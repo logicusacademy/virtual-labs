@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Virtual Lab Kimia — Sistem Periodik Unsur</title>
+<meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: struktur sistem periodik unsur dan tren sifat periodik (jari-jari atom, energi ionisasi, keelektronegatifan).">
+
+<style>
+:root{
+  --ink-950:#0B1220; --ink-900:#101A2E; --ink-800:#16213A; --ink-700:#1F2C48; --ink-600:#2C3A5C;
+  --brass-500:#C4934E; --brass-400:#D9AC6E; --brass-700:#93672F;
+  --phosphor-500:#5FD9C4; --phosphor-300:#9EEBDC;
+  --ember-500:#E0725A; --ember-300:#F0A38F;
+  --leaf-500:#7FBF7F;
+  --violet-400:#B79FE0; --azure-400:#7FB0E0;
+  --paper-100:#F3EFE4; --paper-300:#D9D3C2; --paper-500:#A9A290;
+  --serif:"Fraunces","Iowan Old Style",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --radius-s:6px; --radius-m:12px; --radius-l:20px;
+  --shadow-deep:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{ margin:0; font-family:var(--sans); background:radial-gradient(1200px 800px at 15% -10%, #16223d 0%, var(--ink-950) 55%); color:var(--paper-100); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+h1,h2,h3,h4{ font-family:var(--serif); font-weight:600; margin:0 0 .4em; letter-spacing:.2px; }
+p{ margin:0 0 1em; line-height:1.65; color:var(--paper-300); }
+a{ color:var(--phosphor-500); }
+button{ font-family:inherit; }
+::selection{ background:var(--brass-500); color:var(--ink-950); }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+body.reduce-motion *{ animation:none !important; transition:none !important; }
+:focus-visible{ outline:2px solid var(--phosphor-500); outline-offset:3px; border-radius:4px; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--ink-600); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--brass-700); }
+.visually-hidden{ position:absolute !important; width:1px;height:1px; padding:0;margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.skip-link{ position:absolute; left:12px; top:-60px; background:var(--brass-500); color:var(--ink-950); padding:10px 16px; border-radius:var(--radius-s); z-index:999; font-weight:600; transition:top .2s var(--ease); }
+.skip-link:focus{ top:12px; }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+.appbar{ display:flex; align-items:center; gap:16px; padding:10px 22px; background:linear-gradient(180deg, rgba(16,26,46,.96), rgba(16,26,46,.88)); border-bottom:1px solid var(--ink-600); position:sticky; top:0; z-index:60; backdrop-filter:blur(6px); }
+.appbar__brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+.appbar__mark{ width:34px;height:34px; border-radius:50%; background:radial-gradient(circle at 32% 28%, var(--phosphor-300), var(--phosphor-500) 45%, #1a6f60 100%); box-shadow:0 0 16px -2px var(--phosphor-500); flex:none; }
+.appbar__title{ font-family:var(--serif); font-size:15px; line-height:1.1; }
+.appbar__title small{ display:block; font-family:var(--sans); font-size:11px; color:var(--paper-500); font-weight:500; }
+.tabs{ display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab-btn{ border:1px solid transparent; background:transparent; color:var(--paper-500); padding:9px 14px; border-radius:999px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease); }
+.tab-btn .tab-num{ width:18px;height:18px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); font-size:10px; display:grid; place-items:center; font-family:var(--mono); flex:none; }
+.tab-btn:hover{ color:var(--paper-100); background:var(--ink-800); }
+.tab-btn[aria-selected="true"]{ color:var(--ink-950); background:var(--brass-500); }
+.tab-btn[aria-selected="true"] .tab-num{ background:rgba(11,18,32,.25); color:var(--ink-950); }
+.tab-btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.tab-btn[disabled]:hover{ background:transparent; color:var(--paper-500); }
+.appbar__actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ width:36px;height:36px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); display:grid; place-items:center; cursor:pointer; font-size:15px; transition:border-color .18s var(--ease), color .18s var(--ease), transform .12s var(--ease); }
+.icon-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.icon-btn:active{ transform:scale(.94); }
+.icon-btn[aria-pressed="false"]{ opacity:.5; }
+.progress-rail{ height:3px; background:var(--ink-700); position:relative; }
+.progress-rail__fill{ height:100%; background:linear-gradient(90deg, var(--brass-700), var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+main{ flex:1; position:relative; }
+.view{ display:none; padding:28px clamp(16px,4vw,56px) 64px; max-width:1240px; margin:0 auto; animation:viewIn .35s var(--ease); }
+.view.is-active{ display:block; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+.view-head{ margin-bottom:26px; }
+.eyebrow-plain{ font-size:12.5px; color:var(--phosphor-500); font-weight:600; margin-bottom:6px; }
+.view-head h2{ font-size:clamp(24px,3.4vw,34px); }
+.view-head p{ max-width:640px; }
+.card{ background:linear-gradient(180deg, var(--ink-800), var(--ink-900)); border:1px solid var(--ink-600); border-radius:var(--radius-l); padding:22px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:900px){ .grid-2{ grid-template-columns:1fr; } }
+
+.btn{ display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:12px 22px; border-radius:999px; border:1px solid transparent; cursor:pointer; font-weight:600; font-size:14.5px; transition:transform .14s var(--ease), box-shadow .2s var(--ease), background .18s; }
+.btn:active{ transform:scale(.97); }
+.btn--primary{ background:linear-gradient(180deg, var(--brass-400), var(--brass-500)); color:#1B1305; box-shadow:0 10px 24px -10px rgba(196,147,78,.55); }
+.btn--primary:hover{ box-shadow:0 14px 30px -10px rgba(196,147,78,.7); }
+.btn--ghost{ background:transparent; border-color:var(--ink-600); color:var(--paper-100); }
+.btn--ghost:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.btn--danger{ background:transparent; border-color:var(--ember-500); color:var(--ember-300); }
+.btn--danger:hover{ background:rgba(224,114,90,.12); }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+.btn--sm{ padding:8px 16px; font-size:13px; }
+.btn--block{ width:100%; }
+
+label{ display:block; font-size:13px; font-weight:600; color:var(--paper-300); margin-bottom:6px; }
+input[type="text"], input[type="number"], select, textarea{ width:100%; background:var(--ink-950); border:1px solid var(--ink-600); color:var(--paper-100); padding:11px 13px; border-radius:var(--radius-s); font-size:14.5px; font-family:inherit; }
+textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+input:focus, select:focus, textarea:focus{ border-color:var(--phosphor-500); }
+.field{ margin-bottom:16px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+.hint{ font-size:12px; color:var(--paper-500); margin-top:5px; }
+
+#splash{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:radial-gradient(900px 500px at 80% 10%, rgba(95,217,196,.10), transparent 60%), radial-gradient(700px 500px at 10% 90%, rgba(196,147,78,.14), transparent 60%), var(--ink-950); padding:24px; text-align:center; transition:opacity .5s var(--ease), visibility .5s; }
+#splash.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.splash__orbit{ position:relative; width:150px;height:150px; margin:0 auto 26px; }
+.splash__nucleus{ position:absolute; inset:0; margin:auto; width:26px;height:26px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); box-shadow:0 0 30px 4px rgba(196,147,78,.55); }
+.splash__ring{ position:absolute; inset:0; border:1px solid rgba(95,217,196,.35); border-radius:50%; }
+.splash__ring:nth-child(2){ inset:14px; animation:spin 6s linear infinite; }
+.splash__ring:nth-child(3){ inset:0; transform:rotate(60deg); animation:spin 9s linear infinite reverse; }
+.splash__ring:nth-child(4){ inset:0; transform:rotate(-60deg); animation:spin 12s linear infinite; }
+.splash__electron{ position:absolute; width:8px;height:8px;border-radius:50%; background:var(--phosphor-500); box-shadow:0 0 10px 2px var(--phosphor-500); top:-4px; left:50%; margin-left:-4px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+body.reduce-motion .splash__ring{ animation:none; }
+.splash__eyebrow{ letter-spacing:.4px; color:var(--phosphor-500); font-weight:700; font-size:13px; margin-bottom:10px; }
+.splash h1{ font-size:clamp(26px,4.6vw,42px); max-width:800px; margin:0 auto 10px; }
+.splash__topic{ color:var(--brass-400); font-weight:600; font-size:clamp(15px,2vw,19px); margin-bottom:26px; }
+.splash__meta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+.chip{ border:1px solid var(--ink-600); border-radius:999px; padding:6px 14px; font-size:12.5px; color:var(--paper-300); background:var(--ink-800); }
+
+.modal-scrim{ position:fixed; inset:0; background:rgba(6,9,16,.72); z-index:210; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-scrim[hidden]{ display:none; }
+.modal{ background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); max-width:460px; width:100%; padding:28px; box-shadow:var(--shadow-deep); }
+.modal h2{ font-size:22px; }
+
+.theory-toc{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.toc-pill{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:7px 13px; border-radius:999px; font-size:12.5px; cursor:pointer; font-weight:600; }
+.toc-pill:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.theory-section{ margin-bottom:30px; scroll-margin-top:90px; }
+.theory-section h3{ font-size:20px; border-bottom:1px solid var(--ink-600); padding-bottom:10px; margin-bottom:14px; }
+.term-list{ display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+.term-list dt{ font-weight:700; color:var(--paper-100); font-size:13.5px; }
+.term-list dd{ margin:0 0 12px; color:var(--paper-500); font-size:13.2px; }
+@media (max-width:700px){ .term-list{ grid-template-columns:1fr; } }
+.misconception{ border-left:3px solid var(--ember-500); background:rgba(224,114,90,.08); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:12px 16px; margin-bottom:10px; }
+.misconception b{ color:var(--ember-300); }
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+table.data-table th{ text-align:left; font-family:var(--serif); font-weight:600; color:var(--brass-400); padding:10px 12px; border-bottom:2px solid var(--ink-600); }
+table.data-table td{ padding:10px 12px; border-bottom:1px solid var(--ink-700); color:var(--paper-300); }
+table.data-table tr:last-child td{ border-bottom:none; }
+.table-wrap{ overflow-x:auto; }
+
+.mini-pt{ display:grid; grid-template-columns:repeat(18,22px); gap:2px; margin:18px 0; overflow-x:auto; padding-bottom:6px; }
+.mini-pt .mp-cell{ width:22px;height:22px;border-radius:3px; font-size:8px; display:flex; align-items:center; justify-content:center; color:var(--ink-950); font-weight:700; }
+
+.proc-tabs{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.proc-tab{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:10px 16px; border-radius:var(--radius-m); cursor:pointer; font-weight:600; font-size:13.5px; text-align:left; }
+.proc-tab[aria-selected="true"]{ border-color:var(--brass-500); color:var(--brass-400); background:rgba(196,147,78,.09); }
+.step-list{ counter-reset:step; }
+.step{ display:grid; grid-template-columns:40px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--ink-700); opacity:.5; }
+.step.is-unlocked{ opacity:1; }
+.step:last-child{ border-bottom:none; }
+.step__num{ width:34px;height:34px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; }
+.step.is-unlocked .step__num{ background:var(--brass-500); color:#1B1305; }
+.step.is-done .step__num{ background:var(--leaf-500); color:#0c2410; }
+.step h4{ font-size:15.5px; margin-bottom:6px; }
+.step__meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--paper-500); margin:8px 0; }
+.step__meta span{ display:flex; gap:5px; align-items:center; }
+.step__meta b{ color:var(--paper-300); font-weight:600; }
+.step-actions{ margin-top:10px; }
+.progress-track{ height:8px; background:var(--ink-700); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+.progress-track__fill{ height:100%; background:linear-gradient(90deg, var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+
+.sim-shell{ display:grid; grid-template-columns:300px 1fr; gap:20px; }
+@media (max-width:980px){ .sim-shell{ grid-template-columns:1fr; } }
+.sim-panel{ display:flex; flex-direction:column; gap:16px; }
+.sim-stage{ position:relative; border-radius:var(--radius-l); border:1px solid var(--ink-600); background:radial-gradient(ellipse at 50% 30%, #0e1a30 0%, #060a14 72%); overflow:hidden; min-height:460px; }
+.sim-toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--ink-600); background:rgba(11,18,32,.7); }
+.readout{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:var(--mono); font-size:12.5px; }
+.readout div{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:8px 10px; }
+.readout b{ display:block; color:var(--phosphor-500); font-size:10.5px; letter-spacing:.4px; margin-bottom:2px; font-family:var(--sans); }
+.readout span{ color:var(--paper-100); font-size:13.5px; word-break:break-word; }
+.control-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-500); }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.legend i{ width:10px;height:10px;border-radius:50%; display:inline-block; flex:none; }
+.sim-note{ font-size:12.5px; background:rgba(95,217,196,.08); border:1px solid rgba(95,217,196,.25); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+/* DOM layer (periodic grid & trend comparator) */
+.dom-layer{ position:absolute; inset:0; overflow:auto; padding:22px; }
+
+/* Periodic table grid */
+.pt-grid-wrap{ overflow-x:auto; padding-bottom:8px; }
+.pt-grid{ display:grid; grid-template-columns:repeat(18, minmax(40px,1fr)); gap:4px; min-width:760px; }
+.pt-cell{ aspect-ratio:1; border-radius:6px; border:1.5px solid transparent; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:transform .12s var(--ease), border-color .12s; position:relative; }
+.pt-cell:hover{ transform:translateY(-2px); border-color:var(--paper-100); }
+.pt-cell.is-selected{ border-color:var(--paper-100); box-shadow:0 0 0 2px var(--paper-100); }
+.pt-cell.is-highlighted{ outline:2px dashed rgba(243,239,228,.5); outline-offset:1px; }
+.pt-cell .pz{ font-size:8px; color:rgba(11,18,32,.65); position:absolute; top:2px; left:4px; }
+.pt-cell .psym{ font-size:13px; font-weight:800; color:#0B1220; }
+.pt-empty{ visibility:hidden; }
+.cat-alkali{ background:var(--brass-400); }
+.cat-alkali-tanah{ background:#E3C284; }
+.cat-transisi{ background:var(--azure-400); }
+.cat-metaloid{ background:var(--violet-400); }
+.cat-nonlogam{ background:var(--phosphor-300); }
+.cat-halogen{ background:var(--ember-300); }
+.cat-gas-mulia{ background:#8892A6; }
+.cat-logam{ background:#CFCABF; }
+
+.pt-legend{ display:flex; flex-wrap:wrap; gap:10px; margin:16px 0; font-size:11px; color:var(--paper-300); }
+.pt-legend span{ display:inline-flex; align-items:center; gap:5px; }
+.pt-legend i{ width:12px;height:12px;border-radius:3px; display:inline-block; }
+
+.detail-card{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); padding:18px; margin-top:16px; }
+.detail-head{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.detail-symbol{ width:56px;height:56px;border-radius:var(--radius-s); display:grid; place-items:center; font-family:var(--serif); font-size:24px; font-weight:700; color:#0B1220; flex:none; }
+.detail-cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
+@media (max-width:640px){ .detail-cards{ grid-template-columns:1fr 1fr; } }
+.detail-cards .qn-card{ background:var(--ink-900); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:10px 8px; text-align:center; }
+.detail-cards .qn-card b{ display:block; font-size:10px; color:var(--phosphor-500); margin-bottom:4px; }
+.detail-cards .qn-card span{ font-family:var(--mono); font-size:14px; color:var(--paper-100); }
+
+/* Trend comparator */
+.trend-bars{ display:flex; flex-direction:column; gap:18px; margin:18px 0; }
+.trend-bar-row{ display:flex; align-items:center; gap:12px; }
+.trend-bar-label{ width:110px; flex:none; font-size:12.5px; color:var(--paper-300); text-align:right; }
+.trend-bar-track{ flex:1; height:26px; background:var(--ink-950); border:1px solid var(--ink-700); border-radius:99px; overflow:hidden; position:relative; }
+.trend-bar-fill{ height:100%; border-radius:99px 0 0 99px; display:flex; align-items:center; padding-left:10px; font-family:var(--mono); font-size:12px; color:#0B1220; font-weight:700; white-space:nowrap; transition:width .4s var(--ease); }
+.verdict{ text-align:left; padding:16px 18px; border-radius:var(--radius-m); border:1px solid var(--ink-600); background:var(--ink-950); }
+.verdict-title{ font-family:var(--serif); font-size:18px; color:var(--brass-400); margin-bottom:6px; }
+.verdict-desc{ font-size:13px; color:var(--paper-300); }
+
+.stepper-field{ margin-bottom:16px; }
+.stepper-row{ display:flex; align-items:center; gap:10px; }
+.stepper-btn{ width:34px;height:34px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-100); font-size:17px; font-weight:700; cursor:pointer; display:grid; place-items:center; flex:none; }
+.stepper-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.stepper-btn:active{ transform:scale(.92); }
+.stepper-val{ flex:1; text-align:center; font-family:var(--mono); font-size:18px; color:var(--paper-100); background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:7px 0; }
+
+.lkpd-section{ margin-bottom:24px; }
+.lkpd-section h3{ font-size:16px; display:flex; align-items:center; gap:8px; }
+.lkpd-section h3 em{ font-style:normal; font-family:var(--mono); font-size:11px; color:var(--paper-500); background:var(--ink-700); padding:3px 8px; border-radius:5px; }
+.obs-table td, .obs-table th{ padding:8px; }
+.obs-table input{ padding:7px 9px; font-size:13px; }
+.add-row-btn{ margin-top:8px; }
+.lkpd-toolbar{ display:flex; gap:10px; flex-wrap:wrap; position:sticky; bottom:14px; z-index:5; background:var(--ink-900); border:1px solid var(--ink-600); padding:12px; border-radius:var(--radius-m); box-shadow:var(--shadow-deep); }
+.save-status{ font-size:12px; color:var(--paper-500); align-self:center; margin-left:auto; }
+
+.quiz-progress{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+.quiz-progress .progress-track{ flex:1; margin:0; }
+.quiz-meta{ font-family:var(--mono); font-size:12.5px; color:var(--paper-500); white-space:nowrap; }
+.q-card{ margin-bottom:18px; }
+.q-tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:3px 9px; border-radius:999px; margin-bottom:12px; }
+.q-tag.lots{ background:rgba(127,191,127,.16); color:var(--leaf-500); }
+.q-tag.mots{ background:rgba(196,147,78,.18); color:var(--brass-400); }
+.q-tag.hots{ background:rgba(224,114,90,.18); color:var(--ember-300); }
+.q-stem{ font-size:15.5px; color:var(--paper-100); margin-bottom:14px; font-weight:500; line-height:1.55; }
+.opt{ display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border:1px solid var(--ink-600); border-radius:var(--radius-m); margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s; }
+.opt:hover{ border-color:var(--brass-500); }
+.opt input{ margin-top:3px; accent-color:var(--brass-500); flex:none; }
+.opt span{ font-size:14px; color:var(--paper-300); }
+.opt.is-correct{ border-color:var(--leaf-500); background:rgba(127,191,127,.09); }
+.opt.is-wrong{ border-color:var(--ember-500); background:rgba(224,114,90,.09); }
+.q-explain{ display:none; margin-top:12px; padding:12px 14px; border-radius:var(--radius-s); background:var(--ink-950); border:1px solid var(--ink-700); font-size:13px; color:var(--paper-300); }
+.q-explain.is-visible{ display:block; }
+.q-explain b{ color:var(--phosphor-500); }
+.short-answer-input{ margin-top:6px; }
+.result-hero{ text-align:center; padding:38px 22px; }
+.result-score{ font-family:var(--serif); font-size:56px; color:var(--brass-400); }
+.badge-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.badge{ display:flex; flex-direction:column; align-items:center; gap:6px; width:96px; opacity:.3; }
+.badge.is-earned{ opacity:1; }
+.badge i{ width:44px;height:44px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); display:grid; place-items:center; font-style:normal; font-size:18px; }
+.badge span{ font-size:10.5px; text-align:center; color:var(--paper-500); font-weight:600; }
+
+.dev-card{ display:grid; grid-template-columns:180px 1fr; gap:26px; align-items:start; }
+@media (max-width:640px){ .dev-card{ grid-template-columns:1fr; } }
+.dev-photo{ width:180px;height:180px; border-radius:var(--radius-l); overflow:hidden; border:1px solid var(--ink-600); background:var(--ink-700); }
+.dev-photo svg{ width:100%; height:100%; display:block; }
+.dev-competency{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+.assistant-fab{ position:fixed; right:20px; bottom:20px; z-index:150; width:56px;height:56px; border-radius:50%; background:linear-gradient(160deg, var(--phosphor-300), var(--phosphor-500)); border:none; cursor:pointer; box-shadow:0 14px 30px -10px rgba(95,217,196,.6); font-size:22px; display:grid; place-items:center; color:#052c25; }
+.assistant-panel{ position:fixed; right:20px; bottom:88px; width:min(340px, calc(100vw - 40px)); max-height:60vh; z-index:150; background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); box-shadow:var(--shadow-deep); display:flex; flex-direction:column; overflow:hidden; }
+.assistant-panel[hidden]{ display:none; }
+.assistant-head{ padding:14px 16px; border-bottom:1px solid var(--ink-600); display:flex; justify-content:space-between; align-items:center; }
+.assistant-head h4{ margin:0; font-size:14.5px; }
+.assistant-body{ padding:14px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.assistant-msg{ background:var(--ink-800); border-radius:var(--radius-s); padding:9px 11px; color:var(--paper-300); align-self:flex-start; max-width:88%; }
+.assistant-msg.user{ background:var(--brass-700); color:#fff; align-self:flex-end; }
+.assistant-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; }
+.assistant-chip{ font-size:11.5px; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:6px 10px; border-radius:999px; cursor:pointer; }
+
+#toast-region{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.toast{ background:var(--ink-800); border:1px solid var(--ink-600); color:var(--paper-100); padding:10px 18px; border-radius:999px; font-size:13px; box-shadow:var(--shadow-deep); animation:toastIn .25s var(--ease); }
+.toast.success{ border-color:var(--leaf-500); }
+.toast.error{ border-color:var(--ember-500); }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} }
+footer.appfoot{ text-align:center; padding:20px; font-size:11.5px; color:var(--paper-500); border-top:1px solid var(--ink-600); }
+
+@media (max-width:760px){
+  .appbar{ flex-wrap:wrap; padding:10px 14px; row-gap:8px; }
+  .appbar__brand{ margin-right:0; }
+  .appbar__title small{ display:none; }
+  .tabs{ order:3; width:100%; padding-top:2px; }
+  .appbar__actions{ margin-left:auto; }
+  .assistant-panel{ right:12px; left:12px; width:auto; bottom:80px; }
+  .assistant-fab{ right:14px; bottom:14px; }
+}
+@media print{
+  .appbar,.assistant-fab,.assistant-panel,footer.appfoot,.lkpd-toolbar,#splash,.modal-scrim,.progress-rail{ display:none !important; }
+  body{ background:#fff; color:#111; }
+  .view{ display:block !important; }
+  main .view:not(#view-lkpd){ display:none !important; }
+  .card{ border:1px solid #ccc; background:#fff; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<div id="splash" role="dialog" aria-labelledby="splash-title">
+  <div>
+    <div class="splash__orbit" aria-hidden="true">
+      <div class="splash__ring"></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__nucleus"></div>
+    </div>
+    <div class="splash__eyebrow">Virtual Laboratory — Kimia SMA</div>
+    <h1 id="splash-title">Sistem Periodik Unsur</h1>
+    <div class="splash__topic">Peta besar yang menyusun 118 unsur berdasarkan pola berulang sifatnya</div>
+    <div class="splash__meta">
+      <span class="chip">Fase E · Kelas X</span>
+      <span class="chip">Struktur Atom</span>
+      <span class="chip">± 60 menit</span>
+    </div>
+    <button class="btn btn--primary" id="btn-start" style="font-size:16px;padding:15px 34px;">Mulai Praktikum</button>
+  </div>
+</div>
+
+<div class="modal-scrim" id="modal-identity" hidden>
+  <form class="modal" id="form-identity" novalidate>
+    <h2>Identitas Praktikan</h2>
+    <p style="font-size:13px;">Data ini digunakan pada LKPD, evaluasi, dan rekap hasil belajarmu.</p>
+    <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama" required autocomplete="name" placeholder="cth. Ahmad Zaki"></div>
+    <div class="field-row">
+      <div class="field"><label for="inp-kelas">Kelas</label><input type="text" id="inp-kelas" required placeholder="cth. X-4"></div>
+      <div class="field"><label for="inp-id">No. Absen / ID</label><input type="text" id="inp-id" placeholder="cth. 17"></div>
+    </div>
+    <p class="hint" id="identity-error" style="color:var(--ember-300); display:none;">Nama dan kelas wajib diisi sebelum memulai.</p>
+    <button type="submit" class="btn btn--primary btn--block">Simpan &amp; Masuk Laboratorium</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="appbar">
+    <div class="appbar__brand">
+      <div class="appbar__mark" aria-hidden="true"></div>
+      <div class="appbar__title">Virtual Lab Kimia<small>Sistem Periodik Unsur</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Navigasi bagian praktikum" role="tablist"></nav>
+    <div class="appbar__actions">
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Suara ON/OFF" aria-label="Aktifkan atau matikan suara">🔊</button>
+      <button class="icon-btn" id="btn-reduce-motion" aria-pressed="false" title="Kurangi animasi" aria-label="Kurangi animasi">✧</button>
+      <button class="icon-btn" id="btn-print" title="Cetak LKPD" aria-label="Cetak LKPD">🖨</button>
+    </div>
+  </header>
+  <div class="progress-rail"><div class="progress-rail__fill" id="global-progress"></div></div>
+
+  <main id="main-content">
+
+    <!-- ============================= TEORI ============================= -->
+    <section class="view" id="view-teori" data-view="teori">
+      <div class="view-head">
+        <div class="eyebrow-plain">01 · Teori</div>
+        <h2>Peta Besar Unsur-Unsur Kimia</h2>
+        <p>Mengapa unsur-unsur bisa disusun rapi dalam satu tabel, dan mengapa sifatnya berulang secara periodik? Jawabannya terletak pada konfigurasi elektron yang sudah kamu pelajari sebelumnya.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:26px;">
+        <h3 style="font-size:16px;margin-bottom:12px;">Tujuan Pembelajaran</h3>
+        <ul id="tp-list" style="margin:0; padding-left:20px; color:var(--paper-300); font-size:14px; line-height:1.8;"></ul>
+      </div>
+
+      <div class="theory-toc" id="theory-toc" aria-label="Lompat ke subtopik teori"></div>
+
+      <div class="table-wrap">
+        <div class="mini-pt" id="mini-pt"></div>
+      </div>
+
+      <div id="theory-sections"></div>
+    </section>
+
+    <!-- ============================= PROSEDUR ============================= -->
+    <section class="view" id="view-prosedur" data-view="prosedur">
+      <div class="view-head">
+        <div class="eyebrow-plain">02 · Prosedur</div>
+        <h2>Langkah Kerja Praktikum</h2>
+        <p>Pilih salah satu aktivitas untuk melihat urutan langkah kerjanya. Selesaikan langkah secara berurutan sebelum melanjutkan ke simulasi.</p>
+      </div>
+      <div class="proc-tabs" id="proc-tabs" role="tablist" aria-label="Pilih aktivitas"></div>
+      <div class="progress-track"><div class="progress-track__fill" id="proc-progress"></div></div>
+      <div class="card"><div class="step-list" id="proc-steps"></div></div>
+    </section>
+
+    <!-- ============================= SIMULASI ============================= -->
+    <section class="view" id="view-simulasi" data-view="simulasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">03 · Simulasi</div>
+        <h2>Laboratorium Interaktif</h2>
+        <p>Jelajahi tabel periodik interaktif, atau bandingkan tren sifat periodik dua unsur secara langsung.</p>
+      </div>
+      <div class="proc-tabs" id="sim-tabs" role="tablist" aria-label="Pilih simulasi" style="margin-bottom:18px;"></div>
+
+      <div class="sim-shell">
+        <div class="sim-panel">
+          <div class="card" id="sim-controls"></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Pembacaan Instrumen</h4><div class="readout" id="sim-readout"></div></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Legenda</h4><div class="legend" id="sim-legend"></div></div>
+        </div>
+        <div>
+          <div class="sim-stage" id="sim-stage">
+            <div class="dom-layer" id="dom-layer"></div>
+          </div>
+          <div class="sim-toolbar">
+            <div class="control-row"><button class="btn btn--danger btn--sm" id="sim-reset">↺ Reset</button></div>
+          </div>
+          <p class="sim-note" id="sim-note" style="margin-top:14px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= LKPD ============================= -->
+    <section class="view" id="view-lkpd" data-view="lkpd">
+      <div class="view-head">
+        <div class="eyebrow-plain">04 · LKPD Digital</div>
+        <h2>Lembar Kerja Peserta Didik</h2>
+        <p>Isi setiap bagian berdasarkan pengamatanmu pada simulasi. Data tersimpan otomatis di perangkatmu.</p>
+      </div>
+      <div class="card">
+        <form id="form-lkpd">
+          <div class="lkpd-section">
+            <h3>A. Identitas <em>identitas</em></h3>
+            <div class="field-row">
+              <div class="field"><label>Nama</label><input type="text" id="lkpd-nama" readonly></div>
+              <div class="field"><label>Kelas</label><input type="text" id="lkpd-kelas" readonly></div>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>B. Tujuan <em>tujuan</em></h3>
+            <p style="font-size:13.5px;">Menganalisis struktur sistem periodik (golongan, periode, blok) berdasarkan konfigurasi elektron unsur, serta mengidentifikasi tren sifat periodik (jari-jari atom, energi ionisasi, keelektronegatifan).</p>
+          </div>
+          <div class="lkpd-section">
+            <h3>C. Prediksi <em>hipotesis</em></h3>
+            <div class="field">
+              <label for="lkpd-prediksi">Menurutmu, unsur manakah yang memiliki jari-jari atom lebih besar: Natrium (Na) atau Klorin (Cl)? Keduanya berada pada periode yang sama. Tuliskan prediksimu, lalu buktikan dengan simulator Analisis Tren.</label>
+              <textarea id="lkpd-prediksi"></textarea>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>D. Alat &amp; Bahan <em>otomatis</em></h3>
+            <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px;">
+              <li>Simulator Penjelajah Tabel Periodik (36 unsur pertama)</li>
+              <li>Simulator Analisis Tren Periodik (jari-jari atom, energi ionisasi, keelektronegatifan)</li>
+              <li>Panel pembacaan instrumen (golongan, periode, blok, kategori, nilai sifat periodik)</li>
+            </ul>
+          </div>
+          <div class="lkpd-section">
+            <h3>E. Pengamatan — Penjelajah Tabel Periodik <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-1">
+                <thead><tr><th>Unsur (Z)</th><th>Golongan</th><th>Periode</th><th>Blok</th><th>Klasifikasi</th></tr></thead>
+                <tbody id="obs-tbody-1"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="1">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>E2. Pengamatan — Analisis Tren <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-2">
+                <thead><tr><th>Pasangan Unsur</th><th>Properti Dibandingkan</th><th>Unsur Lebih Besar</th><th>Alasan Tren</th></tr></thead>
+                <tbody id="obs-tbody-2"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="2">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>F. Analisis <em>esai singkat</em></h3>
+            <div class="field"><label for="lkpd-analisis1">1. Mengapa unsur segolongan cenderung memiliki sifat kimia yang mirip?</label><textarea id="lkpd-analisis1"></textarea></div>
+            <div class="field"><label for="lkpd-analisis2">2. Jelaskan mengapa energi ionisasi tidak selalu naik secara mutlak sepanjang satu periode (berikan contoh penyimpangannya).</label><textarea id="lkpd-analisis2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>G. Pertanyaan Pemandu <em>diskusi</em></h3>
+            <div class="field"><label for="lkpd-q1">Bagaimana hubungan antara blok unsur (s, p, d) dengan subkulit terakhir yang terisi pada konfigurasi elektronnya?</label><textarea id="lkpd-q1"></textarea></div>
+            <div class="field"><label for="lkpd-q2">Mengapa unsur logam cenderung berada di sisi kiri-bawah tabel periodik, sedangkan nonlogam di kanan-atas?</label><textarea id="lkpd-q2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>H. Kesimpulan <em>ringkasan</em></h3>
+            <div class="field"><label for="lkpd-kesimpulan">Tuliskan kesimpulan akhir praktikummu (kaitkan dengan tujuan pembelajaran).</label><textarea id="lkpd-kesimpulan" style="min-height:100px;"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>I. Refleksi <em>metakognisi</em></h3>
+            <div class="field"><label for="lkpd-refleksi">Bagian mana dari materi ini yang paling menantang bagimu, dan strategi apa yang kamu pakai untuk memahaminya?</label><textarea id="lkpd-refleksi"></textarea></div>
+          </div>
+          <div class="lkpd-toolbar">
+            <button type="button" class="btn btn--primary btn--sm" id="lkpd-save">💾 Simpan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="lkpd-print">🖨 Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn--danger btn--sm" id="lkpd-reset">↺ Reset LKPD</button>
+            <span class="save-status" id="lkpd-status">Belum disimpan</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= EVALUASI ============================= -->
+    <section class="view" id="view-evaluasi" data-view="evaluasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">05 · Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>18 soal (LOTS–HOTS) untuk mengukur pemahamanmu tentang sistem periodik dan tren sifat periodik.</p>
+      </div>
+      <div id="quiz-intro" class="card">
+        <h3 style="font-size:17px;">Sebelum mulai</h3>
+        <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px; line-height:1.8;">
+          <li>18 soal: pilihan ganda, pilihan ganda kompleks (checkbox), isian singkat, dan analisis singkat.</li>
+          <li>Beberapa soal membahas penyimpangan tren energi ionisasi.</li>
+          <li>Pembahasan setiap soal akan muncul setelah kamu menjawab.</li>
+        </ul>
+        <button class="btn btn--primary" id="quiz-begin" style="margin-top:8px;">Mulai Evaluasi</button>
+      </div>
+      <div id="quiz-body" hidden>
+        <div class="quiz-progress">
+          <div class="progress-track"><div class="progress-track__fill" id="quiz-progress-fill"></div></div>
+          <span class="quiz-meta" id="quiz-progress-label">0 / 18 dijawab</span>
+        </div>
+        <div id="quiz-questions"></div>
+        <button class="btn btn--primary btn--block" id="quiz-submit">Kumpulkan &amp; Lihat Skor</button>
+      </div>
+      <div id="quiz-result" hidden>
+        <div class="card result-hero">
+          <div style="font-size:13px; color:var(--paper-500); letter-spacing:.4px; text-transform:uppercase;">Skor Akhir</div>
+          <div class="result-score" id="result-score">0</div>
+          <p id="result-desc" style="max-width:440px;margin:10px auto 0;"></p>
+          <div class="badge-row" id="badge-row"></div>
+          <div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="quiz-review">Lihat Pembahasan</button>
+            <button class="btn btn--danger btn--sm" id="quiz-retry">Ulangi Evaluasi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= PROFIL PENGEMBANG ============================= -->
+    <section class="view" id="view-profil" data-view="profil">
+      <div class="view-head"><div class="eyebrow-plain">06 · Profil Pengembang</div><h2>Tentang Pengembang</h2></div>
+      <div class="card dev-card">
+        <div class="dev-photo" id="dev-photo"></div>
+        <div>
+          <h3 style="font-size:22px;">S.D. Sabirin, S.Si., Gr.</h3>
+          <p style="color:var(--brass-400); font-weight:600; margin-bottom:14px;">Guru Kimia &amp; Pengembang Media Pembelajaran Digital</p>
+          <p style="font-size:14px;">Mengajar Kimia di SMA Islam Al Azhar 5 Cirebon dan aktif membimbing siswa dalam kompetisi riset (LPIR, OSN, COSMII, OPSI, OSA). Saat ini menempuh studi Magister Kimia di Universitas Padjadjaran melalui program Beasiswa Guru SMUP. Virtual lab ini dikembangkan sebagai bagian dari upaya menghadirkan pembelajaran Kimia yang kontekstual, interaktif, dan berbasis bukti eksperimen.</p>
+          <div class="dev-competency">
+            <span class="chip">Pendidikan Kimia</span>
+            <span class="chip">Pengembangan Media Pembelajaran</span>
+            <span class="chip">Pembimbingan Riset Siswa</span>
+            <span class="chip">Deep Learning Pedagogy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="appfoot">Virtual Lab Kimia — Sistem Periodik Unsur · Dikembangkan oleh S.D. Sabirin, S.Si., Gr. · Referensi: IUPAC &amp; CRC Handbook of Chemistry (nilai sifat periodik adalah data referensi mendekati, dapat bervariasi antarsumber)</footer>
+</div>
+
+<button class="assistant-fab" id="assistant-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="assistant-panel" aria-label="Buka asisten bantuan">?</button>
+<div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Asisten Bantuan" hidden>
+  <div class="assistant-head"><h4>Asisten Lab (berbasis aturan)</h4><button class="icon-btn" id="assistant-close" aria-label="Tutup asisten" style="width:28px;height:28px;">✕</button></div>
+  <div class="assistant-body" id="assistant-body"></div>
+  <div class="assistant-chips" id="assistant-chips"></div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   1. ELEMENTS DATA — Z=1..36, dengan golongan/periode/blok/kategori/sifat
+   Nilai jari-jari (pm, empiris), energi ionisasi pertama (kJ/mol), dan
+   keelektronegatifan (skala Pauling) adalah nilai referensi yang mendekati
+   data eksperimen umum dan dapat sedikit bervariasi antarsumber/rujukan.
+   ========================================================================= */
+const ELEMENTS = [
+  {z:1,sym:"H",name:"Hidrogen",group:1,period:1,block:"s",category:"nonlogam",radius:37,ie:1312,en:2.20},
+  {z:2,sym:"He",name:"Helium",group:18,period:1,block:"s",category:"gas-mulia",radius:32,ie:2372,en:null},
+  {z:3,sym:"Li",name:"Litium",group:1,period:2,block:"s",category:"alkali",radius:152,ie:520,en:0.98},
+  {z:4,sym:"Be",name:"Berilium",group:2,period:2,block:"s",category:"alkali-tanah",radius:112,ie:899,en:1.57},
+  {z:5,sym:"B",name:"Boron",group:13,period:2,block:"p",category:"metaloid",radius:85,ie:801,en:2.04},
+  {z:6,sym:"C",name:"Karbon",group:14,period:2,block:"p",category:"nonlogam",radius:77,ie:1086,en:2.55},
+  {z:7,sym:"N",name:"Nitrogen",group:15,period:2,block:"p",category:"nonlogam",radius:75,ie:1402,en:3.04},
+  {z:8,sym:"O",name:"Oksigen",group:16,period:2,block:"p",category:"nonlogam",radius:73,ie:1314,en:3.44},
+  {z:9,sym:"F",name:"Fluor",group:17,period:2,block:"p",category:"halogen",radius:71,ie:1681,en:3.98},
+  {z:10,sym:"Ne",name:"Neon",group:18,period:2,block:"p",category:"gas-mulia",radius:69,ie:2081,en:null},
+  {z:11,sym:"Na",name:"Natrium",group:1,period:3,block:"s",category:"alkali",radius:186,ie:496,en:0.93},
+  {z:12,sym:"Mg",name:"Magnesium",group:2,period:3,block:"s",category:"alkali-tanah",radius:160,ie:738,en:1.31},
+  {z:13,sym:"Al",name:"Aluminium",group:13,period:3,block:"p",category:"logam",radius:143,ie:578,en:1.61},
+  {z:14,sym:"Si",name:"Silikon",group:14,period:3,block:"p",category:"metaloid",radius:118,ie:786,en:1.90},
+  {z:15,sym:"P",name:"Fosforus",group:15,period:3,block:"p",category:"nonlogam",radius:110,ie:1012,en:2.19},
+  {z:16,sym:"S",name:"Belerang",group:16,period:3,block:"p",category:"nonlogam",radius:104,ie:1000,en:2.58},
+  {z:17,sym:"Cl",name:"Klorin",group:17,period:3,block:"p",category:"halogen",radius:99,ie:1251,en:3.16},
+  {z:18,sym:"Ar",name:"Argon",group:18,period:3,block:"p",category:"gas-mulia",radius:97,ie:1521,en:null},
+  {z:19,sym:"K",name:"Kalium",group:1,period:4,block:"s",category:"alkali",radius:227,ie:419,en:0.82},
+  {z:20,sym:"Ca",name:"Kalsium",group:2,period:4,block:"s",category:"alkali-tanah",radius:197,ie:590,en:1.00},
+  {z:21,sym:"Sc",name:"Skandium",group:3,period:4,block:"d",category:"transisi",radius:162,ie:633,en:1.36},
+  {z:22,sym:"Ti",name:"Titanium",group:4,period:4,block:"d",category:"transisi",radius:147,ie:659,en:1.54},
+  {z:23,sym:"V",name:"Vanadium",group:5,period:4,block:"d",category:"transisi",radius:134,ie:651,en:1.63},
+  {z:24,sym:"Cr",name:"Kromium",group:6,period:4,block:"d",category:"transisi",radius:128,ie:653,en:1.66},
+  {z:25,sym:"Mn",name:"Mangan",group:7,period:4,block:"d",category:"transisi",radius:127,ie:717,en:1.55},
+  {z:26,sym:"Fe",name:"Besi",group:8,period:4,block:"d",category:"transisi",radius:126,ie:762,en:1.83},
+  {z:27,sym:"Co",name:"Kobalt",group:9,period:4,block:"d",category:"transisi",radius:125,ie:760,en:1.88},
+  {z:28,sym:"Ni",name:"Nikel",group:10,period:4,block:"d",category:"transisi",radius:124,ie:737,en:1.91},
+  {z:29,sym:"Cu",name:"Tembaga",group:11,period:4,block:"d",category:"transisi",radius:128,ie:745,en:1.90},
+  {z:30,sym:"Zn",name:"Seng",group:12,period:4,block:"d",category:"transisi",radius:134,ie:906,en:1.65},
+  {z:31,sym:"Ga",name:"Galium",group:13,period:4,block:"p",category:"logam",radius:135,ie:579,en:1.81},
+  {z:32,sym:"Ge",name:"Germanium",group:14,period:4,block:"p",category:"metaloid",radius:122,ie:762,en:2.01},
+  {z:33,sym:"As",name:"Arsen",group:15,period:4,block:"p",category:"metaloid",radius:119,ie:947,en:2.18},
+  {z:34,sym:"Se",name:"Selenium",group:16,period:4,block:"p",category:"nonlogam",radius:120,ie:941,en:2.55},
+  {z:35,sym:"Br",name:"Bromin",group:17,period:4,block:"p",category:"halogen",radius:114,ie:1140,en:2.96},
+  {z:36,sym:"Kr",name:"Kripton",group:18,period:4,block:"p",category:"gas-mulia",radius:110,ie:1351,en:3.00}
+];
+function elByZ(z){ return ELEMENTS[z-1]; }
+
+const CATEGORY_LABEL={
+  "alkali":"Logam Alkali", "alkali-tanah":"Logam Alkali Tanah", "transisi":"Logam Transisi",
+  "metaloid":"Metaloid", "nonlogam":"Nonlogam", "halogen":"Halogen (Nonlogam)",
+  "gas-mulia":"Gas Mulia", "logam":"Logam (Pasca-Transisi)"
+};
+function groupLabel(g){
+  if(g===1) return "1 (IA)";
+  if(g===2) return "2 (IIA)";
+  if(g>=3 && g<=12) return g+" (Golongan B / Transisi)";
+  const map={13:"13 (IIIA)",14:"14 (IVA)",15:"15 (VA)",16:"16 (VIA)",17:"17 (VIIA)",18:"18 (VIIIA)"};
+  return map[g];
+}
+
+/* =========================================================================
+   2. LAB_DATA
+   ========================================================================= */
+const LAB_DATA = {
+  objectives:[
+    "Menjelaskan struktur sistem periodik modern: pengertian golongan, periode, dan blok unsur.",
+    "Menentukan letak suatu unsur (golongan, periode, blok) berdasarkan konfigurasi elektronnya.",
+    "Mengidentifikasi klasifikasi unsur sebagai logam, nonlogam, atau metaloid.",
+    "Menganalisis dan menjelaskan tren sifat periodik: jari-jari atom, energi ionisasi, dan keelektronegatifan."
+  ],
+
+  theorySections:[
+    {
+      id:"sejarah-spu", title:"1. Sejarah Singkat Penyusunan Sistem Periodik",
+      body:[
+        "Upaya mengelompokkan unsur berdasarkan kemiripan sifat telah dilakukan jauh sebelum struktur atom dipahami. Johann Döbereiner (1829) mengelompokkan unsur ke dalam \"triade\" — tiga unsur dengan sifat mirip, di mana massa atom unsur tengah mendekati rata-rata dua unsur lainnya.",
+        "John Newlands (1864) mengusulkan \"hukum oktaf\": ketika unsur diurutkan berdasarkan kenaikan massa atom, sifat-sifatnya tampak berulang setiap unsur kedelapan — mirip pola tangga nada musik.",
+        "Dmitri Mendeleev (1869) menyusun tabel periodik yang jauh lebih sistematis berdasarkan kenaikan massa atom, bahkan berani menyisakan tempat kosong untuk unsur yang belum ditemukan — dan prediksinya tentang sifat unsur tersebut kelak terbukti sangat akurat.",
+        "Henry Moseley (1913) menyempurnakan penyusunan tersebut dengan mengurutkan unsur berdasarkan kenaikan nomor atom (jumlah proton), bukan massa atom — menghasilkan hukum periodik modern yang kita gunakan hingga sekarang."
+      ],
+      example:"Mendeleev memprediksi keberadaan unsur yang ia sebut \"eka-silikon\" lengkap dengan perkiraan sifat-sifatnya; unsur ini kemudian benar-benar ditemukan dan dikenal sebagai Germanium (Ge).",
+      limitation:"Penyusunan berdasarkan massa atom (Mendeleev) sesekali menghasilkan urutan yang tidak konsisten dengan sifat kimia unsur; masalah ini baru terpecahkan tuntas ketika Moseley beralih menggunakan nomor atom sebagai dasar pengurutan."
+    },
+    {
+      id:"struktur-modern", title:"2. Struktur Sistem Periodik Modern",
+      body:[
+        "Tabel periodik modern menyusun unsur dalam baris horizontal yang disebut periode, dan kolom vertikal yang disebut golongan.",
+        "Terdapat 7 periode (baris), dengan nomor periode berkaitan langsung dengan jumlah kulit elektron yang terisi pada atom netral unsur tersebut.",
+        "Terdapat 18 golongan (kolom) menurut sistem penomoran IUPAC modern. Golongan 1, 2, dan 13–18 disebut golongan utama (golongan A pada sistem lama), sedangkan golongan 3–12 disebut golongan transisi (golongan B pada sistem lama)."
+      ],
+      list:[
+        "Nomor periode = jumlah kulit elektron yang terisi",
+        "Nomor golongan utama (A) = jumlah elektron valensi",
+        "18 golongan menurut IUPAC modern; golongan 1,2,13–18 = golongan utama; golongan 3–12 = golongan transisi"
+      ],
+      example:"Natrium (Na) memiliki konfigurasi kulit 2,8,1 — tiga kulit terisi menandakan periode 3, dan 1 elektron valensi menandakan golongan 1 (IA).",
+      limitation:"Penomoran golongan A/B pada sistem lama berbeda-beda antarnegara (terutama untuk golongan transisi); sistem IUPAC 1–18 dibuat untuk menyeragamkan penomoran ini secara internasional."
+    },
+    {
+      id:"konfigurasi-letak", title:"3. Hubungan Konfigurasi Elektron dengan Letak Unsur",
+      body:[
+        "Letak suatu unsur pada tabel periodik sesungguhnya adalah cerminan langsung dari konfigurasi elektronnya — bukan sekadar penomoran yang disusun secara acak.",
+        "Blok unsur (s, p, d, atau f) ditentukan oleh jenis subkulit yang terakhir terisi pada konfigurasi elektronnya. Unsur blok s memiliki elektron terakhir pada subkulit s, unsur blok p pada subkulit p, dan seterusnya."
+      ],
+      list:[
+        "Blok s: golongan 1–2 (subkulit terakhir terisi adalah ns)",
+        "Blok p: golongan 13–18 (subkulit terakhir terisi adalah np)",
+        "Blok d: golongan 3–12, unsur transisi (subkulit terakhir terisi adalah (n−1)d)",
+        "Blok f: unsur lantanida &amp; aktinida (di luar cakupan Z=1–36 pada praktikum ini)"
+      ],
+      example:"Klorin (Cl, Z=17) memiliki konfigurasi subkulit [Ne]3s²3p⁵ — elektron terakhirnya berada pada subkulit 3p, sehingga Cl termasuk unsur blok p, golongan 17 (VIIA), periode 3.",
+      limitation:"Untuk golongan transisi (blok d), penentuan elektron valensi tidak sesederhana golongan utama, karena melibatkan elektron pada dua kulit berbeda (ns dan (n−1)d) — topik ini dibahas lebih mendalam pada jenjang yang lebih lanjut."
+    },
+    {
+      id:"klasifikasi-unsur", title:"4. Klasifikasi Unsur: Logam, Nonlogam, dan Metaloid",
+      body:[
+        "Berdasarkan sifat fisik dan kimianya, unsur-unsur dapat dikelompokkan menjadi tiga kategori besar: logam, nonlogam, dan metaloid.",
+        "Logam umumnya mengilap, menghantarkan panas dan listrik dengan baik, dapat ditempa, dan cenderung melepaskan elektron membentuk ion positif. Sebagian besar unsur pada tabel periodik (termasuk seluruh golongan transisi) tergolong logam.",
+        "Nonlogam umumnya tidak mengilap, penghantar panas/listrik yang buruk, rapuh dalam bentuk padat, dan cenderung menerima elektron membentuk ion negatif.",
+        "Metaloid memiliki sifat di antara logam dan nonlogam, terletak di sepanjang \"garis tangga\" yang memisahkan wilayah logam dan nonlogam pada tabel periodik — contohnya Boron (B), Silikon (Si), Germanium (Ge), dan Arsen (As)."
+      ],
+      example:"Silikon (Si) bersifat mengilap seperti logam namun rapuh dan bersifat semikonduktor (setengah menghantarkan listrik) — sifat khas metaloid yang justru menjadikannya bahan utama industri chip komputer.",
+      limitation:"Batasan antara logam, nonlogam, dan metaloid tidak selalu tegas; beberapa unsur di sekitar garis tangga dapat menunjukkan sifat campuran bergantung pada kondisi atau bentuk alotropnya."
+    },
+    {
+      id:"jari-jari-atom", title:"5. Jari-Jari Atom",
+      body:[
+        "Jari-jari atom menyatakan ukuran atom, umumnya diukur sebagai setengah jarak antara inti dua atom yang berikatan.",
+        "Dalam satu golongan, dari atas ke bawah, jari-jari atom cenderung membesar — karena bertambahnya jumlah kulit elektron yang terisi.",
+        "Dalam satu periode, dari kiri ke kanan, jari-jari atom cenderung mengecil — meskipun jumlah kulitnya sama, muatan inti efektif (gaya tarik inti terhadap elektron terluar) semakin besar seiring bertambahnya proton, sehingga elektron tertarik lebih dekat ke inti."
+      ],
+      example:"Kalium (K) memiliki jari-jari atom jauh lebih besar daripada Klorin (Cl), meskipun keduanya berada pada periode yang sama — karena Cl memiliki muatan inti efektif yang jauh lebih besar, menarik elektron valensinya lebih dekat ke inti.",
+      limitation:"Jari-jari atom sesungguhnya tidak dapat diukur langsung karena batas atom tidak tegas (awan elektron tidak memiliki tepi pasti); nilai yang digunakan merupakan hasil perhitungan/pengukuran tidak langsung dan dapat sedikit berbeda antarmetode pengukuran."
+    },
+    {
+      id:"energi-ionisasi", title:"6. Energi Ionisasi",
+      body:[
+        "Energi ionisasi adalah energi minimum yang diperlukan untuk melepaskan satu elektron dari atom netral dalam wujud gas.",
+        "Dalam satu golongan, dari atas ke bawah, energi ionisasi cenderung mengecil — karena elektron valensi berada semakin jauh dari inti sehingga lebih mudah dilepaskan.",
+        "Dalam satu periode, dari kiri ke kanan, energi ionisasi cenderung membesar — karena muatan inti efektif yang semakin besar membuat elektron semakin sulit dilepaskan. Namun, terdapat beberapa penyimpangan akibat kestabilan subkulit yang terisi penuh atau setengah penuh."
+      ],
+      example:"Energi ionisasi menurun sedikit dari Berilium (Be, subkulit 2s terisi penuh yang stabil) ke Boron (B, elektron terluarnya mulai mengisi subkulit 2p yang berenergi lebih tinggi) — meskipun nomor atom B lebih besar dari Be.",
+      limitation:"Penyimpangan tren energi ionisasi (seperti pada Be→B dan N→O) bukan berarti tren umum salah, melainkan menunjukkan bahwa kestabilan konfigurasi elektron (subkulit penuh/setengah penuh) juga berperan penting selain sekadar muatan inti efektif."
+    },
+    {
+      id:"afinitas-keelektronegatifan", title:"7. Afinitas Elektron dan Keelektronegatifan",
+      body:[
+        "Afinitas elektron adalah perubahan energi yang terjadi ketika atom netral dalam wujud gas menerima satu elektron tambahan. Secara umum, tren afinitas elektron mengikuti pola serupa energi ionisasi, namun dengan lebih banyak pengecualian — terutama gas mulia yang cenderung tidak menerima elektron tambahan sama sekali.",
+        "Keelektronegatifan menyatakan kecenderungan suatu atom menarik pasangan elektron ikatan menuju dirinya, umumnya diukur dengan skala Pauling. Fluor (F) merupakan unsur paling elektronegatif dalam tabel periodik.",
+        "Tren keelektronegatifan serupa dengan energi ionisasi: membesar dari kiri ke kanan dalam satu periode, dan mengecil dari atas ke bawah dalam satu golongan."
+      ],
+      example:"Keelektronegatifan Fluor (F ≈ 3,98) jauh lebih besar dibanding Natrium (Na ≈ 0,93) — menjelaskan mengapa dalam senyawa NaF, elektron ikatan tertarik sangat kuat ke arah atom F.",
+      limitation:"Keelektronegatifan bukan besaran yang dapat diukur langsung seperti massa atau panjang, melainkan besaran relatif yang dihitung dari beberapa sifat lain (seperti energi ikatan); karena itu terdapat beberapa skala keelektronegatifan berbeda (Pauling, Mulliken, Allred-Rochow) dengan nilai yang sedikit berbeda satu sama lain."
+    },
+    {
+      id:"sifat-logam", title:"8. Tren Sifat Logam dan Nonlogam",
+      body:[
+        "Sifat kelogaman suatu unsur berkaitan erat dengan kecenderungannya melepaskan elektron (energi ionisasi rendah) atau menariknya (keelektronegatifan tinggi).",
+        "Secara umum, sifat logam semakin kuat ke arah kiri-bawah tabel periodik, sedangkan sifat nonlogam semakin kuat ke arah kanan-atas — dengan gas mulia (golongan 18) relatif bersifat inert (kurang reaktif) karena konfigurasi elektronnya sudah sangat stabil."
+      ],
+      example:"Fransium (Fr, golongan IA periode 7) dianggap sebagai unsur dengan sifat logam paling kuat, sedangkan Fluor (F, golongan VIIA periode 2) dianggap unsur dengan sifat nonlogam paling kuat.",
+      limitation:"\"Paling logam\" dan \"paling nonlogam\" adalah generalisasi tren; sifat kimia aktual suatu unsur tetap perlu dikonfirmasi lewat data eksperimen, terutama untuk unsur-unsur langka atau radioaktif yang sulit diteliti secara langsung."
+    }
+  ],
+
+  terms:[
+    {t:"Golongan", d:"Kolom vertikal pada tabel periodik; berkaitan dengan jumlah elektron valensi (golongan utama)."},
+    {t:"Periode", d:"Baris horizontal pada tabel periodik; berkaitan dengan jumlah kulit elektron yang terisi."},
+    {t:"Blok", d:"Pengelompokan unsur (s, p, d, f) berdasarkan jenis subkulit yang terakhir terisi."},
+    {t:"Logam", d:"Unsur yang cenderung melepas elektron; umumnya mengilap dan menghantarkan listrik/panas."},
+    {t:"Nonlogam", d:"Unsur yang cenderung menerima elektron; umumnya bukan penghantar listrik/panas yang baik."},
+    {t:"Metaloid", d:"Unsur dengan sifat di antara logam dan nonlogam, terletak di sekitar garis tangga tabel periodik."},
+    {t:"Jari-jari atom", d:"Ukuran atom, umumnya diukur sebagai setengah jarak antara inti dua atom yang berikatan."},
+    {t:"Energi ionisasi", d:"Energi minimum untuk melepaskan satu elektron dari atom netral berwujud gas."},
+    {t:"Afinitas elektron", d:"Perubahan energi saat atom netral berwujud gas menerima satu elektron tambahan."},
+    {t:"Keelektronegatifan", d:"Kecenderungan atom menarik pasangan elektron ikatan menuju dirinya."}
+  ],
+
+  misconceptions:[
+    {wrong:"Golongan dan periode adalah istilah yang bisa dipertukarkan begitu saja.", right:"Golongan adalah kolom vertikal (berkaitan dengan elektron valensi), sedangkan periode adalah baris horizontal (berkaitan dengan jumlah kulit terisi) — keduanya konsep yang berbeda."},
+    {wrong:"Jari-jari atom selalu membesar dari kiri ke kanan dalam satu periode.", right:"Justru sebaliknya — jari-jari atom cenderung mengecil dari kiri ke kanan dalam satu periode, karena meningkatnya muatan inti efektif."},
+    {wrong:"Energi ionisasi selalu meningkat secara mutlak dan konsisten tanpa pengecualian sepanjang satu periode.", right:"Terdapat penyimpangan pada pasangan tertentu (misalnya Be→B dan N→O) akibat kestabilan ekstra pada subkulit yang terisi penuh atau setengah penuh."},
+    {wrong:"Semua unsur logam terletak pada golongan utama (golongan A).", right:"Sebagian besar unsur logam justru berada pada golongan transisi (blok d, golongan 3–12), bukan hanya golongan utama."}
+  ],
+
+  summary:"Sistem periodik modern menyusun unsur berdasarkan kenaikan nomor atom, membentuk pola berulang (periodik) yang mencerminkan langsung konfigurasi elektronnya: nomor periode dari jumlah kulit terisi, nomor golongan utama dari jumlah elektron valensi, dan blok (s,p,d,f) dari jenis subkulit terakhir yang terisi. Dari struktur inilah lahir tren-tren sifat periodik yang dapat diprediksi — jari-jari atom, energi ionisasi, dan keelektronegatifan — yang pada akhirnya menjelaskan mengapa unsur segolongan cenderung memiliki sifat kimia yang mirip.",
+
+  procedures:{
+    explorer:{
+      label:"Penjelajah Tabel Periodik",
+      steps:[
+        {title:"Amati struktur tabel periodik", instruction:"Perhatikan susunan 36 unsur pertama pada kisi tabel periodik interaktif.", tools:"Kisi tabel periodik interaktif", initial:"Belum ada unsur dipilih", action:"Amati pola warna yang membedakan kategori logam, nonlogam, metaloid, dan gas mulia.", observe:"Unsur-unsur tersusun dalam 18 kolom (golongan) dan 4 baris (periode) yang tampak pada praktikum ini."},
+        {title:"Pilih sebuah unsur", instruction:"Klik salah satu sel unsur untuk melihat detail lengkapnya.", tools:"Panel detail unsur", initial:"Struktur tabel telah teramati", action:"Klik unsur Klorin (Cl) pada tabel.", observe:"Panel detail menampilkan konfigurasi elektron, golongan, periode, blok, dan kategori unsur tersebut."},
+        {title:"Amati sorotan golongan dan periode", instruction:"Perhatikan kolom dan baris yang tersorot saat sebuah unsur dipilih.", tools:"Kisi tabel periodik interaktif", initial:"Sebuah unsur telah dipilih", action:"Amati sel-sel lain yang tersorot pada kolom dan baris yang sama dengan unsur pilihanmu.", observe:"Unsur segolongan (satu kolom) dan seperiode (satu baris) tersorot, membantu membandingkan letaknya."},
+        {title:"Bandingkan nilai sifat periodik", instruction:"Catat nilai jari-jari atom, energi ionisasi, dan keelektronegatifan unsur pilihanmu.", tools:"Panel pembacaan instrumen", initial:"Detail unsur telah tampil", action:"Baca panel pembacaan instrumen di sisi kiri layar.", observe:"Nilai-nilai sifat periodik unsur tersebut tampil lengkap dengan satuannya."}
+      ]
+    },
+    trend:{
+      label:"Analisis Tren Periodik",
+      steps:[
+        {title:"Pilih dua unsur untuk dibandingkan", instruction:"Pilih unsur pertama dan kedua dari daftar tersedia.", tools:"Dropdown pemilihan unsur", initial:"Belum ada unsur dipilih", action:"Pilih Natrium (Na) sebagai unsur 1 dan Klorin (Cl) sebagai unsur 2.", observe:"Dua bilah (bar) muncul menampilkan nilai properti kedua unsur secara proporsional."},
+        {title:"Pilih properti yang dibandingkan", instruction:"Pilih salah satu dari tiga sifat periodik yang tersedia.", tools:"Kendali pilihan properti", initial:"Dua unsur telah dipilih", action:"Pilih properti \"Jari-jari Atom\".", observe:"Bilah menyesuaikan panjangnya sesuai nilai jari-jari atom kedua unsur."},
+        {title:"Amati penjelasan tren otomatis", instruction:"Baca penjelasan yang muncul di bawah bilah perbandingan.", tools:"Panel vonis (verdict)", initial:"Properti telah dipilih", action:"Baca panel penjelasan tren di bawah bilah.", observe:"Sistem menjelaskan mengapa tren tersebut terjadi berdasarkan hubungan golongan/periode kedua unsur."},
+        {title:"Ulangi dengan pasangan unsur segolongan", instruction:"Ganti unsur 1 dan 2 menjadi sepasang unsur segolongan, misalnya Li dan Na.", tools:"Dropdown pemilihan unsur", initial:"Tren periode telah teramati", action:"Pilih Litium (Li) dan Natrium (Na), lalu bandingkan energi ionisasi keduanya.", observe:"Penjelasan tren berubah menjadi penjelasan tren golongan (bukan periode), karena kedua unsur kini segolongan."}
+      ]
+    }
+  },
+
+  simulationNotes:{
+    explorer:"Data pada penjelajah ini mencakup 36 unsur pertama (periode 1–4). Nilai jari-jari atom, energi ionisasi, dan keelektronegatifan merupakan data referensi yang mendekati nilai eksperimen umum dan dapat sedikit bervariasi antarsumber.",
+    trend:"Penjelasan tren yang ditampilkan adalah kecenderungan umum (bukan aturan mutlak) — beberapa pasangan unsur (terutama energi ionisasi antarperiode) dapat menunjukkan penyimpangan kecil akibat kestabilan subkulit, sebagaimana dibahas pada bagian Teori."
+  },
+
+  evaluation:[
+    {type:"mc", level:"lots", stem:"Baris horizontal pada tabel periodik disebut …", options:["Golongan","Periode","Blok","Deret"], answer:1, explain:"Baris horizontal pada tabel periodik disebut periode."},
+    {type:"mc", level:"lots", stem:"Kolom vertikal pada tabel periodik disebut …", options:["Golongan","Periode","Blok","Deret"], answer:0, explain:"Kolom vertikal pada tabel periodik disebut golongan."},
+    {type:"mc", level:"lots", stem:"Unsur-unsur golongan 18 (VIIIA) dikenal sebagai golongan …", options:["Logam alkali","Logam alkali tanah","Halogen","Gas mulia"], answer:3, explain:"Golongan 18 (VIIIA) adalah golongan gas mulia."},
+    {type:"mc", level:"lots", stem:"Unsur-unsur golongan 1 (IA), kecuali hidrogen, dikenal sebagai golongan …", options:["Logam alkali","Logam alkali tanah","Halogen","Metaloid"], answer:0, explain:"Golongan 1 (IA), kecuali hidrogen, adalah golongan logam alkali."},
+    {type:"mc", level:"lots", stem:"Ilmuwan yang menyempurnakan sistem periodik berdasarkan kenaikan nomor atom (bukan massa atom) adalah …", options:["Dmitri Mendeleev","John Newlands","Henry Moseley","Johann Döbereiner"], answer:2, explain:"Henry Moseley (1913) menyusun hukum periodik modern berdasarkan kenaikan nomor atom."},
+    {type:"mc", level:"mots", stem:"Nomor periode suatu unsur berkaitan langsung dengan …", options:["Jumlah proton dalam inti","Jumlah kulit elektron yang terisi","Jumlah elektron valensi","Jumlah neutron dalam inti"], answer:1, explain:"Nomor periode menunjukkan jumlah kulit elektron yang terisi pada atom netral."},
+    {type:"mc", level:"mots", stem:"Nomor golongan utama (golongan A) suatu unsur berkaitan langsung dengan …", options:["Jumlah kulit elektron","Jumlah neutron","Jumlah elektron valensi","Jumlah proton dan neutron"], answer:2, explain:"Nomor golongan utama menunjukkan jumlah elektron valensi (elektron pada kulit terluar)."},
+    {type:"mc", level:"mots", stem:"Unsur dengan konfigurasi elektron [Ne]3s²3p⁴ terletak pada golongan dan periode …", options:["Golongan 14, periode 3","Golongan 16, periode 3","Golongan 16, periode 2","Golongan 14, periode 2"], answer:1, explain:"Jumlah elektron valensi 3s²3p⁴ = 6, menunjukkan golongan 16 (VIA); kulit terluar n=3 menunjukkan periode 3."},
+    {type:"mc", level:"mots", stem:"Dalam satu golongan dari atas ke bawah, jari-jari atom cenderung …", options:["Semakin kecil","Semakin besar","Tetap sama","Berubah tidak beraturan"], answer:1, explain:"Dalam satu golongan, jari-jari atom cenderung membesar dari atas ke bawah karena bertambahnya jumlah kulit elektron."},
+    {type:"mc", level:"mots", stem:"Dalam satu periode dari kiri ke kanan, energi ionisasi cenderung …", options:["Semakin kecil","Semakin besar","Tetap sama","Selalu turun drastis"], answer:1, explain:"Dalam satu periode, energi ionisasi cenderung membesar dari kiri ke kanan karena meningkatnya muatan inti efektif."},
+    {type:"mc", level:"mots", stem:"Unsur yang terletak di sekitar \"garis tangga\" pada tabel periodik (seperti B, Si, Ge, As) tergolong sebagai …", options:["Logam alkali","Logam transisi","Metaloid","Gas mulia"], answer:2, explain:"Unsur di sekitar garis tangga tabel periodik tergolong metaloid, dengan sifat di antara logam dan nonlogam."},
+    {type:"mc", level:"hots", stem:"Mengapa jari-jari atom cenderung mengecil dari kiri ke kanan dalam satu periode, padahal jumlah kulit elektronnya sama?", options:["Karena muatan inti efektif meningkat, menarik elektron valensi lebih kuat ke arah inti","Karena jumlah neutron berkurang drastis","Karena elektron valensi berpindah ke kulit yang lebih dekat dengan inti","Karena atom-atom tersebut kehilangan sebagian elektronnya"], answer:0, explain:"Meskipun jumlah kulit sama, bertambahnya proton meningkatkan muatan inti efektif, sehingga elektron valensi tertarik lebih kuat dan jari-jari mengecil."},
+    {type:"mc", level:"hots", stem:"Mengapa terjadi sedikit penurunan energi ionisasi dari Berilium (Be) ke Boron (B), padahal nomor atom B lebih besar?", options:["Karena elektron terluar B berada pada subkulit 2p yang sedikit lebih tinggi energinya dibanding subkulit 2s yang terisi penuh pada Be","Karena B memiliki lebih sedikit proton dibanding Be","Karena B berada pada golongan yang berbeda periode dengan Be","Karena Be sebenarnya memiliki energi ionisasi yang salah diukur"], answer:0, explain:"Subkulit 2s yang terisi penuh pada Be memberi kestabilan ekstra, sedangkan elektron terluar B mulai mengisi subkulit 2p yang sedikit lebih tinggi energinya dan lebih mudah dilepaskan."},
+    {type:"mc", level:"hots", stem:"Unsur X memiliki energi ionisasi sangat rendah dan jari-jari atom sangat besar. Unsur X kemungkinan besar terletak pada …", options:["Golongan gas mulia periode kecil","Golongan halogen periode besar","Golongan logam alkali periode besar (bawah tabel)","Golongan metaloid periode kecil"], answer:2, explain:"Energi ionisasi rendah dan jari-jari besar adalah ciri khas logam alkali (golongan 1) pada periode besar (bagian bawah tabel periodik)."},
+    {type:"checkbox", level:"mots", stem:"Manakah pernyataan berikut yang BENAR tentang tren sifat periodik? (Pilih semua yang sesuai)", options:["Jari-jari atom membesar dari atas ke bawah dalam satu golongan","Energi ionisasi membesar dari kiri ke kanan dalam satu periode","Keelektronegatifan membesar dari atas ke bawah dalam satu golongan","Fluor (F) merupakan unsur paling elektronegatif pada tabel periodik"], answerSet:[0,1,3], explain:"Pernyataan pertama, kedua, dan keempat benar. Pernyataan ketiga keliru — keelektronegatifan justru mengecil (bukan membesar) dari atas ke bawah dalam satu golongan."},
+    {type:"checkbox", level:"mots", stem:"Manakah pasangan unsur dan blok/golongannya yang BENAR? (Pilih semua yang sesuai)", options:["Natrium (Na): blok s, golongan 1","Klorin (Cl): blok p, golongan 17","Besi (Fe): blok p, golongan 8","Kalsium (Ca): blok s, golongan 2"], answerSet:[0,1,3], explain:"Na, Cl, dan Ca dipasangkan dengan benar. Besi (Fe) sebenarnya termasuk blok d (bukan blok p), karena elektron terakhirnya mengisi subkulit 3d."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Unsur-unsur golongan 17 (VIIA) disebut golongan ____________.", accepted:["halogen"], explain:"Jawaban yang tepat adalah halogen."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Unsur dengan sifat di antara logam dan nonlogam, terletak di sekitar garis tangga tabel periodik, disebut ____________.", accepted:["metaloid"], explain:"Jawaban yang tepat adalah metaloid."},
+    {type:"essay", level:"hots", stem:"Jelaskan mengapa energi ionisasi cenderung menurun dari atas ke bawah dalam satu golongan, dan kaitkan jawabanmu dengan jumlah kulit elektron serta jarak elektron valensi dari inti. (Jawaban akan direkam untuk penilaian guru)", explain:"Kunci jawaban: semakin ke bawah dalam satu golongan, jumlah kulit elektron yang terisi semakin banyak, sehingga elektron valensi berada semakin jauh dari inti. Semakin jauh jaraknya, semakin lemah gaya tarik inti terhadapnya (juga karena efek perisai/shielding dari kulit-kulit di bawahnya), sehingga elektron tersebut semakin mudah dilepaskan dan energi ionisasinya semakin kecil."}
+  ]
+};
+
+/* =========================================================================
+   3. STATE
+   ========================================================================= */
+const STORAGE_KEY = "vlab_sistem_periodik_v1";
+const State = {
+  identity:{ nama:"", kelas:"", id:"" },
+  soundOn:true, reduceMotion:false,
+  activeView:"teori", unlockedViews:["teori"],
+  procedure:{ active:"explorer", done:{ explorer:[], trend:[] } },
+  simulation:{ active:"explorer" },
+  lkpd:{}, quiz:{ answers:{}, submitted:false }
+};
+function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) Object.assign(State, JSON.parse(raw)); }catch(e){} }
+function persistState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(State)); }catch(e){} }
+
+/* =========================================================================
+   4. AUDIO
+   ========================================================================= */
+const AudioFX = (() => {
+  let ctx = null;
+  function ensureCtx(){ if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx=null; } } return ctx; }
+  function tone(freq,dur,type,gainVal){
+    if(!State.soundOn) return;
+    const c = ensureCtx(); if(!c) return;
+    try{
+      const osc=c.createOscillator(), gain=c.createGain();
+      osc.type=type||"sine"; osc.frequency.value=freq; gain.gain.value=gainVal||0.05;
+      osc.connect(gain); gain.connect(c.destination);
+      const now=c.currentTime;
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+      osc.start(now); osc.stop(now+dur);
+    }catch(e){}
+  }
+  return {
+    click:()=>tone(720,0.06,"square",0.035),
+    success:()=>{ tone(520,0.12,"sine",0.06); setTimeout(()=>tone(780,0.16,"sine",0.06),90); },
+    error:()=>tone(160,0.22,"sawtooth",0.05),
+    reset:()=>tone(300,0.18,"triangle",0.045),
+    complete:()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.18,"sine",0.05), i*110)); },
+    ping:()=>tone(1400,0.05,"sine",0.03)
+  };
+})();
+
+/* =========================================================================
+   5. TOAST
+   ========================================================================= */
+function showToast(msg,kind){
+  const region=document.getElementById("toast-region");
+  const el=document.createElement("div");
+  el.className="toast"+(kind?" "+kind:"");
+  el.textContent=msg;
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(),320); },2600);
+}
+
+/* =========================================================================
+   6. SPLASH & IDENTITY
+   ========================================================================= */
+function initSplash(){
+  document.getElementById("btn-start").addEventListener("click", ()=>{
+    AudioFX.click();
+    if(State.identity.nama && State.identity.kelas) enterApp();
+    else{ document.getElementById("modal-identity").hidden=false; document.getElementById("inp-nama").focus(); }
+  });
+  document.getElementById("form-identity").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nama=document.getElementById("inp-nama").value.trim();
+    const kelas=document.getElementById("inp-kelas").value.trim();
+    const id=document.getElementById("inp-id").value.trim();
+    const err=document.getElementById("identity-error");
+    if(!nama||!kelas){ err.style.display="block"; AudioFX.error(); return; }
+    err.style.display="none";
+    State.identity={nama,kelas,id}; persistState();
+    document.getElementById("modal-identity").hidden=true;
+    AudioFX.success(); enterApp();
+  });
+}
+function enterApp(){
+  document.getElementById("splash").classList.add("is-hidden");
+  document.getElementById("app").hidden=false;
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  showToast(`Selamat datang, ${State.identity.nama||"Praktikan"}!`,"success");
+}
+
+/* =========================================================================
+   7. NAVIGATION
+   ========================================================================= */
+const VIEWS=[
+  {id:"teori",label:"Teori"},{id:"prosedur",label:"Prosedur"},{id:"simulasi",label:"Simulasi"},
+  {id:"lkpd",label:"LKPD"},{id:"evaluasi",label:"Evaluasi"},{id:"profil",label:"Profil Pengembang"}
+];
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  VIEWS.forEach((v,i)=>{
+    const btn=document.createElement("button");
+    btn.className="tab-btn"; btn.setAttribute("role","tab"); btn.id="tab-"+v.id;
+    btn.setAttribute("aria-controls","view-"+v.id);
+    btn.innerHTML=`<span class="tab-num">${i+1}</span><span>${v.label}</span>`;
+    btn.addEventListener("click", ()=>{ if(btn.disabled) return; AudioFX.click(); goToView(v.id); });
+    nav.appendChild(btn);
+  });
+  refreshTabsState();
+}
+function refreshTabsState(){
+  VIEWS.forEach(v=>{
+    const btn=document.getElementById("tab-"+v.id);
+    btn.disabled=!State.unlockedViews.includes(v.id);
+    btn.setAttribute("aria-selected", String(State.activeView===v.id));
+  });
+  const idx=VIEWS.findIndex(v=>v.id===State.activeView);
+  const pct=((State.unlockedViews.length-1)/(VIEWS.length-1))*100;
+  document.getElementById("global-progress").style.width=Math.max(pct,(idx/(VIEWS.length-1))*100)+"%";
+}
+function unlockView(id){ if(!State.unlockedViews.includes(id)){ State.unlockedViews.push(id); persistState(); refreshTabsState(); } }
+function goToView(id){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("is-active"));
+  const target=document.getElementById("view-"+id); if(target) target.classList.add("is-active");
+  State.activeView=id; persistState(); refreshTabsState();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+
+/* =========================================================================
+   8. THEORY RENDER
+   ========================================================================= */
+function renderMiniPT(){
+  const wrap=document.getElementById("mini-pt");
+  wrap.innerHTML="";
+  for(let p=1;p<=4;p++){
+    for(let g=1;g<=18;g++){
+      const el=ELEMENTS.find(e=>e.period===p && e.group===g);
+      const cell=document.createElement("div");
+      if(el){
+        cell.className="mp-cell cat-"+el.category;
+        cell.textContent=el.sym;
+        cell.title=`${el.name} (Z=${el.z})`;
+      } else {
+        cell.className="mp-cell";
+        cell.style.visibility="hidden";
+      }
+      cell.style.gridColumn=g; cell.style.gridRow=p;
+      wrap.appendChild(cell);
+    }
+  }
+}
+function renderTheory(){
+  document.getElementById("tp-list").innerHTML = LAB_DATA.objectives.map(o=>`<li>${o}</li>`).join("");
+  renderMiniPT();
+
+  const toc=document.getElementById("theory-toc");
+  toc.innerHTML = LAB_DATA.theorySections.map(s=>`<button class="toc-pill" data-target="${s.id}">${s.title.replace(/^[0-9]+\.\s*/,"")}</button>`).join("")
+    + `<button class="toc-pill" data-target="istilah">Istilah</button><button class="toc-pill" data-target="miskonsepsi">Miskonsepsi</button>`;
+  toc.querySelectorAll(".toc-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const el=document.getElementById("sec-"+btn.dataset.target);
+      if(el) el.scrollIntoView({behavior:State.reduceMotion?"auto":"smooth", block:"start"});
+    });
+  });
+
+  const container=document.getElementById("theory-sections");
+  container.innerHTML = LAB_DATA.theorySections.map(s=>`
+    <div class="theory-section" id="sec-${s.id}">
+      <h3>${s.title}</h3>
+      ${s.body.map(p=>`<p>${p}</p>`).join("")}
+      ${s.list?`<ul style="padding-left:20px;color:var(--paper-300);font-size:14px;line-height:1.8;">${s.list.map(li=>`<li>${li}</li>`).join("")}</ul>`:""}
+      <div class="card" style="background:var(--ink-900);margin:14px 0;">
+        <strong style="color:var(--phosphor-500);font-size:12.5px;">CONTOH PENERAPAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.example}</p>
+      </div>
+      <div class="card" style="background:rgba(224,114,90,.06);border-color:rgba(224,114,90,.3);">
+        <strong style="color:var(--ember-300);font-size:12.5px;">CATATAN / KETERBATASAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.limitation}</p>
+      </div>
+    </div>`).join("") + `
+    <div class="theory-section" id="sec-istilah">
+      <h3>Istilah Penting</h3>
+      <dl class="term-list">${LAB_DATA.terms.map(t=>`<dt>${t.t}</dt><dd>${t.d}</dd>`).join("")}</dl>
+    </div>
+    <div class="theory-section" id="sec-miskonsepsi">
+      <h3>Miskonsepsi Umum</h3>
+      ${LAB_DATA.misconceptions.map(m=>`<div class="misconception"><div><b>✗ Anggapan keliru:</b> ${m.wrong}</div><div style="margin-top:4px;"><b style="color:var(--leaf-500);">✓ Yang benar:</b> ${m.right}</div></div>`).join("")}
+    </div>
+    <div class="theory-section" id="sec-ringkasan">
+      <h3>Ringkasan</h3>
+      <p>${LAB_DATA.summary}</p>
+      <button class="btn btn--primary" id="theory-continue">Lanjut ke Prosedur →</button>
+    </div>`;
+  document.getElementById("theory-continue").addEventListener("click", ()=>{ AudioFX.success(); unlockView("prosedur"); goToView("prosedur"); });
+}
+
+/* =========================================================================
+   9. PROCEDURE
+   ========================================================================= */
+function renderProcedureTabs(){
+  const wrap=document.getElementById("proc-tabs"); wrap.innerHTML="";
+  Object.keys(LAB_DATA.procedures).forEach(key=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(State.procedure.active===key));
+    btn.textContent=LAB_DATA.procedures[key].label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); State.procedure.active=key; persistState(); renderProcedureTabs(); renderProcedureSteps(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderProcedureSteps(){
+  const key=State.procedure.active;
+  const proc=LAB_DATA.procedures[key];
+  const doneArr=State.procedure.done[key];
+  const unlockedIndex=doneArr.length;
+  const list=document.getElementById("proc-steps");
+  list.innerHTML=proc.steps.map((s,i)=>{
+    const isDone=doneArr.includes(i);
+    const isUnlocked=i<=unlockedIndex;
+    return `<div class="step ${isUnlocked?"is-unlocked":""} ${isDone?"is-done":""}" data-i="${i}">
+      <div class="step__num">${isDone?"✓":(i+1)}</div>
+      <div>
+        <h4>${s.title}</h4>
+        <p style="margin:0 0 6px;font-size:13.5px;">${s.instruction}</p>
+        <div class="step__meta"><span><b>Alat/Bahan:</b> ${s.tools}</span><span><b>Kondisi Awal:</b> ${s.initial}</span></div>
+        <div class="step__meta"><span><b>Tindakan:</b> ${s.action}</span></div>
+        <div class="step__meta"><span><b>Hasil Diamati:</b> ${s.observe}</span></div>
+        ${isUnlocked&&!isDone?`<div class="step-actions"><button class="btn btn--primary btn--sm" data-mark="${i}">Tandai Selesai</button></div>`:""}
+      </div></div>`;
+  }).join("");
+  list.querySelectorAll("[data-mark]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i=Number(btn.dataset.mark);
+      if(!doneArr.includes(i)) doneArr.push(i);
+      AudioFX.success(); persistState(); renderProcedureSteps(); updateProcProgress();
+      const totalDone=State.procedure.done.explorer.length+State.procedure.done.trend.length;
+      if(totalDone>=4) unlockView("simulasi");
+    });
+  });
+  updateProcProgress();
+}
+function updateProcProgress(){
+  const key=State.procedure.active;
+  const total=LAB_DATA.procedures[key].steps.length;
+  const done=State.procedure.done[key].length;
+  document.getElementById("proc-progress").style.width=(done/total*100)+"%";
+}
+
+/* =========================================================================
+   10. SIMULATION — Penjelajah Tabel Periodik & Analisis Tren
+   ========================================================================= */
+const SUP_DIGITS={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function toSup(n){ return String(n).split('').map(d=>SUP_DIGITS[d]||d).join(''); }
+const AUFBAU_ORDER=[
+  {sub:"1s",cap:2},{sub:"2s",cap:2},{sub:"2p",cap:6},
+  {sub:"3s",cap:2},{sub:"3p",cap:6},{sub:"4s",cap:2},
+  {sub:"3d",cap:10},{sub:"4p",cap:6}
+];
+function buildAufbauConfig(Z){
+  let remaining=Z, entries=[];
+  for(const orb of AUFBAU_ORDER){
+    if(remaining<=0) break;
+    const fill=Math.min(orb.cap, remaining);
+    entries.push({sub:orb.sub, filled:fill});
+    remaining-=fill;
+  }
+  if(Z===24){ entries=entries.map(e=> e.sub==="4s"?{...e,filled:1}: e.sub==="3d"?{...e,filled:5}:e); }
+  if(Z===29){ entries=entries.map(e=> e.sub==="4s"?{...e,filled:1}: e.sub==="3d"?{...e,filled:10}:e); }
+  return entries.filter(e=>e.filled>0);
+}
+function configNotation(entries){ return entries.map(e=> e.sub+toSup(e.filled)).join(" "); }
+function shellConfig(Z){
+  const caps=[2,8,8,8,8,8,8];
+  let remaining=Z, shells=[];
+  for(let i=0;i<caps.length && remaining>0;i++){
+    const fill=Math.min(caps[i], remaining);
+    shells.push(fill); remaining-=fill;
+  }
+  return shells;
+}
+
+const Sim = {
+  key:"explorer",
+  explorer:{ selectedZ:17 },
+  trend:{ z1:11, z2:17, prop:"radius" }
+};
+function renderSimTabs(){
+  const wrap=document.getElementById("sim-tabs"); wrap.innerHTML="";
+  [{key:"explorer",label:"Penjelajah Tabel Periodik"},{key:"trend",label:"Analisis Tren Periodik"}].forEach(it=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab"); btn.setAttribute("aria-selected", String(Sim.key===it.key));
+    btn.textContent=it.label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); Sim.key=it.key; renderSimTabs(); renderSimControls(); renderSimLegend(); drawCurrentSim(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderSimControls(){
+  document.getElementById("sim-note").textContent = Sim.key==="explorer" ? LAB_DATA.simulationNotes.explorer : LAB_DATA.simulationNotes.trend;
+  const controls=document.getElementById("sim-controls");
+
+  if(Sim.key==="explorer"){
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Penjelajah Tabel Periodik</h4>
+      <div class="stepper-field"><label>Nomor Atom (Z)</label>
+        <div class="stepper-row"><button class="stepper-btn" id="ez-dec">−</button><div class="stepper-val" id="val-ez">${Sim.explorer.selectedZ}</div><button class="stepper-btn" id="ez-inc">+</button></div></div>
+      <p class="hint">Klik langsung pada sel di tabel periodik, atau gunakan stepper ini.</p>`;
+    document.getElementById("ez-dec").addEventListener("click", ()=>{ selectElement(Math.max(1,Sim.explorer.selectedZ-1)); });
+    document.getElementById("ez-inc").addEventListener("click", ()=>{ selectElement(Math.min(36,Sim.explorer.selectedZ+1)); });
+  } else {
+    const opts=ELEMENTS.map(e=>`<option value="${e.z}">${e.name} (${e.sym}, Z=${e.z})</option>`).join("");
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Analisis Tren</h4>
+      <div class="field"><label for="ctrl-z1">Unsur 1</label><select id="ctrl-z1">${opts}</select></div>
+      <div class="field"><label for="ctrl-z2">Unsur 2</label><select id="ctrl-z2">${opts}</select></div>
+      <div class="field"><label for="ctrl-prop">Properti</label>
+        <select id="ctrl-prop">
+          <option value="radius">Jari-jari Atom (pm)</option>
+          <option value="ie">Energi Ionisasi (kJ/mol)</option>
+          <option value="en">Keelektronegatifan (Pauling)</option>
+        </select>
+      </div>`;
+    const s1=document.getElementById("ctrl-z1"), s2=document.getElementById("ctrl-z2"), sp=document.getElementById("ctrl-prop");
+    s1.value=Sim.trend.z1; s2.value=Sim.trend.z2; sp.value=Sim.trend.prop;
+    s1.addEventListener("change", ()=>{ Sim.trend.z1=Number(s1.value); AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    s2.addEventListener("change", ()=>{ Sim.trend.z2=Number(s2.value); AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    sp.addEventListener("change", ()=>{ Sim.trend.prop=sp.value; AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+  }
+  renderReadout();
+}
+function selectElement(z){
+  Sim.explorer.selectedZ=z;
+  AudioFX.ping();
+  const valEl=document.getElementById("val-ez"); if(valEl) valEl.textContent=z;
+  drawCurrentSim(); renderReadout(); unlockView("lkpd");
+}
+function renderSimLegend(){
+  const legend=document.getElementById("sim-legend");
+  if(Sim.key==="explorer"){
+    legend.innerHTML=Object.keys(CATEGORY_LABEL).map(cat=>`<span><i class="cat-${cat}"></i> ${CATEGORY_LABEL[cat]}</span>`).join("");
+  } else {
+    legend.innerHTML=`<span><i style="background:var(--phosphor-500);"></i> Unsur 1</span><span><i style="background:var(--brass-500);"></i> Unsur 2</span>`;
+  }
+}
+function renderReadout(){
+  const readout=document.getElementById("sim-readout");
+  if(Sim.key==="explorer"){
+    const el=elByZ(Sim.explorer.selectedZ);
+    readout.innerHTML=`
+      <div><b>Unsur</b><span>${el.name} (${el.sym})</span></div>
+      <div><b>Golongan / Periode</b><span>${groupLabel(el.group)} / ${el.period}</span></div>
+      <div><b>Blok</b><span>${el.block}</span></div>
+      <div><b>Kategori</b><span>${CATEGORY_LABEL[el.category]}</span></div>
+      <div><b>Jari-jari Atom</b><span>${el.radius} pm</span></div>
+      <div><b>Energi Ionisasi</b><span>${el.ie} kJ/mol</span></div>`;
+  } else {
+    const e1=elByZ(Sim.trend.z1), e2=elByZ(Sim.trend.z2);
+    readout.innerHTML=`
+      <div><b>Unsur 1</b><span>${e1.name}</span></div>
+      <div><b>Unsur 2</b><span>${e2.name}</span></div>
+      <div><b>Golongan 1 / 2</b><span>${e1.group} / ${e2.group}</span></div>
+      <div><b>Periode 1 / 2</b><span>${e1.period} / ${e2.period}</span></div>`;
+  }
+}
+
+function drawCurrentSim(){
+  if(Sim.key==="explorer") drawExplorer(); else drawTrend();
+}
+
+function drawExplorer(){
+  const layer=document.getElementById("dom-layer");
+  const selected=Sim.explorer.selectedZ;
+  const selEl=elByZ(selected);
+
+  let gridHtml=`<div class="pt-grid-wrap"><div class="pt-grid">`;
+  for(let p=1;p<=4;p++){
+    for(let g=1;g<=18;g++){
+      const el=ELEMENTS.find(e=>e.period===p && e.group===g);
+      if(el){
+        const isSel = el.z===selected;
+        const isHi = (!isSel) && (el.group===selEl.group || el.period===selEl.period);
+        gridHtml+=`<button class="pt-cell cat-${el.category} ${isSel?"is-selected":""} ${isHi?"is-highlighted":""}" data-z="${el.z}" style="grid-column:${g};grid-row:${p};" title="${el.name}">
+          <span class="pz">${el.z}</span><span class="psym">${el.sym}</span>
+        </button>`;
+      } else {
+        gridHtml+=`<div class="pt-cell pt-empty" style="grid-column:${g};grid-row:${p};"></div>`;
+      }
+    }
+  }
+  gridHtml+=`</div></div>`;
+
+  const legendHtml=`<div class="pt-legend">${Object.keys(CATEGORY_LABEL).map(cat=>`<span><i class="cat-${cat}"></i>${CATEGORY_LABEL[cat]}</span>`).join("")}</div>`;
+
+  const cfg=buildAufbauConfig(selEl.z);
+  const shells=shellConfig(selEl.z);
+  const detailHtml=`
+    <div class="detail-card">
+      <div class="detail-head">
+        <div class="detail-symbol cat-${selEl.category}">${selEl.sym}</div>
+        <div>
+          <div style="font-family:var(--serif);font-size:19px;color:var(--paper-100);">${selEl.name} <span style="color:var(--paper-500);font-size:13px;font-family:var(--mono);">Z=${selEl.z}</span></div>
+          <div style="font-size:12.5px;color:var(--brass-400);">${CATEGORY_LABEL[selEl.category]} · Blok ${selEl.block}</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:13px;color:var(--paper-300);">Kulit: ${shells.join(", ")} &nbsp;·&nbsp; Subkulit: ${configNotation(cfg)}</div>
+      <div class="detail-cards">
+        <div class="qn-card"><b>Golongan</b><span>${groupLabel(selEl.group)}</span></div>
+        <div class="qn-card"><b>Periode</b><span>${selEl.period}</span></div>
+        <div class="qn-card"><b>Jari-jari</b><span>${selEl.radius} pm</span></div>
+        <div class="qn-card"><b>Energi Ionisasi</b><span>${selEl.ie} kJ/mol</span></div>
+      </div>
+    </div>`;
+
+  layer.innerHTML = gridHtml + legendHtml + detailHtml;
+  layer.querySelectorAll("[data-z]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ selectElement(Number(btn.dataset.z)); const valEl=document.getElementById("val-ez"); if(valEl) valEl.textContent=btn.dataset.z; });
+  });
+}
+
+const PROP_LABEL={ radius:"Jari-jari Atom", ie:"Energi Ionisasi", en:"Keelektronegatifan" };
+const PROP_UNIT={ radius:"pm", ie:"kJ/mol", en:"" };
+const PROP_MAX={ radius:230, ie:2400, en:4.0 };
+
+function trendExplanation(e1,e2,prop){
+  if(e1.z===e2.z){
+    return {title:"Pilih Dua Unsur Berbeda", desc:"Pilih dua unsur yang berbeda untuk melihat perbandingan tren.", related:false};
+  }
+  if(e1[prop]==null || e2[prop]==null){
+    return {title:"Data Tidak Umum Didefinisikan", desc:"Keelektronegatifan tidak umum didefinisikan untuk gas mulia, karena gas mulia jarang membentuk ikatan kimia.", related:false};
+  }
+  const sameGroup = e1.group===e2.group;
+  const samePeriod = e1.period===e2.period;
+  if(sameGroup && !samePeriod){
+    const texts={
+      radius:`Kedua unsur berada pada golongan yang sama (golongan ${e1.group}). Dalam satu golongan, jari-jari atom umumnya membesar dari atas ke bawah karena bertambahnya jumlah kulit elektron.`,
+      ie:`Kedua unsur berada pada golongan yang sama (golongan ${e1.group}). Dalam satu golongan, energi ionisasi umumnya mengecil dari atas ke bawah karena elektron valensi semakin jauh dari inti dan lebih mudah dilepaskan.`,
+      en:`Kedua unsur berada pada golongan yang sama (golongan ${e1.group}). Dalam satu golongan, keelektronegatifan umumnya mengecil dari atas ke bawah karena jari-jari atom yang membesar melemahkan gaya tarik inti terhadap elektron ikatan.`
+    };
+    return {title:"Tren Segolongan", desc:texts[prop], related:true};
+  }
+  if(samePeriod && !sameGroup){
+    const texts={
+      radius:`Kedua unsur berada pada periode yang sama (periode ${e1.period}). Dalam satu periode, jari-jari atom umumnya mengecil dari kiri ke kanan karena meningkatnya muatan inti efektif.`,
+      ie:`Kedua unsur berada pada periode yang sama (periode ${e1.period}). Dalam satu periode, energi ionisasi umumnya membesar dari kiri ke kanan, meski terdapat beberapa penyimpangan akibat kestabilan subkulit terisi penuh/setengah penuh (misalnya pada Be→B dan N→O).`,
+      en:`Kedua unsur berada pada periode yang sama (periode ${e1.period}). Dalam satu periode, keelektronegatifan umumnya membesar dari kiri ke kanan karena muatan inti efektif yang lebih besar menarik elektron ikatan lebih kuat.`
+    };
+    return {title:"Tren Seperiode", desc:texts[prop], related:true};
+  }
+  if(sameGroup && samePeriod){
+    return {title:"Unsur yang Sama", desc:"Kedua pilihan merupakan unsur yang sama persis.", related:true};
+  }
+  return {title:"Tidak Segolongan Maupun Seperiode", desc:"Kedua unsur ini tidak berada pada golongan maupun periode yang sama, sehingga tidak ada satu aturan tren tunggal yang berlaku langsung. Sebagai gambaran umum, unsur yang lebih ke kiri-bawah tabel periodik cenderung memiliki jari-jari lebih besar serta energi ionisasi dan keelektronegatifan yang lebih kecil.", related:false};
+}
+
+function drawTrend(){
+  const layer=document.getElementById("dom-layer");
+  const e1=elByZ(Sim.trend.z1), e2=elByZ(Sim.trend.z2);
+  const prop=Sim.trend.prop;
+  const v1=e1[prop], v2=e2[prop];
+  const max=PROP_MAX[prop];
+  const pct1 = v1!=null ? Math.max(6,(v1/max*100)) : 0;
+  const pct2 = v2!=null ? Math.max(6,(v2/max*100)) : 0;
+  const verdict=trendExplanation(e1,e2,prop);
+
+  layer.innerHTML=`
+    <h4 style="font-size:15px;margin-bottom:16px;color:var(--paper-100);">Perbandingan ${PROP_LABEL[prop]}</h4>
+    <div class="trend-bars">
+      <div class="trend-bar-row">
+        <div class="trend-bar-label">${e1.name} (${e1.sym})</div>
+        <div class="trend-bar-track"><div class="trend-bar-fill" style="width:${pct1}%;background:var(--phosphor-500);">${v1!=null?v1+" "+PROP_UNIT[prop]:"—"}</div></div>
+      </div>
+      <div class="trend-bar-row">
+        <div class="trend-bar-label">${e2.name} (${e2.sym})</div>
+        <div class="trend-bar-track"><div class="trend-bar-fill" style="width:${pct2}%;background:var(--brass-500);">${v2!=null?v2+" "+PROP_UNIT[prop]:"—"}</div></div>
+      </div>
+    </div>
+    <div class="verdict ${verdict.related?"":""}">
+      <div class="verdict-title">${verdict.title}</div>
+      <div class="verdict-desc">${verdict.desc}</div>
+    </div>`;
+}
+
+function resetSim(){
+  AudioFX.reset();
+  if(confirm("Kembalikan simulasi ke kondisi awal? Data LKPD tidak akan terhapus.")){
+    Sim.explorer={selectedZ:17};
+    Sim.trend={z1:11,z2:17,prop:"radius"};
+    renderSimControls(); drawCurrentSim();
+    showToast("Simulasi direset ke kondisi awal.");
+  }
+}
+function initSimulationView(){
+  renderSimTabs();
+  renderSimControls();
+  renderSimLegend();
+  drawCurrentSim();
+  document.getElementById("sim-reset").addEventListener("click", resetSim);
+}
+
+/* =========================================================================
+   11. LKPD
+   ========================================================================= */
+const LKPD_FIELDS=["prediksi","analisis1","analisis2","q1","q2","kesimpulan","refleksi"];
+let obsRowCount1=0, obsRowCount2=0;
+function addObsRow1(data){
+  const tbody=document.getElementById("obs-tbody-1"); const idx=obsRowCount1++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. Cl (Z=17)" value="${data&&data.unsur||""}"></td>
+    <td><input type="text" placeholder="cth. 17 (VIIA)" value="${data&&data.golongan||""}"></td>
+    <td><input type="text" placeholder="cth. 3" value="${data&&data.periode||""}"></td>
+    <td><input type="text" placeholder="cth. p" value="${data&&data.blok||""}"></td>
+    <td><input type="text" placeholder="cth. Halogen" value="${data&&data.klasifikasi||""}"></td>`;
+  tbody.appendChild(row);
+}
+function addObsRow2(data){
+  const tbody=document.getElementById("obs-tbody-2"); const idx=obsRowCount2++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. Na vs Cl" value="${data&&data.pasangan||""}"></td>
+    <td><input type="text" placeholder="cth. Jari-jari atom" value="${data&&data.properti||""}"></td>
+    <td><input type="text" placeholder="cth. Na" value="${data&&data.lebihBesar||""}"></td>
+    <td><input type="text" placeholder="cth. Muatan inti efektif lebih kecil" value="${data&&data.alasan||""}"></td>`;
+  tbody.appendChild(row);
+}
+function renderLKPD(){
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  const l=State.lkpd;
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el&&l[f]) el.value=l[f]; });
+  document.getElementById("obs-tbody-1").innerHTML=""; obsRowCount1=0;
+  (l.obs1&&l.obs1.length?l.obs1:[{},{}]).forEach(r=>addObsRow1(r));
+  document.getElementById("obs-tbody-2").innerHTML=""; obsRowCount2=0;
+  (l.obs2&&l.obs2.length?l.obs2:[{},{}]).forEach(r=>addObsRow2(r));
+}
+function collectLKPD(){
+  const l={};
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el) l[f]=el.value; });
+  l.obs1 = Array.from(document.querySelectorAll("#obs-tbody-1 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {unsur:i[0].value, golongan:i[1].value, periode:i[2].value, blok:i[3].value, klasifikasi:i[4].value};
+  });
+  l.obs2 = Array.from(document.querySelectorAll("#obs-tbody-2 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {pasangan:i[0].value, properti:i[1].value, lebihBesar:i[2].value, alasan:i[3].value};
+  });
+  return l;
+}
+function initLKPD(){
+  document.querySelectorAll("[data-add]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ AudioFX.click(); btn.dataset.add==="1"?addObsRow1():addObsRow2(); });
+  });
+  document.getElementById("lkpd-save").addEventListener("click", ()=>{
+    State.lkpd=collectLKPD(); persistState();
+    document.getElementById("lkpd-status").textContent="Tersimpan · "+new Date().toLocaleTimeString("id-ID");
+    AudioFX.success(); showToast("LKPD berhasil disimpan.","success");
+    unlockView("evaluasi");
+  });
+  document.getElementById("lkpd-print").addEventListener("click", ()=>window.print());
+  document.getElementById("btn-print").addEventListener("click", ()=>{ goToView("lkpd"); setTimeout(()=>window.print(),200); });
+  document.getElementById("lkpd-reset").addEventListener("click", ()=>{
+    if(confirm("Hapus seluruh isian LKPD? Tindakan ini tidak dapat dibatalkan.")){
+      State.lkpd={}; persistState(); renderLKPD(); AudioFX.reset(); showToast("LKPD telah direset.");
+    }
+  });
+}
+
+/* =========================================================================
+   12. EVALUATION
+   ========================================================================= */
+function renderQuiz(){
+  const container=document.getElementById("quiz-questions");
+  container.innerHTML=LAB_DATA.evaluation.map((q,i)=>{
+    let body="";
+    if(q.type==="mc") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="radio" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="checkbox") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="checkbox" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="short") body=`<input type="text" class="short-answer-input" id="q${i}-short" placeholder="Ketik jawabanmu…">`;
+    else if(q.type==="essay") body=`<textarea id="q${i}-essay" placeholder="Tuliskan jawaban analisismu…" style="min-height:90px;"></textarea>`;
+    return `<div class="card q-card" id="qcard-${i}">
+      <span class="q-tag ${q.level}">${q.level.toUpperCase()} · Soal ${i+1}</span>
+      <div class="q-stem">${q.stem}</div>${body}
+      <div class="q-explain" id="qexplain-${i}"><b>Pembahasan:</b> ${q.explain}</div>
+    </div>`;
+  }).join("");
+  container.addEventListener("change", onQuizAnswerChange);
+  container.querySelectorAll(".short-answer-input, textarea").forEach(el=>el.addEventListener("input", onQuizAnswerChange));
+  document.getElementById("quiz-begin").parentElement.hidden=true;
+  document.getElementById("quiz-body").hidden=false;
+  updateQuizProgress();
+}
+function onQuizAnswerChange(){
+  const answers={};
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    if(q.type==="mc"){ const sel=document.querySelector(`input[name="q${i}"]:checked`); if(sel) answers[i]=Number(sel.value); }
+    else if(q.type==="checkbox"){ const sels=document.querySelectorAll(`input[name="q${i}"]:checked`); if(sels.length) answers[i]=Array.from(sels).map(s=>Number(s.value)); }
+    else if(q.type==="short"){ const val=document.getElementById(`q${i}-short`).value.trim(); if(val) answers[i]=val; }
+    else if(q.type==="essay"){ const val=document.getElementById(`q${i}-essay`).value.trim(); if(val) answers[i]=val; }
+  });
+  State.quiz.answers=answers; persistState(); updateQuizProgress();
+}
+function updateQuizProgress(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  document.getElementById("quiz-progress-fill").style.width=(answered/total*100)+"%";
+  document.getElementById("quiz-progress-label").textContent=`${answered} / ${total} dijawab`;
+}
+function normalizeText(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+function gradeQuiz(){
+  let scoreItems=0, gradable=0;
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const ans=State.quiz.answers[i];
+    if(q.type==="essay") return;
+    gradable++;
+    if(q.type==="mc"){ if(ans===q.answer) scoreItems++; }
+    else if(q.type==="checkbox"){ if(Array.isArray(ans)){ const a=[...ans].sort().join(","), b=[...q.answerSet].sort().join(","); if(a===b) scoreItems++; } }
+    else if(q.type==="short"){ if(ans && q.accepted.includes(normalizeText(ans))) scoreItems++; }
+  });
+  return { scoreItems, gradable, pct: gradable?Math.round((scoreItems/gradable)*100):0 };
+}
+function revealAnswers(){
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    document.getElementById(`qexplain-${i}`).classList.add("is-visible");
+    if(q.type==="mc"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(oi===q.answer) optEl.classList.add("is-correct"); else if(oi===sel) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="checkbox"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i]||[];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(q.answerSet.includes(oi)) optEl.classList.add("is-correct"); else if(sel.includes(oi)) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="short"){ document.getElementById(`q${i}-short`).disabled=true; }
+    else if(q.type==="essay"){ document.getElementById(`q${i}-essay`).disabled=true; }
+  });
+}
+function submitQuiz(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  if(answered<total){ if(!confirm(`Kamu baru menjawab ${answered} dari ${total} soal. Tetap kumpulkan sekarang?`)) return; }
+  const result=gradeQuiz();
+  State.quiz.submitted=true; State.quiz.lastResult=result; persistState();
+  revealAnswers(); unlockView("profil");
+  document.getElementById("quiz-submit").hidden=true;
+  document.getElementById("quiz-result").hidden=false;
+  document.getElementById("result-score").textContent=result.pct;
+  let desc="";
+  if(result.pct>=85) desc="Istimewa! Pemahamanmu tentang sistem periodik dan tren sifat periodik sangat kuat.";
+  else if(result.pct>=70) desc="Bagus! Sebagian besar konsep sudah kamu kuasai — tinjau kembali bagian yang masih keliru.";
+  else if(result.pct>=50) desc="Cukup baik. Baca ulang bagian Teori, khususnya tren jari-jari atom dan energi ionisasi, lalu coba lagi.";
+  else desc="Perlu belajar lebih dalam. Cobalah ulangi bagian Teori dan Simulasi sebelum mengulang evaluasi.";
+  document.getElementById("result-desc").textContent=desc;
+  const badges=[
+    {icon:"🎓",label:"Skor ≥ 85",earned:result.pct>=85},
+    {icon:"🧪",label:"Semua Soal Dijawab",earned:answered>=total},
+    {icon:"⚛",label:"Skor ≥ 70",earned:result.pct>=70}
+  ];
+  document.getElementById("badge-row").innerHTML=badges.map(b=>`<div class="badge ${b.earned?"is-earned":""}"><i>${b.icon}</i><span>${b.label}</span></div>`).join("");
+  if(result.pct>=70) AudioFX.complete(); else AudioFX.error();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+function initQuiz(){
+  document.getElementById("quiz-begin").addEventListener("click", ()=>{ AudioFX.click(); renderQuiz(); });
+  document.getElementById("quiz-submit").addEventListener("click", submitQuiz);
+  document.getElementById("quiz-review").addEventListener("click", ()=>{
+    document.getElementById("quiz-result").hidden=true;
+    document.getElementById("quiz-body").hidden=false;
+    window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+  });
+  document.getElementById("quiz-retry").addEventListener("click", ()=>{
+    if(confirm("Ulangi evaluasi dari awal? Jawaban sebelumnya akan dihapus.")){
+      State.quiz={answers:{},submitted:false}; persistState();
+      document.getElementById("quiz-result").hidden=true;
+      document.getElementById("quiz-intro").hidden=false;
+      document.getElementById("quiz-body").hidden=true;
+      document.getElementById("quiz-submit").hidden=false;
+      AudioFX.reset();
+    }
+  });
+}
+
+/* =========================================================================
+   13. DEVELOPER PROFILE
+   ========================================================================= */
+function renderDevProfile(){
+  document.getElementById("dev-photo").innerHTML=`
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder foto pengembang">
+      <rect width="180" height="180" fill="#1F2C48"/>
+      <circle cx="90" cy="70" r="34" fill="#2C3A5C"/>
+      <path d="M30 168c8-40 40-58 60-58s52 18 60 58z" fill="#2C3A5C"/>
+      <circle cx="90" cy="90" r="88" fill="none" stroke="#C4934E" stroke-width="1.5" opacity="0.4"/>
+    </svg>`;
+}
+
+/* =========================================================================
+   14. ASSISTANT
+   ========================================================================= */
+const ASSISTANT_RULES=[
+  {keys:["mulai","cara mulai"], reply:"Klik \"Mulai Praktikum\", isi identitasmu, lalu ikuti tab navigasi dari Teori → Prosedur → Simulasi → LKPD → Evaluasi secara berurutan."},
+  {keys:["golongan"], reply:"Golongan adalah kolom vertikal pada tabel periodik, berkaitan dengan jumlah elektron valensi (untuk golongan utama)."},
+  {keys:["periode"], reply:"Periode adalah baris horizontal pada tabel periodik, berkaitan dengan jumlah kulit elektron yang terisi."},
+  {keys:["blok"], reply:"Blok (s,p,d,f) ditentukan dari subkulit terakhir yang terisi pada konfigurasi elektron unsur."},
+  {keys:["jari-jari","jari jari"], reply:"Jari-jari atom membesar ke bawah dalam satu golongan (kulit bertambah), dan mengecil ke kanan dalam satu periode (muatan inti efektif meningkat)."},
+  {keys:["ionisasi"], reply:"Energi ionisasi mengecil ke bawah dalam satu golongan, dan membesar ke kanan dalam satu periode (dengan beberapa penyimpangan seperti Be→B dan N→O)."},
+  {keys:["elektronegatif"], reply:"Keelektronegatifan mengecil ke bawah dalam satu golongan, dan membesar ke kanan dalam satu periode. Fluor (F) adalah yang paling elektronegatif."},
+  {keys:["metaloid"], reply:"Metaloid adalah unsur dengan sifat di antara logam dan nonlogam, terletak di sekitar garis tangga tabel periodik (misalnya B, Si, Ge, As)."},
+  {keys:["lkpd"], reply:"LKPD dapat diisi setelah kamu mencoba simulasi. Klik \"Simpan\" secara berkala, dan gunakan \"Cetak / Simpan PDF\" bila perlu dokumen cetak."},
+  {keys:["nilai","skor","evaluasi"], reply:"Evaluasi berisi 18 soal (LOTS-HOTS). Skor otomatis dihitung dari soal pilihan ganda, checkbox, dan isian singkat. Soal esai direkam untuk dinilai gurumu."},
+  {keys:["error","macet","bug"], reply:"Coba muat ulang halaman. Data LKPD dan jawabanmu tersimpan otomatis di perangkat ini."}
+];
+function assistantReply(text){
+  const q=normalizeText(text);
+  const rule=ASSISTANT_RULES.find(r=>r.keys.some(k=>q.includes(k)));
+  return rule?rule.reply:"Aku asisten berbasis aturan (bukan AI generatif), jadi jawabanku terbatas pada topik virtual lab ini. Coba tanyakan tentang: golongan, periode, blok, jari-jari atom, energi ionisasi, keelektronegatifan, atau metaloid.";
+}
+function initAssistant(){
+  const fab=document.getElementById("assistant-fab"), panel=document.getElementById("assistant-panel"), body=document.getElementById("assistant-body"), chips=document.getElementById("assistant-chips");
+  function addMsg(text,who){ const div=document.createElement("div"); div.className="assistant-msg"+(who==="user"?" user":""); div.textContent=text; body.appendChild(div); body.scrollTop=body.scrollHeight; }
+  addMsg("Halo! Aku asisten berbasis aturan untuk membantumu memahami sistem periodik unsur. Silakan bertanya.","bot");
+  ["Apa itu golongan?","Kenapa jari-jari atom berubah?","Apa itu metaloid?"].forEach(q=>{
+    const chip=document.createElement("button"); chip.className="assistant-chip"; chip.textContent=q;
+    chip.addEventListener("click", ()=>{ addMsg(q,"user"); setTimeout(()=>addMsg(assistantReply(q),"bot"),220); });
+    chips.appendChild(chip);
+  });
+  fab.addEventListener("click", ()=>{ const hidden=panel.hidden; panel.hidden=!hidden; fab.setAttribute("aria-expanded", String(hidden)); AudioFX.click(); });
+  document.getElementById("assistant-close").addEventListener("click", ()=>{ panel.hidden=true; fab.setAttribute("aria-expanded","false"); });
+}
+
+/* =========================================================================
+   15. TOP CONTROLS
+   ========================================================================= */
+function initTopControls(){
+  const soundBtn=document.getElementById("btn-sound");
+  soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+  soundBtn.textContent=State.soundOn?"🔊":"🔇";
+  soundBtn.addEventListener("click", ()=>{
+    State.soundOn=!State.soundOn;
+    soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+    soundBtn.textContent=State.soundOn?"🔊":"🔇";
+    persistState(); if(State.soundOn) AudioFX.click();
+  });
+  const rmBtn=document.getElementById("btn-reduce-motion");
+  rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+  document.body.classList.toggle("reduce-motion", State.reduceMotion);
+  rmBtn.addEventListener("click", ()=>{
+    State.reduceMotion=!State.reduceMotion;
+    rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+    document.body.classList.toggle("reduce-motion", State.reduceMotion);
+    persistState();
+  });
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    State.reduceMotion=true; document.body.classList.add("reduce-motion"); rmBtn.setAttribute("aria-pressed","true");
+  }
+}
+
+window.addEventListener("error",(e)=>{ console.error("Terjadi kesalahan tak terduga:", e.message); });
+
+/* =========================================================================
+   16. BOOTSTRAP
+   ========================================================================= */
+function init(){
+  loadState();
+  initSplash();
+  initTopControls();
+  buildTabs();
+  renderTheory();
+  renderProcedureTabs();
+  renderProcedureSteps();
+  initLKPD();
+  renderLKPD();
+  initQuiz();
+  renderDevProfile();
+  initAssistant();
+  goToView(State.activeView||"teori");
+
+  let simInitialized=false;
+  document.getElementById("tab-simulasi").addEventListener("click", ()=>{ if(!simInitialized){ initSimulationView(); simInitialized=true; } });
+  if(State.activeView==="simulasi"){ initSimulationView(); simInitialized=true; }
+}
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
