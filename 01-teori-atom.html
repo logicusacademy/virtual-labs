@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Virtual Lab Kimia — Sejarah Perkembangan Teori Atom &amp; Penemuan Partikel Subatomik</title>
+<meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: sejarah perkembangan teori atom dan penemuan partikel subatomik.">
+
+<style>
+/* =========================================================================
+   DESIGN TOKENS
+   Tema "Instrumen Penemuan" — terinspirasi ruang laboratorium fisika akhir
+   abad ke-19 / awal abad ke-20: kabinet kayu gelap, kuningan/tembaga pada
+   instrumen presisi, dan pendar hijau-kebiruan tabung sinar katode (fosfor
+   seng sulfida) sebagai aksen "penemuan". Palet sengaja dijauhkan dari
+   krem hangat/terracotta generik maupun dashboard SaaS bulat serba sama.
+   ========================================================================= */
+:root{
+  --ink-950:#0B1220;      /* latar utama — biru malam sangat gelap */
+  --ink-900:#101A2E;      /* panel utama */
+  --ink-800:#16213A;      /* kartu */
+  --ink-700:#1F2C48;      /* kartu terangkat / hover */
+  --ink-600:#2C3A5C;      /* garis batas */
+  --brass-500:#C4934E;    /* kuningan instrumen — aksen primer */
+  --brass-400:#D9AC6E;
+  --brass-700:#93672F;
+  --phosphor-500:#5FD9C4; /* pendar fosfor CRT — aksen sekunder */
+  --phosphor-300:#9EEBDC;
+  --ember-500:#E0725A;    /* peringatan / salah */
+  --ember-300:#F0A38F;
+  --leaf-500:#7FBF7F;     /* benar / berhasil */
+  --paper-100:#F3EFE4;    /* teks utama di atas gelap */
+  --paper-300:#D9D3C2;
+  --paper-500:#A9A290;
+  --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  --radius-s:6px;
+  --radius-m:12px;
+  --radius-l:20px;
+  --shadow-deep: 0 20px 50px -20px rgba(0,0,0,0.6);
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+@font-face{
+  font-family:"Fraunces";
+  src: local("Fraunces");
+  font-display: swap;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: var(--sans);
+  background: radial-gradient(1200px 800px at 15% -10%, #16223d 0%, var(--ink-950) 55%);
+  color: var(--paper-100);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{ font-family: var(--serif); font-weight:600; margin:0 0 .4em; letter-spacing:.2px; }
+p{ margin:0 0 1em; line-height:1.65; color: var(--paper-300); }
+a{ color: var(--phosphor-500); }
+button{ font-family:inherit; }
+::selection{ background: var(--brass-500); color:var(--ink-950); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+body.reduce-motion *{ animation:none !important; transition:none !important; }
+
+/* Focus visibility */
+:focus-visible{
+  outline: 2px solid var(--phosphor-500);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background: var(--ink-600); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background: var(--brass-700); }
+
+.visually-hidden{
+  position:absolute !important; width:1px;height:1px; padding:0;margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+.skip-link{
+  position:absolute; left:12px; top:-60px; background:var(--brass-500); color:var(--ink-950);
+  padding:10px 16px; border-radius: var(--radius-s); z-index:999; font-weight:600;
+  transition: top .2s var(--ease);
+}
+.skip-link:focus{ top:12px; }
+
+/* =========================================================================
+   APP SHELL
+   ========================================================================= */
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+
+.appbar{
+  display:flex; align-items:center; gap:16px;
+  padding:10px 22px;
+  background: linear-gradient(180deg, rgba(16,26,46,.96), rgba(16,26,46,.88));
+  border-bottom:1px solid var(--ink-600);
+  position:sticky; top:0; z-index:60;
+  backdrop-filter: blur(6px);
+}
+.appbar__brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+.appbar__mark{
+  width:34px;height:34px; border-radius:50%;
+  background: radial-gradient(circle at 32% 28%, var(--phosphor-300), var(--phosphor-500) 45%, #1a6f60 100%);
+  box-shadow: 0 0 16px -2px var(--phosphor-500);
+  flex:none;
+}
+.appbar__title{ font-family:var(--serif); font-size:15px; line-height:1.1; }
+.appbar__title small{ display:block; font-family:var(--sans); font-size:11px; color:var(--paper-500); font-weight:500; }
+
+.tabs{ display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab-btn{
+  border:1px solid transparent; background:transparent; color:var(--paper-500);
+  padding:9px 14px; border-radius: 999px; font-size:13.5px; font-weight:600;
+  cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px;
+  transition: background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease);
+}
+.tab-btn .tab-num{
+  width:18px;height:18px;border-radius:50%; background:var(--ink-700); color:var(--paper-500);
+  font-size:10px; display:grid; place-items:center; font-family:var(--mono); flex:none;
+}
+.tab-btn:hover{ color:var(--paper-100); background:var(--ink-800); }
+.tab-btn[aria-selected="true"]{ color:var(--ink-950); background:var(--brass-500); }
+.tab-btn[aria-selected="true"] .tab-num{ background:rgba(11,18,32,.25); color:var(--ink-950); }
+.tab-btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.tab-btn[disabled]:hover{ background:transparent; color:var(--paper-500); }
+
+.appbar__actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{
+  width:36px;height:36px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800);
+  color:var(--paper-300); display:grid; place-items:center; cursor:pointer; font-size:15px;
+  transition: border-color .18s var(--ease), color .18s var(--ease), transform .12s var(--ease);
+}
+.icon-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.icon-btn:active{ transform:scale(.94); }
+.icon-btn[aria-pressed="false"]{ opacity:.5; }
+
+.progress-rail{ height:3px; background:var(--ink-700); position:relative; }
+.progress-rail__fill{ height:100%; background: linear-gradient(90deg, var(--brass-700), var(--brass-500), var(--phosphor-500)); width:0%; transition: width .4s var(--ease); }
+
+main{ flex:1; position:relative; }
+.view{ display:none; padding: 28px clamp(16px,4vw,56px) 64px; max-width:1240px; margin:0 auto; animation: viewIn .35s var(--ease); }
+.view.is-active{ display:block; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+.view-head{ margin-bottom:26px; }
+.eyebrow-plain{ font-size:12.5px; color:var(--phosphor-500); font-weight:600; margin-bottom:6px; }
+.view-head h2{ font-size: clamp(24px,3.4vw,34px); }
+.view-head p{ max-width:640px; }
+
+.card{
+  background: linear-gradient(180deg, var(--ink-800), var(--ink-900));
+  border:1px solid var(--ink-600);
+  border-radius: var(--radius-l);
+  padding:22px;
+}
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media (max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  padding:12px 22px; border-radius:999px; border:1px solid transparent; cursor:pointer;
+  font-weight:600; font-size:14.5px; transition: transform .14s var(--ease), box-shadow .2s var(--ease), background .18s;
+}
+.btn:active{ transform: scale(.97); }
+.btn--primary{ background: linear-gradient(180deg, var(--brass-400), var(--brass-500)); color:#1B1305; box-shadow: 0 10px 24px -10px rgba(196,147,78,.55); }
+.btn--primary:hover{ box-shadow: 0 14px 30px -10px rgba(196,147,78,.7); }
+.btn--ghost{ background:transparent; border-color:var(--ink-600); color:var(--paper-100); }
+.btn--ghost:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.btn--danger{ background:transparent; border-color: var(--ember-500); color:var(--ember-300); }
+.btn--danger:hover{ background: rgba(224,114,90,.12); }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+.btn--sm{ padding:8px 16px; font-size:13px; }
+.btn--block{ width:100%; }
+
+/* Form elements */
+label{ display:block; font-size:13px; font-weight:600; color:var(--paper-300); margin-bottom:6px; }
+input[type="text"], input[type="number"], select, textarea{
+  width:100%; background: var(--ink-950); border:1px solid var(--ink-600); color:var(--paper-100);
+  padding:11px 13px; border-radius: var(--radius-s); font-size:14.5px; font-family:inherit;
+}
+textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+input:focus, select:focus, textarea:focus{ border-color:var(--phosphor-500); }
+.field{ margin-bottom:16px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+.hint{ font-size:12px; color:var(--paper-500); margin-top:5px; }
+
+/* =========================================================================
+   SPLASH
+   ========================================================================= */
+#splash{
+  position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(900px 500px at 80% 10%, rgba(95,217,196,.10), transparent 60%),
+    radial-gradient(700px 500px at 10% 90%, rgba(196,147,78,.14), transparent 60%),
+    var(--ink-950);
+  padding:24px; text-align:center; transition: opacity .5s var(--ease), visibility .5s;
+}
+#splash.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.splash__orbit{ position:relative; width:150px;height:150px; margin:0 auto 26px; }
+.splash__nucleus{
+  position:absolute; inset:0; margin:auto; width:26px;height:26px;border-radius:50%;
+  background: radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700));
+  box-shadow: 0 0 30px 4px rgba(196,147,78,.55);
+}
+.splash__ring{ position:absolute; inset:0; border:1px solid rgba(95,217,196,.35); border-radius:50%; }
+.splash__ring:nth-child(2){ inset:14px; animation: spin 6s linear infinite; }
+.splash__ring:nth-child(3){ inset:0; transform:rotate(60deg); animation: spin 9s linear infinite reverse; }
+.splash__ring:nth-child(4){ inset:0; transform:rotate(-60deg); animation: spin 12s linear infinite; }
+.splash__electron{ position:absolute; width:8px;height:8px;border-radius:50%; background:var(--phosphor-400,var(--phosphor-500)); box-shadow:0 0 10px 2px var(--phosphor-500); top:-4px; left:50%; margin-left:-4px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+body.reduce-motion .splash__ring{ animation:none; }
+
+.splash__eyebrow{ letter-spacing:.4px; color:var(--phosphor-500); font-weight:700; font-size:13px; margin-bottom:10px; }
+.splash h1{ font-size: clamp(28px,5vw,46px); max-width:760px; margin:0 auto 10px; }
+.splash__topic{ color:var(--brass-400); font-weight:600; font-size: clamp(15px,2vw,19px); margin-bottom:26px; }
+.splash__meta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+.chip{ border:1px solid var(--ink-600); border-radius:999px; padding:6px 14px; font-size:12.5px; color:var(--paper-300); background:var(--ink-800); }
+
+/* =========================================================================
+   IDENTITY MODAL
+   ========================================================================= */
+.modal-scrim{ position:fixed; inset:0; background:rgba(6,9,16,.72); z-index:210; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-scrim[hidden]{ display:none; }
+.modal{ background: var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); max-width:460px; width:100%; padding:28px; box-shadow: var(--shadow-deep); }
+.modal h2{ font-size:22px; }
+
+/* =========================================================================
+   THEORY VIEW
+   ========================================================================= */
+.theory-toc{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.toc-pill{
+  border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300);
+  padding:7px 13px; border-radius:999px; font-size:12.5px; cursor:pointer; font-weight:600;
+}
+.toc-pill:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+
+.timeline{ position:relative; padding-left:26px; margin:18px 0 6px; }
+.timeline::before{ content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background: linear-gradient(var(--brass-700), var(--phosphor-500)); }
+.timeline-item{ position:relative; padding-bottom:26px; }
+.timeline-item:last-child{ padding-bottom:0; }
+.timeline-item::before{
+  content:""; position:absolute; left:-26px; top:4px; width:12px;height:12px;border-radius:50%;
+  background: var(--brass-500); box-shadow:0 0 0 4px rgba(196,147,78,.2);
+}
+.timeline-item h3{ font-size:16.5px; margin-bottom:3px; }
+.timeline-year{ font-family:var(--mono); color:var(--phosphor-500); font-size:12.5px; font-weight:600; }
+
+.theory-section{ margin-bottom:30px; scroll-margin-top:90px; }
+.theory-section h3{ font-size:20px; border-bottom:1px solid var(--ink-600); padding-bottom:10px; margin-bottom:14px; }
+.term-list{ display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+.term-list dt{ font-weight:700; color:var(--paper-100); font-size:13.5px; }
+.term-list dd{ margin:0 0 12px; color:var(--paper-500); font-size:13.2px; }
+@media (max-width:700px){ .term-list{ grid-template-columns:1fr; } }
+
+.misconception{
+  border-left:3px solid var(--ember-500); background:rgba(224,114,90,.08); border-radius:0 var(--radius-s) var(--radius-s) 0;
+  padding:12px 16px; margin-bottom:10px;
+}
+.misconception b{ color:var(--ember-300); }
+
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+table.data-table th{ text-align:left; font-family:var(--serif); font-weight:600; color:var(--brass-400); padding:10px 12px; border-bottom:2px solid var(--ink-600); }
+table.data-table td{ padding:10px 12px; border-bottom:1px solid var(--ink-700); color:var(--paper-300); }
+table.data-table tr:last-child td{ border-bottom:none; }
+.table-wrap{ overflow-x:auto; }
+
+/* =========================================================================
+   PROCEDURE VIEW
+   ========================================================================= */
+.proc-tabs{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.proc-tab{
+  border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:10px 16px;
+  border-radius: var(--radius-m); cursor:pointer; font-weight:600; font-size:13.5px; text-align:left;
+}
+.proc-tab[aria-selected="true"]{ border-color:var(--brass-500); color:var(--brass-400); background: rgba(196,147,78,.09); }
+
+.step-list{ counter-reset:step; }
+.step{ display:grid; grid-template-columns:40px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--ink-700); opacity:.5; }
+.step.is-unlocked{ opacity:1; }
+.step:last-child{ border-bottom:none; }
+.step__num{ counter-increment:step; width:34px;height:34px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; }
+.step.is-unlocked .step__num{ background:var(--brass-500); color:#1B1305; }
+.step.is-done .step__num{ background:var(--leaf-500); color:#0c2410; }
+.step h4{ font-size:15.5px; margin-bottom:6px; }
+.step__meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--paper-500); margin:8px 0; }
+.step__meta span{ display:flex; gap:5px; align-items:center; }
+.step__meta b{ color:var(--paper-300); font-weight:600; }
+.step-actions{ margin-top:10px; }
+
+.progress-track{ height:8px; background:var(--ink-700); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+.progress-track__fill{ height:100%; background:linear-gradient(90deg, var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+
+/* =========================================================================
+   SIMULATION VIEW
+   ========================================================================= */
+.sim-shell{ display:grid; grid-template-columns:300px 1fr; gap:20px; }
+@media (max-width:980px){ .sim-shell{ grid-template-columns:1fr; } }
+.sim-panel{ display:flex; flex-direction:column; gap:16px; }
+.sim-stage{
+  position:relative; border-radius: var(--radius-l); border:1px solid var(--ink-600);
+  background: radial-gradient(ellipse at 50% 30%, #0e1a30 0%, #060a14 72%);
+  overflow:hidden; min-height:440px;
+}
+.sim-stage canvas{ display:block; width:100%; height:100%; }
+.sim-toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--ink-600); background:rgba(11,18,32,.7); }
+.mode-switch{ display:flex; gap:6px; background:var(--ink-800); border:1px solid var(--ink-600); border-radius:999px; padding:4px; }
+.mode-switch button{ border:none; background:transparent; color:var(--paper-500); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; cursor:pointer; }
+.mode-switch button[aria-pressed="true"]{ background:var(--phosphor-500); color:#04211c; }
+
+.readout{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:var(--mono); font-size:12.5px; }
+.readout div{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:8px 10px; }
+.readout b{ display:block; color:var(--phosphor-500); font-size:10.5px; letter-spacing:.4px; margin-bottom:2px; font-family:var(--sans); }
+.readout span{ color:var(--paper-100); font-size:14px; }
+
+.slider-field{ margin-bottom:14px; }
+.slider-field .val{ float:right; font-family:var(--mono); color:var(--brass-400); font-size:12.5px; }
+input[type="range"]{ width:100%; accent-color: var(--brass-500); }
+
+.control-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-500); }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.legend i{ width:10px;height:10px;border-radius:50%; display:inline-block; }
+
+.sim-note{ font-size:12.5px; background:rgba(95,217,196,.08); border:1px solid rgba(95,217,196,.25); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+/* =========================================================================
+   LKPD VIEW
+   ========================================================================= */
+.lkpd-section{ margin-bottom:24px; }
+.lkpd-section h3{ font-size:16px; display:flex; align-items:center; gap:8px; }
+.lkpd-section h3 em{ font-style:normal; font-family:var(--mono); font-size:11px; color:var(--paper-500); background:var(--ink-700); padding:3px 8px; border-radius:5px; }
+.obs-table td, .obs-table th{ padding:8px; }
+.obs-table input{ padding:7px 9px; font-size:13px; }
+.add-row-btn{ margin-top:8px; }
+.lkpd-toolbar{ display:flex; gap:10px; flex-wrap:wrap; position:sticky; bottom:14px; z-index:5; background:var(--ink-900); border:1px solid var(--ink-600); padding:12px; border-radius:var(--radius-m); box-shadow:var(--shadow-deep); }
+.save-status{ font-size:12px; color:var(--paper-500); align-self:center; margin-left:auto; }
+
+/* =========================================================================
+   EVALUATION VIEW
+   ========================================================================= */
+.quiz-progress{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+.quiz-progress .progress-track{ flex:1; margin:0; }
+.quiz-meta{ font-family:var(--mono); font-size:12.5px; color:var(--paper-500); white-space:nowrap; }
+.q-card{ margin-bottom:18px; }
+.q-tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:3px 9px; border-radius:999px; margin-bottom:12px; }
+.q-tag.lots{ background:rgba(127,191,127,.16); color:var(--leaf-500); }
+.q-tag.mots{ background:rgba(196,147,78,.18); color:var(--brass-400); }
+.q-tag.hots{ background:rgba(224,114,90,.18); color:var(--ember-300); }
+.q-stem{ font-size:15.5px; color:var(--paper-100); margin-bottom:14px; font-weight:500; line-height:1.55; }
+.opt{
+  display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border:1px solid var(--ink-600);
+  border-radius: var(--radius-m); margin-bottom:9px; cursor:pointer; transition: border-color .15s, background .15s;
+}
+.opt:hover{ border-color:var(--brass-500); }
+.opt input{ margin-top:3px; accent-color:var(--brass-500); flex:none; }
+.opt span{ font-size:14px; color:var(--paper-300); }
+.opt.is-correct{ border-color:var(--leaf-500); background:rgba(127,191,127,.09); }
+.opt.is-wrong{ border-color:var(--ember-500); background:rgba(224,114,90,.09); }
+.q-explain{ display:none; margin-top:12px; padding:12px 14px; border-radius:var(--radius-s); background:var(--ink-950); border:1px solid var(--ink-700); font-size:13px; color:var(--paper-300); }
+.q-explain.is-visible{ display:block; }
+.q-explain b{ color:var(--phosphor-500); }
+.short-answer-input{ margin-top:6px; }
+
+.result-hero{ text-align:center; padding:38px 22px; }
+.result-score{ font-family:var(--serif); font-size:56px; color:var(--brass-400); }
+.badge-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.badge{ display:flex; flex-direction:column; align-items:center; gap:6px; width:96px; opacity:.3; }
+.badge.is-earned{ opacity:1; }
+.badge i{ width:44px;height:44px;border-radius:50%; background: radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); display:grid; place-items:center; font-style:normal; font-size:18px; }
+.badge span{ font-size:10.5px; text-align:center; color:var(--paper-500); font-weight:600; }
+
+/* =========================================================================
+   DEVELOPER PROFILE VIEW
+   ========================================================================= */
+.dev-card{ display:grid; grid-template-columns:180px 1fr; gap:26px; align-items:start; }
+@media (max-width:640px){ .dev-card{ grid-template-columns:1fr; } }
+.dev-photo{ width:180px;height:180px; border-radius:var(--radius-l); overflow:hidden; border:1px solid var(--ink-600); background:var(--ink-700); }
+.dev-photo svg{ width:100%; height:100%; display:block; }
+.dev-competency{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+/* =========================================================================
+   ASSISTANT (rule-based)
+   ========================================================================= */
+.assistant-fab{
+  position:fixed; right:20px; bottom:20px; z-index:150; width:56px;height:56px; border-radius:50%;
+  background: linear-gradient(160deg, var(--phosphor-300), var(--phosphor-500)); border:none; cursor:pointer;
+  box-shadow: 0 14px 30px -10px rgba(95,217,196,.6); font-size:22px; display:grid; place-items:center; color:#052c25;
+}
+.assistant-panel{
+  position:fixed; right:20px; bottom:88px; width:min(340px, calc(100vw - 40px)); max-height:60vh; z-index:150;
+  background:var(--ink-900); border:1px solid var(--ink-600); border-radius: var(--radius-l); box-shadow: var(--shadow-deep);
+  display:flex; flex-direction:column; overflow:hidden; transform-origin:bottom right;
+  transition: transform .2s var(--ease), opacity .2s var(--ease);
+}
+.assistant-panel[hidden]{ display:none; }
+.assistant-head{ padding:14px 16px; border-bottom:1px solid var(--ink-600); display:flex; justify-content:space-between; align-items:center; }
+.assistant-head h4{ margin:0; font-size:14.5px; }
+.assistant-body{ padding:14px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.assistant-msg{ background:var(--ink-800); border-radius:var(--radius-s); padding:9px 11px; color:var(--paper-300); align-self:flex-start; max-width:88%; }
+.assistant-msg.user{ background: var(--brass-700); color:#fff; align-self:flex-end; }
+.assistant-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; }
+.assistant-chip{ font-size:11.5px; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:6px 10px; border-radius:999px; cursor:pointer; }
+
+/* Toast */
+#toast-region{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.toast{ background:var(--ink-800); border:1px solid var(--ink-600); color:var(--paper-100); padding:10px 18px; border-radius:999px; font-size:13px; box-shadow:var(--shadow-deep); animation: toastIn .25s var(--ease); }
+.toast.success{ border-color: var(--leaf-500); }
+.toast.error{ border-color: var(--ember-500); }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} }
+
+footer.appfoot{ text-align:center; padding:20px; font-size:11.5px; color:var(--paper-500); border-top:1px solid var(--ink-600); }
+
+/* Responsive appbar for narrow / mobile viewports */
+@media (max-width:760px){
+  .appbar{ flex-wrap:wrap; padding:10px 14px; row-gap:8px; }
+  .appbar__brand{ margin-right:0; }
+  .appbar__title small{ display:none; }
+  .tabs{ order:3; width:100%; padding-top:2px; }
+  .appbar__actions{ margin-left:auto; }
+  .assistant-panel{ right:12px; left:12px; width:auto; bottom:80px; }
+  .assistant-fab{ right:14px; bottom:14px; }
+}
+
+@media print{
+  .appbar,.assistant-fab,.assistant-panel,footer.appfoot,.lkpd-toolbar,#splash,.modal-scrim,.progress-rail{ display:none !important; }
+  body{ background:#fff; color:#111; }
+  .view{ display:block !important; }
+  main .view:not(#view-lkpd){ display:none !important; }
+  .card{ border:1px solid #ccc; background:#fff; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<!-- ============================= SPLASH ============================= -->
+<div id="splash" role="dialog" aria-labelledby="splash-title">
+  <div>
+    <div class="splash__orbit" aria-hidden="true">
+      <div class="splash__ring"></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__nucleus"></div>
+    </div>
+    <div class="splash__eyebrow">Virtual Laboratory — Kimia SMA</div>
+    <h1 id="splash-title">Sejarah Perkembangan Teori Atom &amp; Penemuan Partikel Subatomik</h1>
+    <div class="splash__topic">Dari bola pejal Dalton hingga inti atom Rutherford</div>
+    <div class="splash__meta">
+      <span class="chip">Fase E · Kelas X</span>
+      <span class="chip">Struktur Atom</span>
+      <span class="chip">± 45–60 menit</span>
+    </div>
+    <button class="btn btn--primary" id="btn-start" style="font-size:16px;padding:15px 34px;">Mulai Praktikum</button>
+  </div>
+</div>
+
+<!-- ======================= IDENTITY MODAL ======================= -->
+<div class="modal-scrim" id="modal-identity" hidden>
+  <form class="modal" id="form-identity" novalidate>
+    <h2>Identitas Praktikan</h2>
+    <p style="font-size:13px;">Data ini digunakan pada LKPD, evaluasi, dan rekap hasil belajarmu.</p>
+    <div class="field">
+      <label for="inp-nama">Nama Lengkap</label>
+      <input type="text" id="inp-nama" required autocomplete="name" placeholder="cth. Ahmad Zaki">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="inp-kelas">Kelas</label>
+        <input type="text" id="inp-kelas" required placeholder="cth. X-4">
+      </div>
+      <div class="field">
+        <label for="inp-id">No. Absen / ID</label>
+        <input type="text" id="inp-id" placeholder="cth. 17">
+      </div>
+    </div>
+    <p class="hint" id="identity-error" style="color:var(--ember-300); display:none;">Nama dan kelas wajib diisi sebelum memulai.</p>
+    <button type="submit" class="btn btn--primary btn--block">Simpan &amp; Masuk Laboratorium</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <!-- ============================= APPBAR ============================= -->
+  <header class="appbar">
+    <div class="appbar__brand">
+      <div class="appbar__mark" aria-hidden="true"></div>
+      <div class="appbar__title">Virtual Lab Kimia<small>Struktur Atom — Sejarah &amp; Partikel Subatomik</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Navigasi bagian praktikum" role="tablist"></nav>
+    <div class="appbar__actions">
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Suara ON/OFF" aria-label="Aktifkan atau matikan suara">🔊</button>
+      <button class="icon-btn" id="btn-reduce-motion" aria-pressed="false" title="Kurangi animasi" aria-label="Kurangi animasi">✧</button>
+      <button class="icon-btn" id="btn-print" title="Cetak LKPD" aria-label="Cetak LKPD">🖨</button>
+    </div>
+  </header>
+  <div class="progress-rail"><div class="progress-rail__fill" id="global-progress"></div></div>
+
+  <main id="main-content">
+
+    <!-- ============================= TEORI ============================= -->
+    <section class="view" id="view-teori" data-view="teori">
+      <div class="view-head">
+        <div class="eyebrow-plain">01 · Teori</div>
+        <h2>Bagaimana kita tahu atom punya bagian‑bagian?</h2>
+        <p>Selama hampir seabad, para ilmuwan menyusun ulang gambaran atom lewat percobaan demi percobaan — dari bola pejal yang tak terbagi, menjadi struktur berlapis dengan inti kecil dan padat di tengahnya.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:26px;">
+        <h3 style="font-size:16px;margin-bottom:12px;">Tujuan Pembelajaran</h3>
+        <ul id="tp-list" style="margin:0; padding-left:20px; color:var(--paper-300); font-size:14px; line-height:1.8;"></ul>
+      </div>
+
+      <div class="theory-toc" id="theory-toc" aria-label="Lompat ke subtopik teori"></div>
+
+      <div class="timeline" id="theory-timeline"></div>
+
+      <div id="theory-sections"></div>
+    </section>
+
+    <!-- ============================= PROSEDUR ============================= -->
+    <section class="view" id="view-prosedur" data-view="prosedur">
+      <div class="view-head">
+        <div class="eyebrow-plain">02 · Prosedur</div>
+        <h2>Langkah Kerja Eksperimen</h2>
+        <p>Pilih salah satu eksperimen historis untuk melihat urutan langkah kerjanya. Selesaikan langkah secara berurutan sebelum melanjutkan ke simulasi.</p>
+      </div>
+      <div class="proc-tabs" id="proc-tabs" role="tablist" aria-label="Pilih eksperimen"></div>
+      <div class="progress-track"><div class="progress-track__fill" id="proc-progress"></div></div>
+      <div class="card">
+        <div class="step-list" id="proc-steps"></div>
+      </div>
+    </section>
+
+    <!-- ============================= SIMULASI ============================= -->
+    <section class="view" id="view-simulasi" data-view="simulasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">03 · Simulasi</div>
+        <h2>Laboratorium Interaktif</h2>
+        <p>Ubah variabel, jalankan simulasi, dan amati bagaimana hasilnya berubah — persis seperti yang dilakukan Thomson dan Rutherford di laboratorium mereka.</p>
+      </div>
+      <div class="proc-tabs" id="sim-tabs" role="tablist" aria-label="Pilih simulasi" style="margin-bottom:18px;"></div>
+
+      <div class="sim-shell">
+        <div class="sim-panel">
+          <div class="card" id="sim-controls"></div>
+          <div class="card">
+            <h4 style="font-size:13px; margin-bottom:10px;">Pembacaan Instrumen</h4>
+            <div class="readout" id="sim-readout"></div>
+          </div>
+          <div class="card">
+            <h4 style="font-size:13px; margin-bottom:10px;">Legenda</h4>
+            <div class="legend" id="sim-legend"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sim-stage" id="sim-stage">
+            <canvas id="sim-canvas" role="img" aria-label="Kanvas simulasi laboratorium"></canvas>
+          </div>
+          <div class="sim-toolbar">
+            <div class="control-row">
+              <button class="btn btn--primary btn--sm" id="sim-start">▶ Mulai</button>
+              <button class="btn btn--ghost btn--sm" id="sim-pause">⏸ Jeda</button>
+              <button class="btn btn--ghost btn--sm" id="sim-step">⏭ Step</button>
+              <button class="btn btn--danger btn--sm" id="sim-reset">↺ Reset</button>
+            </div>
+            <div class="mode-switch" id="sim-mode-switch" role="group" aria-label="Mode tampilan"></div>
+          </div>
+          <p class="sim-note" id="sim-note" style="margin-top:14px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= LKPD ============================= -->
+    <section class="view" id="view-lkpd" data-view="lkpd">
+      <div class="view-head">
+        <div class="eyebrow-plain">04 · LKPD Digital</div>
+        <h2>Lembar Kerja Peserta Didik</h2>
+        <p>Isi setiap bagian berdasarkan pengamatanmu pada simulasi. Data tersimpan otomatis di perangkatmu.</p>
+      </div>
+      <div class="card">
+        <form id="form-lkpd">
+
+          <div class="lkpd-section">
+            <h3>A. Identitas <em>identitas</em></h3>
+            <div class="field-row">
+              <div class="field"><label>Nama</label><input type="text" id="lkpd-nama" readonly></div>
+              <div class="field"><label>Kelas</label><input type="text" id="lkpd-kelas" readonly></div>
+            </div>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>B. Tujuan <em>tujuan</em></h3>
+            <p style="font-size:13.5px;">Menganalisis bukti eksperimen (sinar katode dan hamburan sinar alfa) untuk menyimpulkan keberadaan dan sifat partikel subatomik serta struktur atom.</p>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>C. Prediksi <em>hipotesis</em></h3>
+            <div class="field">
+              <label for="lkpd-prediksi">Sebelum menjalankan simulasi hamburan sinar alfa: menurutmu, apa yang akan terjadi jika sinar alfa ditembakkan ke lempeng emas jika model atom Thomson (roti kismis) benar?</label>
+              <textarea id="lkpd-prediksi" placeholder="Tuliskan prediksimu…"></textarea>
+            </div>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>D. Alat &amp; Bahan <em>otomatis</em></h3>
+            <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px;">
+              <li>Tabung sinar katode virtual (elektroda, pelat defleksi, layar fosfor)</li>
+              <li>Sumber partikel alfa virtual &amp; lempeng emas virtual</li>
+              <li>Panel kendali variabel (tegangan, model atom, kecepatan partikel)</li>
+            </ul>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>E. Pengamatan <em>data</em></h3>
+            <p style="font-size:13px;">Catat hasil pengamatanmu dari simulasi Percobaan Rutherford untuk dua model atom yang berbeda.</p>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table">
+                <thead>
+                  <tr><th>Model Atom Diuji</th><th>Partikel Diteruskan</th><th>Partikel Dibelokkan</th><th>Partikel Dipantulkan</th><th>Kesimpulan Sementara</th></tr>
+                </thead>
+                <tbody id="obs-tbody"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" id="obs-add-row">+ Tambah Baris</button>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>F. Analisis <em>esai singkat</em></h3>
+            <div class="field">
+              <label for="lkpd-analisis1">1. Mengapa sebagian besar partikel alfa diteruskan lurus melewati lempeng emas?</label>
+              <textarea id="lkpd-analisis1"></textarea>
+            </div>
+            <div class="field">
+              <label for="lkpd-analisis2">2. Apa yang menyebabkan sebagian kecil partikel dibelokkan tajam atau dipantulkan kembali?</label>
+              <textarea id="lkpd-analisis2"></textarea>
+            </div>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>G. Pertanyaan Pemandu <em>diskusi</em></h3>
+            <div class="field">
+              <label for="lkpd-q1">Bandingkan model atom Thomson dan Rutherford. Apa perbedaan mendasarnya?</label>
+              <textarea id="lkpd-q1"></textarea>
+            </div>
+            <div class="field">
+              <label for="lkpd-q2">Mengapa hasil eksperimen Geiger–Marsden dianggap "mengejutkan" oleh Rutherford sendiri?</label>
+              <textarea id="lkpd-q2"></textarea>
+            </div>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>H. Kesimpulan <em>ringkasan</em></h3>
+            <div class="field">
+              <label for="lkpd-kesimpulan">Tuliskan kesimpulan akhir praktikummu (kaitkan dengan tujuan pembelajaran).</label>
+              <textarea id="lkpd-kesimpulan" style="min-height:100px;"></textarea>
+            </div>
+          </div>
+
+          <div class="lkpd-section">
+            <h3>I. Refleksi <em>metakognisi</em></h3>
+            <div class="field">
+              <label for="lkpd-refleksi">Bagian mana dari materi ini yang paling menantang bagimu, dan strategi apa yang kamu pakai untuk memahaminya?</label>
+              <textarea id="lkpd-refleksi"></textarea>
+            </div>
+          </div>
+
+          <div class="lkpd-toolbar">
+            <button type="button" class="btn btn--primary btn--sm" id="lkpd-save">💾 Simpan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="lkpd-print">🖨 Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn--danger btn--sm" id="lkpd-reset">↺ Reset LKPD</button>
+            <span class="save-status" id="lkpd-status">Belum disimpan</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= EVALUASI ============================= -->
+    <section class="view" id="view-evaluasi" data-view="evaluasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">05 · Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>18 soal (LOTS–HOTS) untuk mengukur pemahamanmu tentang sejarah teori atom dan penemuan partikel subatomik.</p>
+      </div>
+
+      <div id="quiz-intro" class="card">
+        <h3 style="font-size:17px;">Sebelum mulai</h3>
+        <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px; line-height:1.8;">
+          <li>18 soal: pilihan ganda, pilihan ganda kompleks (checkbox), isian singkat, dan analisis singkat.</li>
+          <li>Jawaban tidak dibatasi waktu, namun disarankan dikerjakan dalam 20–25 menit.</li>
+          <li>Pembahasan setiap soal akan muncul setelah kamu menjawab.</li>
+        </ul>
+        <button class="btn btn--primary" id="quiz-begin" style="margin-top:8px;">Mulai Evaluasi</button>
+      </div>
+
+      <div id="quiz-body" hidden>
+        <div class="quiz-progress">
+          <div class="progress-track"><div class="progress-track__fill" id="quiz-progress-fill"></div></div>
+          <span class="quiz-meta" id="quiz-progress-label">0 / 18 dijawab</span>
+        </div>
+        <div id="quiz-questions"></div>
+        <button class="btn btn--primary btn--block" id="quiz-submit">Kumpulkan &amp; Lihat Skor</button>
+      </div>
+
+      <div id="quiz-result" hidden>
+        <div class="card result-hero">
+          <div style="font-size:13px; color:var(--paper-500); letter-spacing:.4px; text-transform:uppercase;">Skor Akhir</div>
+          <div class="result-score" id="result-score">0</div>
+          <p id="result-desc" style="max-width:440px;margin:10px auto 0;"></p>
+          <div class="badge-row" id="badge-row"></div>
+          <div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="quiz-review">Lihat Pembahasan</button>
+            <button class="btn btn--danger btn--sm" id="quiz-retry">Ulangi Evaluasi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= PROFIL PENGEMBANG ============================= -->
+    <section class="view" id="view-profil" data-view="profil">
+      <div class="view-head">
+        <div class="eyebrow-plain">06 · Profil Pengembang</div>
+        <h2>Tentang Pengembang</h2>
+      </div>
+      <div class="card dev-card">
+        <div class="dev-photo" id="dev-photo"></div>
+        <div>
+          <h3 style="font-size:22px;">S.D. Sabirin, S.Si., Gr.</h3>
+          <p style="color:var(--brass-400); font-weight:600; margin-bottom:14px;">Guru Kimia &amp; Pengembang Media Pembelajaran Digital</p>
+          <p style="font-size:14px;">Mengajar Kimia di SMA Islam Al Azhar 5 Cirebon dan aktif membimbing siswa dalam kompetisi riset (LPIR, OSN, COSMII, OPSI, OSA). Saat ini menempuh studi Magister Kimia di Universitas Padjadjaran melalui program Beasiswa Guru SMUP. Virtual lab ini dikembangkan sebagai bagian dari upaya menghadirkan pembelajaran Kimia yang kontekstual, interaktif, dan berbasis bukti eksperimen.</p>
+          <div class="dev-competency">
+            <span class="chip">Pendidikan Kimia</span>
+            <span class="chip">Pengembangan Media Pembelajaran</span>
+            <span class="chip">Pembimbingan Riset Siswa</span>
+            <span class="chip">Deep Learning Pedagogy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="appfoot">Virtual Lab Kimia — Struktur Atom · Dikembangkan oleh S.D. Sabirin, S.Si., Gr. · Referensi: LibreTexts Inorganic Chemistry &amp; Encyclopaedia Britannica</footer>
+</div>
+
+<!-- ============================= ASSISTANT ============================= -->
+<button class="assistant-fab" id="assistant-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="assistant-panel" aria-label="Buka asisten bantuan">?</button>
+<div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Asisten Bantuan" hidden>
+  <div class="assistant-head">
+    <h4>Asisten Lab (berbasis aturan)</h4>
+    <button class="icon-btn" id="assistant-close" aria-label="Tutup asisten" style="width:28px;height:28px;">✕</button>
+  </div>
+  <div class="assistant-body" id="assistant-body"></div>
+  <div class="assistant-chips" id="assistant-chips"></div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   1. LAB_DATA — seluruh konten terpisah dari logic
+   ========================================================================= */
+const LAB_DATA = {
+  meta:{
+    title:"Virtual Lab Kimia — Struktur Atom",
+    subtitle:"Sejarah Perkembangan Teori Atom dan Penemuan Partikel Subatomik",
+    fase:"Fase E / Kelas X",
+    developer:{
+      name:"S.D. Sabirin, S.Si., Gr.",
+      role:"Guru Kimia SMA Islam Al Azhar 5 Cirebon"
+    }
+  },
+
+  objectives:[
+    "Menjelaskan perkembangan model atom secara kronologis, dari teori Dalton hingga model atom Rutherford.",
+    "Mendeskripsikan rancangan dan hasil eksperimen kunci yang mengarah pada penemuan elektron, proton, dan neutron.",
+    "Menganalisis data hasil eksperimen sinar katode (Thomson) dan hamburan sinar alfa (Geiger–Marsden/Rutherford) untuk menarik kesimpulan tentang struktur atom.",
+    "Membandingkan model atom Dalton, Thomson, dan Rutherford beserta keunggulan dan keterbatasannya."
+  ],
+
+  timeline:[
+    {year:"1803", title:"Teori Atom Dalton", desc:"Atom digambarkan sebagai bola pejal, terkecil, dan tak dapat dibagi."},
+    {year:"1886", title:"Sinar Terusan — Goldstein", desc:"Eugen Goldstein mengamati partikel bermuatan positif dalam tabung sinar katode termodifikasi."},
+    {year:"1897", title:"Penemuan Elektron — J.J. Thomson", desc:"Eksperimen sinar katode membuktikan keberadaan partikel bermuatan negatif di dalam atom."},
+    {year:"1909–1911", title:"Hamburan Sinar Alfa — Geiger, Marsden &amp; Rutherford", desc:"Penembakan lempeng emas mengungkap keberadaan inti atom yang kecil, padat, dan bermuatan positif."},
+    {year:"1917–1920", title:"Identifikasi Proton — Rutherford", desc:"Partikel bermuatan positif pada inti diberi nama proton."},
+    {year:"1932", title:"Penemuan Neutron — James Chadwick", desc:"Partikel netral bermassa mirip proton ditemukan di dalam inti atom."}
+  ],
+
+  theorySections:[
+    {
+      id:"dalton",
+      title:"1. Teori Atom Dalton (1803)",
+      body:[
+        "John Dalton menyusun teori atom modern pertama berdasarkan hukum kekekalan massa dan hukum perbandingan tetap. Ia mengajukan empat gagasan utama.",
+      ],
+      list:[
+        "Setiap unsur tersusun atas partikel sangat kecil yang disebut atom.",
+        "Atom-atom dari unsur yang sama identik dalam ukuran, massa, dan sifat; atom unsur berbeda memiliki sifat yang berbeda pula.",
+        "Atom tidak dapat diciptakan, dimusnahkan, atau dibagi lagi menjadi partikel yang lebih kecil.",
+        "Senyawa terbentuk dari penggabungan atom-atom unsur dengan perbandingan bilangan bulat sederhana; reaksi kimia hanyalah penataan ulang atom."
+      ],
+      example:"Model Dalton berhasil menjelaskan mengapa air (H₂O) selalu tersusun dari perbandingan massa hidrogen dan oksigen yang tetap — karena setiap molekul air memang selalu terdiri dari 2 atom H dan 1 atom O.",
+      limitation:"Gagasan bahwa atom \"tidak dapat dibagi lagi\" ini yang kemudian terbantahkan oleh penemuan elektron, proton, dan neutron pada akhir abad ke-19 dan awal abad ke-20."
+    },
+    {
+      id:"elektron",
+      title:"2. Penemuan Elektron — J.J. Thomson (1897)",
+      body:[
+        "Joseph John Thomson meneliti sinar katode: berkas cahaya yang muncul ketika arus listrik tegangan tinggi dialirkan melalui tabung kaca bertekanan sangat rendah (hampir vakum).",
+        "Ia menemukan bahwa sinar ini dibelokkan oleh medan listrik menuju pelat bermuatan positif, dan juga dibelokkan oleh medan magnet. Ini menunjukkan bahwa sinar katode terdiri atas partikel bermuatan negatif, bukan gelombang elektromagnetik seperti yang diperdebatkan sebelumnya.",
+        "Thomson mengukur perbandingan muatan terhadap massa (e/m) partikel ini dan mendapati nilainya jauh lebih besar daripada e/m ion hidrogen — mengindikasikan partikel ini jauh lebih ringan daripada atom hidrogen. Partikel inilah yang kemudian disebut elektron.",
+        "Karena atom secara keseluruhan bersifat netral, Thomson mengusulkan model atom \"roti kismis\" (plum pudding model): atom digambarkan sebagai bola bermuatan positif dengan elektron-elektron tersebar merata di dalamnya, seperti kismis dalam roti."
+      ],
+      example:"Prinsip pembelokan berkas elektron oleh medan listrik ini kelak menjadi dasar kerja tabung televisi/monitor CRT dan osiloskop analog.",
+      limitation:"Model roti kismis menganggap muatan positif tersebar merata ke seluruh volume atom — anggapan yang kemudian dipatahkan oleh eksperimen Rutherford."
+    },
+    {
+      id:"proton",
+      title:"3. Penemuan Proton — Goldstein dan Rutherford (1886–1920)",
+      body:[
+        "Pada 1886, Eugen Goldstein memodifikasi tabung sinar katode dengan katode berlubang dan mengamati adanya berkas sinar yang bergerak ke arah berlawanan dari sinar katode. Ia menamainya sinar terusan (canal rays), yang terbukti bermuatan positif.",
+        "Sinar terusan ini dihasilkan dari partikel gas dalam tabung yang kehilangan elektron akibat tumbukan dengan sinar katode. Sifat sinar terusan (massa dan muatannya) berbeda-beda bergantung jenis gas yang digunakan — berbeda dengan sinar katode yang selalu sama.",
+        "Ketika gas hidrogen digunakan, dihasilkan partikel positif dengan massa terkecil. Rutherford kemudian, melalui serangkaian eksperimen inti atom pada 1917–1920, mengidentifikasi partikel ini sebagai penyusun dasar inti atom dan menamainya proton (dari bahasa Yunani protos, \"pertama\")."
+      ],
+      example:"Sinar terusan berhidrogen memberikan partikel bermuatan positif paling ringan yang ditemukan — konsisten dengan proton sebagai partikel dasar bermuatan positif.",
+      limitation:"Karena massa dan muatan sinar terusan bergantung pada jenis gas, dibutuhkan waktu lebih dari tiga dekade untuk memastikan proton sebagai partikel dasar yang seragam pada semua inti atom."
+    },
+    {
+      id:"rutherford",
+      title:"4. Model Atom Nuklir — Percobaan Hamburan Sinar Alfa (1909–1911)",
+      body:[
+        "Di bawah arahan Ernest Rutherford, Hans Geiger dan Ernest Marsden menembakkan partikel alfa (inti helium, bermuatan positif) ke lempeng emas setipis mungkin, dikelilingi layar berlapis seng sulfida yang berpendar setiap kali tertumbuk partikel.",
+        "Berdasarkan model roti kismis Thomson, seluruh partikel alfa seharusnya menembus lempeng dengan pembelokan yang sangat kecil, karena muatan positif dianggap tersebar merata dan lemah di seluruh atom.",
+        "Hasil yang diperoleh justru mengejutkan: sebagian besar partikel alfa memang diteruskan hampir lurus, namun sebagian kecil dibelokkan pada sudut besar, dan sekitar 1 dari 8.000 partikel dipantulkan kembali ke arah sumbernya.",
+        "Rutherford menyimpulkan bahwa sebagian besar volume atom adalah ruang kosong, sementara hampir seluruh massa dan seluruh muatan positif atom terpusat pada wilayah yang sangat kecil dan padat di pusat atom — yang ia sebut inti atom (nukleus). Elektron-elektron bermuatan negatif bergerak mengelilingi inti tersebut pada jarak yang relatif jauh."
+      ],
+      example:"Rutherford menggambarkan keterkejutannya seperti menembakkan peluru meriam ke selembar tisu dan mendapati pelurunya memantul kembali — sesuatu yang mustahil terjadi bila muatan tersebar merata seperti model Thomson.",
+      limitation:"Model Rutherford belum menjelaskan mengapa elektron yang bergerak mengelilingi inti tidak kehilangan energi dan jatuh ke inti (sebagaimana diprediksi oleh elektrodinamika klasik). Persoalan ini baru dijawab oleh model atom Bohr yang mengintegrasikan gagasan kuantisasi energi."
+      
+    },
+    {
+      id:"neutron",
+      title:"5. Penemuan Neutron — James Chadwick (1932)",
+      body:[
+        "Setelah proton ditemukan, muncul persoalan: massa inti atom (selain hidrogen) selalu lebih besar daripada jumlah massa proton penyusunnya berdasarkan muatan intinya. Para ilmuwan menduga ada partikel tambahan tak bermuatan di dalam inti.",
+        "Pada 1932, James Chadwick menembakkan partikel alfa ke lempeng berilium. Radiasi berdaya tembus tinggi yang dihasilkan tidak dibelokkan oleh medan listrik maupun medan magnet — menandakan radiasi tersebut tidak bermuatan.",
+        "Chadwick menunjukkan bahwa radiasi ini terdiri atas partikel dengan massa mendekati massa proton namun tanpa muatan listrik. Partikel inilah yang dinamakan neutron, melengkapi tiga partikel subatomik dasar penyusun atom."
+      ],
+      example:"Penemuan neutron menjelaskan fenomena isotop: atom-atom dari unsur yang sama (jumlah proton sama) namun memiliki jumlah neutron — dan karenanya massa — yang berbeda.",
+      limitation:"Karena neutron tidak bermuatan, partikel ini tidak dapat dideteksi langsung dengan medan listrik/magnet seperti elektron dan proton; keberadaannya harus disimpulkan secara tidak langsung dari kekekalan massa dan momentum."
+    }
+  ],
+
+  particleTable:[
+    {particle:"Elektron", symbol:"e⁻", relCharge:"−1", massSma:"≈ 0,00055", discoverer:"J.J. Thomson", year:"1897", method:"Pembelokan sinar katode oleh medan listrik &amp; magnet"},
+    {particle:"Proton", symbol:"p⁺", relCharge:"+1", massSma:"≈ 1,0073", discoverer:"Goldstein / Rutherford", year:"1886 / 1917", method:"Sinar terusan; identifikasi inti atom hidrogen"},
+    {particle:"Neutron", symbol:"n⁰", relCharge:"0", massSma:"≈ 1,0087", discoverer:"James Chadwick", year:"1932", method:"Radiasi tak bermuatan dari penembakan berilium"}
+  ],
+
+  terms:[
+    {t:"Atom", d:"Satuan terkecil suatu unsur yang masih mempertahankan sifat kimia unsur tersebut."},
+    {t:"Elektron", d:"Partikel subatomik bermuatan negatif yang mengelilingi inti atom."},
+    {t:"Proton", d:"Partikel subatomik bermuatan positif yang terletak di dalam inti atom."},
+    {t:"Neutron", d:"Partikel subatomik tanpa muatan listrik yang terletak di dalam inti atom."},
+    {t:"Inti atom (Nukleus)", d:"Wilayah pusat atom yang sangat kecil dan padat, berisi proton dan neutron."},
+    {t:"Sinar katode", d:"Berkas partikel bermuatan negatif yang dipancarkan dari katode dalam tabung hampa bertegangan tinggi."},
+    {t:"Sinar terusan", d:"Berkas partikel bermuatan positif yang teramati bergerak berlawanan arah dengan sinar katode."},
+    {t:"Hamburan (scattering)", d:"Pembelokan lintasan partikel akibat interaksi (gaya elektrostatik) dengan partikel lain."},
+    {t:"Partikel alfa", d:"Partikel radioaktif bermuatan positif setara inti atom helium (2 proton + 2 neutron)."},
+    {t:"Model atom", d:"Representasi ilmiah tentang susunan dan struktur atom berdasarkan bukti eksperimen pada masanya."}
+  ],
+
+  misconceptions:[
+    {wrong:"Atom adalah partikel terkecil yang tidak memiliki bagian di dalamnya.", right:"Atom tersusun dari partikel-partikel subatomik yang lebih kecil: elektron, proton, dan neutron."},
+    {wrong:"Model atom Thomson (roti kismis) adalah gambaran atom yang sudah benar dan final.", right:"Model Thomson terbantahkan oleh eksperimen hamburan sinar alfa Rutherford; muatan positif ternyata terpusat, bukan tersebar merata."},
+    {wrong:"Massa atom tersebar merata ke seluruh volumenya.", right:"Hampir seluruh massa atom terpusat pada inti yang volumenya jauh lebih kecil dari volume atom secara keseluruhan."},
+    {wrong:"Elektron mengelilingi inti dengan lintasan pasti seperti planet mengelilingi matahari.", right:"Gambaran lintasan pasti hanyalah penyederhanaan; model yang lebih akurat (dikembangkan setelah Rutherford) menjelaskan posisi elektron sebagai kebolehjadian (probabilitas), bukan lintasan tetap."}
+  ],
+
+  summary:"Perjalanan dari teori Dalton menuju model atom Rutherford menunjukkan bagaimana sains bekerja: setiap model bersifat sementara dan dapat direvisi ketika ada bukti eksperimen baru yang tidak sesuai. Penemuan elektron (Thomson), proton (Goldstein/Rutherford), dan neutron (Chadwick) secara bertahap mengungkap bahwa atom memiliki struktur internal — dengan inti kecil, padat, dan bermuatan positif di pusatnya, dikelilingi elektron-elektron bermuatan negatif.",
+
+  procedures:{
+    thomson:{
+      label:"Percobaan Sinar Katode (Thomson)",
+      steps:[
+        {title:"Amati tabung dalam keadaan vakum", instruction:"Perhatikan tabung sinar katode sebelum medan listrik diaktifkan.", tools:"Tabung kaca hampa, elektroda", initial:"Tidak ada medan listrik (0 kV)", action:"Klik \"Mulai\" pada simulasi untuk mengalirkan arus melalui katode.", observe:"Muncul berkas sinar lurus dari katode menuju anode, membuat layar di ujung tabung berpendar."},
+        {title:"Aktifkan medan listrik", instruction:"Naikkan tegangan pelat defleksi secara bertahap.", tools:"Sepasang pelat bermuatan (positif/negatif)", initial:"Sinar katode bergerak lurus", action:"Geser slider tegangan pelat ke arah positif.", observe:"Berkas sinar membelok ke arah pelat bermuatan positif."},
+        {title:"Balik polaritas medan", instruction:"Ubah arah medan listrik dan amati perubahan arah defleksi.", tools:"Kendali polaritas", initial:"Sinar terdefleksi ke satu arah", action:"Klik tombol balik polaritas atau geser slider ke arah negatif.", observe:"Arah pembelokan sinar berbalik, tetap menuju pelat yang bermuatan positif."},
+        {title:"Simpulkan sifat muatan partikel", instruction:"Berdasarkan arah pembelokan yang konsisten, tentukan jenis muatan partikel penyusun sinar katode.", tools:"Data pengamatan", initial:"Dua pola defleksi telah teramati", action:"Catat kesimpulanmu pada LKPD.", observe:"Sinar katode selalu tertarik ke pelat positif — partikel penyusunnya bermuatan negatif (elektron)."}
+      ]
+    },
+    rutherford:{
+      label:"Percobaan Hamburan Sinar Alfa (Geiger–Marsden)",
+      steps:[
+        {title:"Amati susunan alat", instruction:"Perhatikan posisi sumber partikel alfa, lempeng emas, dan layar detektor berpendar di sekelilingnya.", tools:"Sumber partikel alfa, lempeng emas tipis, layar ZnS", initial:"Belum ada partikel ditembakkan", action:"Pilih model atom target (Thomson atau Rutherford) sebagai pembanding.", observe:"Lempeng emas tervisualisasikan dengan model atom yang dipilih."},
+        {title:"Tembakkan partikel alfa", instruction:"Jalankan penembakan partikel alfa secara kontinu ke arah lempeng emas.", tools:"Sumber partikel alfa", initial:"Model atom telah dipilih", action:"Klik \"Mulai\" untuk menembakkan rentetan partikel alfa.", observe:"Sebagian besar partikel melintas lurus; amati pola kilatan pada layar detektor melingkar."},
+        {title:"Bandingkan dua model", instruction:"Ulangi penembakan dengan model atom yang berbeda untuk membandingkan hasilnya.", tools:"Kendali pilihan model", initial:"Data pada satu model telah terkumpul", action:"Ganti model atom, lalu tembakkan ulang partikel alfa.", observe:"Pada model Thomson, hampir semua partikel tembus nyaris lurus. Pada model Rutherford, sebagian kecil dibelokkan tajam dan sangat sedikit yang terpantul balik."},
+        {title:"Catat persentase hasil", instruction:"Rekam persentase partikel yang diteruskan, dibelokkan, dan dipantulkan untuk setiap model.", tools:"Panel pembacaan data", initial:"Simulasi telah berjalan pada kedua model", action:"Salin data pada panel pembacaan instrumen ke tabel pengamatan LKPD.", observe:"Data mendukung kesimpulan bahwa muatan positif dan massa atom terpusat pada volume yang sangat kecil (inti atom)."}
+      ]
+    }
+  },
+
+  simulationNotes:{
+    thomson:"Model disederhanakan secara kualitatif: besar defleksi sebanding dengan kuat medan listrik (F = qE), namun simulasi ini tidak menghitung rasio e/m secara presisi kuantitatif seperti eksperimen asli Thomson.",
+    rutherford:"Distribusi sudut hamburan pada simulasi ini merepresentasikan pola kualitatif hasil eksperimen Geiger–Marsden (mayoritas tembus, sedikit dibelokkan besar, sangat sedikit terpantul balik) dan bukan perhitungan rumus hamburan Rutherford secara penuh."
+  },
+
+  evaluation:[
+    {type:"mc", level:"lots", stem:"Siapakah ilmuwan yang mengemukakan bahwa atom adalah partikel terkecil yang tidak dapat dibagi lagi?", options:["John Dalton","J.J. Thomson","Ernest Rutherford","James Chadwick"], answer:0, explain:"John Dalton (1803) mengajukan teori atom yang menyatakan atom sebagai partikel terkecil dan tidak dapat dibagi lagi."},
+    {type:"mc", level:"lots", stem:"Partikel subatomik yang ditemukan oleh J.J. Thomson melalui eksperimen sinar katode adalah …", options:["Proton","Neutron","Elektron","Positron"], answer:2, explain:"Thomson menunjukkan bahwa sinar katode terdiri atas partikel bermuatan negatif yang kemudian disebut elektron."},
+    {type:"mc", level:"lots", stem:"Model atom \"roti kismis\" (plum pudding model) dikemukakan oleh …", options:["Dalton","Thomson","Rutherford","Chadwick"], answer:1, explain:"Thomson mengusulkan model ini: bola bermuatan positif dengan elektron tersebar di dalamnya."},
+    {type:"mc", level:"lots", stem:"Partikel apa yang digunakan Rutherford, Geiger, dan Marsden untuk menembak lempeng emas?", options:["Elektron","Neutron","Partikel alfa","Foton"], answer:2, explain:"Mereka menggunakan partikel alfa (inti helium) sebagai proyektil dalam eksperimen hamburan."},
+    {type:"mc", level:"lots", stem:"Partikel neutron ditemukan oleh …", options:["J.J. Thomson","Eugen Goldstein","Ernest Rutherford","James Chadwick"], answer:3, explain:"James Chadwick menemukan neutron pada tahun 1932 melalui penembakan berilium dengan partikel alfa."},
+    {type:"mc", level:"mots", stem:"Dalam eksperimen sinar katode, sinar tersebut selalu dibelokkan ke arah pelat bermuatan positif. Fakta ini menunjukkan bahwa partikel penyusun sinar katode …", options:["Tidak bermuatan","Bermuatan positif","Bermuatan negatif","Bermuatan positif dan negatif sekaligus"], answer:2, explain:"Karena tertarik ke pelat positif (muatan sejenis tolak-menolak, muatan berlawanan tarik-menarik), partikel tersebut pastilah bermuatan negatif."},
+    {type:"mc", level:"mots", stem:"Berdasarkan model atom Thomson, jika partikel alfa ditembakkan ke lempeng emas, hasil yang seharusnya diamati adalah …", options:["Hampir semua partikel dipantulkan balik","Semua partikel diteruskan hampir tanpa pembelokan berarti","Sebagian besar partikel dibelokkan tajam","Semua partikel berhenti di permukaan lempeng"], answer:1, explain:"Karena model Thomson menganggap muatan positif tersebar lemah dan merata, partikel alfa seharusnya menembus dengan pembelokan yang sangat kecil."},
+    {type:"mc", level:"mots", stem:"Fakta bahwa sebagian kecil partikel alfa dipantulkan kembali pada eksperimen Geiger–Marsden mengindikasikan bahwa …", options:["Atom sepenuhnya berupa ruang kosong","Terdapat wilayah kecil, padat, dan bermuatan positif di dalam atom","Elektron memiliki massa yang sangat besar","Lempeng emas tidak dapat ditembus partikel apa pun"], answer:1, explain:"Hanya benda padat dan bermuatan sejenis yang dapat menyebabkan pemantulan tajam — ini menunjukkan adanya inti atom yang padat dan bermuatan positif."},
+    {type:"mc", level:"mots", stem:"Manakah pernyataan yang benar mengenai massa atom berdasarkan model Rutherford?", options:["Massa atom tersebar merata di seluruh volume atom","Hampir seluruh massa atom terpusat pada inti atom","Massa atom seluruhnya berasal dari elektron","Atom tidak memiliki massa yang dapat diukur"], answer:1, explain:"Rutherford menyimpulkan hampir seluruh massa atom terkonsentrasi pada inti yang volumenya sangat kecil dibanding volume atom keseluruhan."},
+    {type:"mc", level:"hots", stem:"Seandainya eksperimen Geiger–Marsden hanya menghasilkan partikel alfa yang seluruhnya diteruskan lurus tanpa ada yang dibelokkan sama sekali, kesimpulan yang paling tepat adalah …", options:["Model Rutherford (inti padat) yang terbukti benar","Model Thomson (muatan tersebar merata) lebih sesuai dengan data tersebut","Atom tidak memiliki elektron","Partikel alfa tidak bermuatan"], answer:1, explain:"Tanpa adanya pembelokan besar/pemantulan sama sekali, data tersebut justru akan mendukung model muatan tersebar merata (Thomson), bukan model inti padat."},
+    {type:"mc", level:"hots", stem:"Mengapa jumlah partikel alfa yang dipantulkan balik pada eksperimen asli sangat sedikit (sekitar 1 dari 8.000), bukan mayoritas?", options:["Karena partikel alfa sebagian besar rusak sebelum mencapai lempeng","Karena inti atom hanya menempati sebagian sangat kecil dari total volume atom, sehingga peluang tumbukan langsung dengannya kecil","Karena lempeng emas terlalu tebal","Karena medan magnet bumi membelokkan sebagian besar partikel"], answer:1, explain:"Inti atom berukuran sangat kecil dibanding atom secara keseluruhan, sehingga sebagian besar partikel alfa melintas melalui ruang kosong di sekitar inti tanpa mendekatinya."},
+    {type:"mc", level:"hots", stem:"Keterbatasan utama teori atom Dalton yang paling mendasar, dilihat dari perkembangan ilmu pengetahuan selanjutnya, adalah …", options:["Dalton tidak menjelaskan reaksi kimia sama sekali","Dalton menganggap atom sebagai partikel tak terbagi, padahal atom memiliki partikel subatomik", "Dalton tidak menyebutkan adanya unsur kimia", "Dalton tidak menggunakan data eksperimen sama sekali"], answer:1, explain:"Anggapan atom sebagai partikel terkecil yang tak terbagi inilah yang kemudian terbantahkan oleh penemuan elektron, proton, dan neutron."},
+    {type:"checkbox", level:"mots", stem:"Manakah pernyataan berikut yang BENAR mengenai partikel subatomik? (Pilih semua yang sesuai)", options:["Elektron bermuatan negatif dan bermassa jauh lebih kecil daripada proton","Proton dan neutron memiliki massa yang hampir sama","Neutron tidak memiliki muatan listrik","Proton ditemukan lebih dulu daripada elektron"], answerSet:[0,1,2], explain:"Elektron bermuatan negatif dengan massa jauh lebih kecil dari proton; proton dan neutron bermassa hampir sama; neutron tidak bermuatan. Elektron (1897) justru ditemukan sebelum proton dipastikan (1917-an)."},
+    {type:"checkbox", level:"mots", stem:"Manakah yang termasuk hasil pengamatan pada eksperimen hamburan sinar alfa Geiger–Marsden? (Pilih semua yang sesuai)", options:["Sebagian besar partikel alfa diteruskan hampir lurus","Seluruh partikel alfa dipantulkan balik","Sebagian kecil partikel dibelokkan pada sudut besar","Sangat sedikit partikel dipantulkan kembali ke arah sumber"], answerSet:[0,2,3], explain:"Hasil eksperimen menunjukkan mayoritas partikel tembus lurus, sebagian kecil dibelokkan besar, dan sangat sedikit yang terpantul balik — bukan seluruhnya terpantul."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Partikel bermuatan positif yang menyusun inti atom disebut ____________.", accepted:["proton","proton (p+)","proton(p+)"], explain:"Jawaban yang tepat adalah proton — partikel bermuatan positif yang terletak di inti atom."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Model atom yang menggambarkan atom sebagai bola bermuatan positif dengan elektron tersebar di dalamnya dikenal sebagai model atom ____________.", accepted:["thomson","roti kismis","thomson (roti kismis)","plum pudding"], explain:"Model ini dikenal sebagai model atom Thomson atau model \"roti kismis\" (plum pudding model)."},
+    {type:"essay", level:"hots", stem:"Jelaskan dengan kalimatmu sendiri mengapa hasil eksperimen hamburan sinar alfa dianggap sebagai bukti kuat yang menggugurkan model atom Thomson. (Jawaban akan direkam untuk penilaian guru, bukan dinilai otomatis)", explain:"Kunci jawaban: karena model Thomson memprediksi seluruh partikel alfa akan diteruskan dengan pembelokan minimal (muatan tersebar merata), sedangkan data eksperimen menunjukkan adanya pembelokan besar dan pemantulan balik pada sebagian kecil partikel — yang hanya dapat dijelaskan oleh keberadaan pusat bermuatan positif yang padat dan terkonsentrasi (inti atom)."},
+    {type:"essay", level:"hots", stem:"Seorang siswa berpendapat bahwa \"penemuan neutron tidak terlalu penting karena tidak bermuatan.\" Tanggapi pernyataan tersebut berdasarkan konsep massa atom dan isotop. (Jawaban akan direkam untuk penilaian guru, bukan dinilai otomatis)", explain:"Kunci jawaban: neutron tetap krusial karena menyumbang sebagian besar massa inti (bersama proton) dan menjelaskan mengapa atom-atom dari unsur yang sama dapat memiliki massa berbeda (isotop), yang tidak dapat dijelaskan hanya dengan jumlah proton dan elektron."}
+  ]
+};
+
+/* =========================================================================
+   2. STATE
+   ========================================================================= */
+const STORAGE_KEY = "vlab_struktur_atom_v1";
+const State = {
+  identity:{ nama:"", kelas:"", id:"" },
+  soundOn:true,
+  reduceMotion:false,
+  activeView:"teori",
+  unlockedViews:["teori"],
+  procedure:{ active:"thomson", stepIndex:{ thomson:0, rutherford:0 }, done:{ thomson:[], rutherford:[] } },
+  simulation:{ active:"thomson", mode:"submikroskopik" },
+  lkpd:{},
+  quiz:{ answers:{}, submitted:false, reviewMode:false }
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      Object.assign(State, parsed);
+    }
+  }catch(e){ /* localStorage tidak tersedia; lanjut dengan state default */ }
+}
+function persistState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(State));
+  }catch(e){ /* abaikan bila penyimpanan gagal (mis. mode privat) */ }
+}
+
+/* =========================================================================
+   3. AUDIO (Web Audio API — tanpa file eksternal)
+   ========================================================================= */
+const AudioFX = (() => {
+  let ctx = null;
+  function ensureCtx(){
+    if(!ctx){
+      try{ ctx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ ctx = null; }
+    }
+    return ctx;
+  }
+  function tone(freq, dur, type, gainVal){
+    if(!State.soundOn) return;
+    const c = ensureCtx();
+    if(!c) return;
+    try{
+      const osc = c.createOscillator();
+      const gain = c.createGain();
+      osc.type = type || "sine";
+      osc.frequency.value = freq;
+      gain.gain.value = gainVal || 0.05;
+      osc.connect(gain); gain.connect(c.destination);
+      const now = c.currentTime;
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      osc.start(now); osc.stop(now + dur);
+    }catch(e){ /* audio gagal; abaikan tanpa menghentikan aplikasi */ }
+  }
+  return {
+    click:()=>tone(720,0.06,"square",0.035),
+    success:()=>{ tone(520,0.12,"sine",0.06); setTimeout(()=>tone(780,0.16,"sine",0.06),90); },
+    error:()=>tone(160,0.22,"sawtooth",0.05),
+    reset:()=>tone(300,0.18,"triangle",0.045),
+    complete:()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.18,"sine",0.05), i*110)); },
+    ping:()=>tone(1400,0.05,"sine",0.03)
+  };
+})();
+
+/* =========================================================================
+   4. TOAST
+   ========================================================================= */
+function showToast(msg, kind){
+  const region = document.getElementById("toast-region");
+  const el = document.createElement("div");
+  el.className = "toast" + (kind ? " " + kind : "");
+  el.textContent = msg;
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(), 320); }, 2600);
+}
+
+/* =========================================================================
+   5. SPLASH & IDENTITY
+   ========================================================================= */
+function initSplash(){
+  document.getElementById("btn-start").addEventListener("click", ()=>{
+    AudioFX.click();
+    if(State.identity.nama && State.identity.kelas){
+      enterApp();
+    }else{
+      document.getElementById("modal-identity").hidden = false;
+      document.getElementById("inp-nama").focus();
+    }
+  });
+
+  document.getElementById("form-identity").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nama = document.getElementById("inp-nama").value.trim();
+    const kelas = document.getElementById("inp-kelas").value.trim();
+    const id = document.getElementById("inp-id").value.trim();
+    const err = document.getElementById("identity-error");
+    if(!nama || !kelas){
+      err.style.display = "block";
+      AudioFX.error();
+      return;
+    }
+    err.style.display = "none";
+    State.identity = { nama, kelas, id };
+    persistState();
+    document.getElementById("modal-identity").hidden = true;
+    AudioFX.success();
+    enterApp();
+  });
+}
+
+function enterApp(){
+  document.getElementById("splash").classList.add("is-hidden");
+  document.getElementById("app").hidden = false;
+  document.getElementById("lkpd-nama").value = State.identity.nama || "";
+  document.getElementById("lkpd-kelas").value = State.identity.kelas || "";
+  showToast(`Selamat datang, ${State.identity.nama || "Praktikan"}!`, "success");
+}
+
+/* =========================================================================
+   6. NAVIGATION / TABS
+   ========================================================================= */
+const VIEWS = [
+  {id:"teori", label:"Teori"},
+  {id:"prosedur", label:"Prosedur"},
+  {id:"simulasi", label:"Simulasi"},
+  {id:"lkpd", label:"LKPD"},
+  {id:"evaluasi", label:"Evaluasi"},
+  {id:"profil", label:"Profil Pengembang"}
+];
+
+function buildTabs(){
+  const nav = document.getElementById("tabs");
+  nav.innerHTML = "";
+  VIEWS.forEach((v,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "tab-btn";
+    btn.setAttribute("role","tab");
+    btn.id = "tab-"+v.id;
+    btn.setAttribute("aria-controls","view-"+v.id);
+    btn.innerHTML = `<span class="tab-num">${i+1}</span><span>${v.label}</span>`;
+    btn.addEventListener("click", ()=>{
+      if(btn.disabled) return;
+      AudioFX.click();
+      goToView(v.id);
+    });
+    nav.appendChild(btn);
+  });
+  refreshTabsState();
+}
+
+function refreshTabsState(){
+  VIEWS.forEach(v=>{
+    const btn = document.getElementById("tab-"+v.id);
+    const unlocked = State.unlockedViews.includes(v.id);
+    btn.disabled = !unlocked;
+    btn.setAttribute("aria-selected", String(State.activeView===v.id));
+  });
+  const idx = VIEWS.findIndex(v=>v.id===State.activeView);
+  const pct = ((State.unlockedViews.length-1) / (VIEWS.length-1)) * 100;
+  document.getElementById("global-progress").style.width = Math.max(pct, (idx/(VIEWS.length-1))*100) + "%";
+}
+
+function unlockView(id){
+  if(!State.unlockedViews.includes(id)){
+    State.unlockedViews.push(id);
+    persistState();
+    refreshTabsState();
+  }
+}
+
+function goToView(id){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("is-active"));
+  const target = document.getElementById("view-"+id);
+  if(target) target.classList.add("is-active");
+  State.activeView = id;
+  persistState();
+  refreshTabsState();
+  window.scrollTo({top:0, behavior: State.reduceMotion ? "auto":"smooth"});
+}
+
+/* =========================================================================
+   7. THEORY RENDER
+   ========================================================================= */
+function renderTheory(){
+  const tp = document.getElementById("tp-list");
+  tp.innerHTML = LAB_DATA.objectives.map(o=>`<li>${o}</li>`).join("");
+
+  const tl = document.getElementById("theory-timeline");
+  tl.innerHTML = LAB_DATA.timeline.map(t=>`
+    <div class="timeline-item">
+      <div class="timeline-year">${t.year}</div>
+      <h3>${t.title}</h3>
+      <p style="margin:0;font-size:13.5px;">${t.desc}</p>
+    </div>`).join("");
+
+  const toc = document.getElementById("theory-toc");
+  toc.innerHTML = LAB_DATA.theorySections.map(s=>`<button class="toc-pill" data-target="${s.id}">${s.title.replace(/^[0-9]+\.\s*/,"")}</button>`).join("");
+  toc.querySelectorAll(".toc-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.getElementById("sec-"+btn.dataset.target).scrollIntoView({behavior: State.reduceMotion?"auto":"smooth", block:"start"});
+    });
+  });
+
+  const container = document.getElementById("theory-sections");
+  container.innerHTML = LAB_DATA.theorySections.map(s=>`
+    <div class="theory-section" id="sec-${s.id}">
+      <h3>${s.title}</h3>
+      ${s.body.map(p=>`<p>${p}</p>`).join("")}
+      ${s.list ? `<ul style="padding-left:20px;color:var(--paper-300);font-size:14px;line-height:1.8;">${s.list.map(li=>`<li>${li}</li>`).join("")}</ul>` : ""}
+      <div class="card" style="background:var(--ink-900);margin:14px 0;">
+        <strong style="color:var(--phosphor-500);font-size:12.5px;">FENOMENA / CONTOH</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.example}</p>
+      </div>
+      <div class="card" style="background:rgba(224,114,90,.06);border-color:rgba(224,114,90,.3);">
+        <strong style="color:var(--ember-300);font-size:12.5px;">KETERBATASAN MODEL</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.limitation}</p>
+      </div>
+    </div>
+  `).join("") + `
+    <div class="theory-section" id="sec-partikel">
+      <h3>Ringkasan Partikel Subatomik</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Partikel</th><th>Simbol</th><th>Muatan Relatif</th><th>Massa (sma)</th><th>Penemu</th><th>Tahun</th><th>Metode</th></tr></thead>
+          <tbody>
+            ${LAB_DATA.particleTable.map(p=>`<tr><td>${p.particle}</td><td>${p.symbol}</td><td>${p.relCharge}</td><td>${p.massSma}</td><td>${p.discoverer}</td><td>${p.year}</td><td>${p.method}</td></tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="theory-section" id="sec-istilah">
+      <h3>Istilah Penting</h3>
+      <dl class="term-list">
+        ${LAB_DATA.terms.map(t=>`<dt>${t.t}</dt><dd>${t.d}</dd>`).join("")}
+      </dl>
+    </div>
+    <div class="theory-section" id="sec-miskonsepsi">
+      <h3>Miskonsepsi Umum</h3>
+      ${LAB_DATA.misconceptions.map(m=>`
+        <div class="misconception">
+          <div><b>✗ Anggapan keliru:</b> ${m.wrong}</div>
+          <div style="margin-top:4px;"><b style="color:var(--leaf-500);">✓ Yang benar:</b> ${m.right}</div>
+        </div>`).join("")}
+    </div>
+    <div class="theory-section" id="sec-ringkasan">
+      <h3>Ringkasan</h3>
+      <p>${LAB_DATA.summary}</p>
+      <button class="btn btn--primary" id="theory-continue">Lanjut ke Prosedur →</button>
+    </div>
+  `;
+  document.getElementById("theory-continue").addEventListener("click", ()=>{
+    AudioFX.success();
+    unlockView("prosedur");
+    goToView("prosedur");
+  });
+}
+
+/* =========================================================================
+   8. PROCEDURE
+   ========================================================================= */
+function renderProcedureTabs(){
+  const wrap = document.getElementById("proc-tabs");
+  wrap.innerHTML = "";
+  Object.keys(LAB_DATA.procedures).forEach(key=>{
+    const btn = document.createElement("button");
+    btn.className = "proc-tab";
+    btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(State.procedure.active===key));
+    btn.textContent = LAB_DATA.procedures[key].label;
+    btn.addEventListener("click", ()=>{
+      AudioFX.click();
+      State.procedure.active = key;
+      persistState();
+      renderProcedureTabs();
+      renderProcedureSteps();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderProcedureSteps(){
+  const key = State.procedure.active;
+  const proc = LAB_DATA.procedures[key];
+  const doneArr = State.procedure.done[key];
+  const unlockedIndex = doneArr.length; // langkah berikutnya yang bisa dikerjakan
+
+  const list = document.getElementById("proc-steps");
+  list.innerHTML = proc.steps.map((s,i)=>{
+    const isDone = doneArr.includes(i);
+    const isUnlocked = i <= unlockedIndex;
+    return `
+      <div class="step ${isUnlocked?"is-unlocked":""} ${isDone?"is-done":""}" data-i="${i}">
+        <div class="step__num">${isDone ? "✓" : (i+1)}</div>
+        <div>
+          <h4>${s.title}</h4>
+          <p style="margin:0 0 6px;font-size:13.5px;">${s.instruction}</p>
+          <div class="step__meta">
+            <span><b>Alat/Bahan:</b> ${s.tools}</span>
+            <span><b>Kondisi Awal:</b> ${s.initial}</span>
+          </div>
+          <div class="step__meta">
+            <span><b>Tindakan:</b> ${s.action}</span>
+          </div>
+          <div class="step__meta">
+            <span><b>Hasil Diamati:</b> ${s.observe}</span>
+          </div>
+          ${isUnlocked && !isDone ? `<div class="step-actions"><button class="btn btn--primary btn--sm" data-mark="${i}">Tandai Selesai</button></div>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+
+  list.querySelectorAll("[data-mark]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = Number(btn.dataset.mark);
+      if(!doneArr.includes(i)) doneArr.push(i);
+      AudioFX.success();
+      persistState();
+      renderProcedureSteps();
+      updateProcProgress();
+      const totalDone = State.procedure.done.thomson.length + State.procedure.done.rutherford.length;
+      if(totalDone >= 4){ // cukup 1 prosedur selesai untuk buka simulasi
+        unlockView("simulasi");
+      }
+    });
+  });
+  updateProcProgress();
+}
+
+function updateProcProgress(){
+  const key = State.procedure.active;
+  const total = LAB_DATA.procedures[key].steps.length;
+  const done = State.procedure.done[key].length;
+  document.getElementById("proc-progress").style.width = (done/total*100) + "%";
+}
+
+/* =========================================================================
+   9. SIMULATION — Canvas engine
+   ========================================================================= */
+const Sim = {
+  key:"thomson", mode:"submikroskopik", running:false, raf:null,
+  thomson:{ voltage:0, particles:[] },
+  rutherford:{ atomModel:"rutherford", speed:5, running:false, particles:[], stats:{through:0,deflected:0,bounced:0,total:0} },
+  canvas:null, ctx:null, dpr:1
+};
+
+function setupCanvas(){
+  Sim.canvas = document.getElementById("sim-canvas");
+  Sim.ctx = Sim.canvas.getContext("2d");
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+}
+function resizeCanvas(){
+  const stage = document.getElementById("sim-stage");
+  const rect = stage.getBoundingClientRect();
+  Sim.dpr = Math.min(window.devicePixelRatio||1, 2);
+  Sim.canvas.width = Math.max(320, rect.width) * Sim.dpr;
+  Sim.canvas.height = Math.max(420, rect.height) * Sim.dpr;
+  Sim.canvas.style.width = "100%";
+  Sim.canvas.style.height = rect.height + "px";
+}
+
+function renderSimTabs(){
+  const wrap = document.getElementById("sim-tabs");
+  wrap.innerHTML = "";
+  const items = [
+    {key:"thomson", label:"Tabung Sinar Katode (Thomson)"},
+    {key:"rutherford", label:"Hamburan Sinar Alfa (Rutherford)"}
+  ];
+  items.forEach(it=>{
+    const btn = document.createElement("button");
+    btn.className = "proc-tab";
+    btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(Sim.key===it.key));
+    btn.textContent = it.label;
+    btn.addEventListener("click", ()=>{
+      AudioFX.click();
+      Sim.key = it.key;
+      stopSim();
+      renderSimTabs();
+      renderSimControls();
+      renderSimLegend();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function renderSimControls(){
+  const modeSwitch = document.getElementById("sim-mode-switch");
+  modeSwitch.innerHTML = ["makroskopik","submikroskopik","simbolik"].map(m=>
+    `<button data-mode="${m}" aria-pressed="${Sim.mode===m}">${m[0].toUpperCase()+m.slice(1)}</button>`
+  ).join("");
+  modeSwitch.querySelectorAll("button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      Sim.mode = b.dataset.mode;
+      renderSimControls();
+    });
+  });
+
+  const controls = document.getElementById("sim-controls");
+  document.getElementById("sim-note").textContent = Sim.key==="thomson" ? LAB_DATA.simulationNotes.thomson : LAB_DATA.simulationNotes.rutherford;
+
+  if(Sim.key === "thomson"){
+    controls.innerHTML = `
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Tabung Sinar Katode</h4>
+      <div class="slider-field">
+        <label for="ctrl-voltage">Tegangan Pelat Defleksi <span class="val" id="val-voltage">0 kV</span></label>
+        <input type="range" id="ctrl-voltage" min="-10" max="10" step="1" value="${Sim.thomson.voltage}">
+        <p class="hint">Negatif = pelat atas positif · Positif = pelat bawah positif</p>
+      </div>`;
+    const slider = document.getElementById("ctrl-voltage");
+    slider.addEventListener("input", ()=>{
+      Sim.thomson.voltage = Number(slider.value);
+      document.getElementById("val-voltage").textContent = Sim.thomson.voltage + " kV";
+      AudioFX.ping();
+    });
+  } else {
+    controls.innerHTML = `
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Hamburan Sinar Alfa</h4>
+      <div class="field" style="margin-bottom:14px;">
+        <label for="ctrl-model">Model Atom Target</label>
+        <select id="ctrl-model">
+          <option value="rutherford" ${Sim.rutherford.atomModel==="rutherford"?"selected":""}>Rutherford (inti padat)</option>
+          <option value="thomson" ${Sim.rutherford.atomModel==="thomson"?"selected":""}>Thomson (roti kismis)</option>
+        </select>
+      </div>
+      <div class="slider-field">
+        <label for="ctrl-speed">Kecepatan Partikel Alfa <span class="val" id="val-speed">${Sim.rutherford.speed}</span></label>
+        <input type="range" id="ctrl-speed" min="2" max="9" step="1" value="${Sim.rutherford.speed}">
+      </div>`;
+    document.getElementById("ctrl-model").addEventListener("change",(e)=>{
+      Sim.rutherford.atomModel = e.target.value;
+      Sim.rutherford.stats = {through:0,deflected:0,bounced:0,total:0};
+      renderReadout();
+    });
+    document.getElementById("ctrl-speed").addEventListener("input",(e)=>{
+      Sim.rutherford.speed = Number(e.target.value);
+      document.getElementById("val-speed").textContent = Sim.rutherford.speed;
+    });
+  }
+  renderReadout();
+}
+
+function renderSimLegend(){
+  const legend = document.getElementById("sim-legend");
+  if(Sim.key === "thomson"){
+    legend.innerHTML = `
+      <span><i style="background:var(--phosphor-500);"></i> Elektron (sinar katode)</span>
+      <span><i style="background:var(--ember-500);"></i> Pelat bermuatan positif</span>
+      <span><i style="background:var(--brass-500);"></i> Pelat bermuatan negatif</span>`;
+  } else {
+    legend.innerHTML = `
+      <span><i style="background:var(--phosphor-500);"></i> Partikel alfa</span>
+      <span><i style="background:var(--brass-500);"></i> Inti atom (model Rutherford)</span>
+      <span><i style="background:rgba(196,147,78,.35);"></i> Muatan tersebar (model Thomson)</span>
+      <span><i style="background:var(--ember-500);"></i> Partikel terpantul balik</span>`;
+  }
+}
+
+function renderReadout(){
+  const readout = document.getElementById("sim-readout");
+  if(Sim.key === "thomson"){
+    const v = Sim.thomson.voltage;
+    const arah = v===0 ? "Tidak ada defleksi" : (v>0 ? "Menuju pelat bawah" : "Menuju pelat atas");
+    readout.innerHTML = `
+      <div><b>Tegangan</b><span>${v} kV</span></div>
+      <div><b>Arah Defleksi</b><span>${arah}</span></div>
+      <div><b>Muatan Partikel</b><span>Negatif (e⁻)</span></div>
+      <div><b>Status</b><span>${Sim.running?"Berjalan":"Berhenti"}</span></div>`;
+  } else {
+    const s = Sim.rutherford.stats;
+    const pct = (n)=> s.total? ((n/s.total)*100).toFixed(1)+"%" : "0%";
+    readout.innerHTML = `
+      <div><b>Model Aktif</b><span>${Sim.rutherford.atomModel==="rutherford"?"Rutherford":"Thomson"}</span></div>
+      <div><b>Total Partikel</b><span>${s.total}</span></div>
+      <div><b>Diteruskan</b><span>${s.through} (${pct(s.through)})</span></div>
+      <div><b>Dibelokkan</b><span>${s.deflected} (${pct(s.deflected)})</span></div>
+      <div><b>Dipantulkan</b><span>${s.bounced} (${pct(s.bounced)})</span></div>
+      <div><b>Status</b><span>${Sim.running?"Berjalan":"Berhenti"}</span></div>`;
+  }
+}
+
+/* ---- Draw loop ---- */
+function drawFrame(){
+  const ctx = Sim.ctx;
+  const w = Sim.canvas.width, h = Sim.canvas.height;
+  ctx.clearRect(0,0,w,h);
+  if(Sim.key === "thomson") drawThomson(ctx,w,h);
+  else drawRutherford(ctx,w,h);
+  if(Sim.running) Sim.raf = requestAnimationFrame(drawFrame);
+}
+
+function drawThomson(ctx,w,h){
+  // Tabung
+  ctx.strokeStyle = "rgba(217,211,194,.35)";
+  ctx.lineWidth = 2*Sim.dpr;
+  ctx.strokeRect(w*0.08, h*0.32, w*0.84, h*0.36);
+
+  // Pelat defleksi
+  const plateX1 = w*0.55, plateX2 = w*0.75;
+  const v = Sim.thomson.voltage;
+  ctx.fillStyle = v>0 ? "rgba(224,114,90,.7)" : "rgba(196,147,78,.7)";
+  ctx.fillRect(plateX1, h*0.32, (plateX2-plateX1), 6*Sim.dpr); // pelat atas
+  ctx.fillStyle = v<0 ? "rgba(224,114,90,.7)" : "rgba(196,147,78,.7)";
+  ctx.fillRect(plateX1, h*0.68-6*Sim.dpr, (plateX2-plateX1), 6*Sim.dpr); // pelat bawah
+
+  // label plus/minus
+  ctx.font = (14*Sim.dpr)+"px sans-serif";
+  ctx.fillStyle = "var(--paper-100)";
+  ctx.fillStyle = "#F3EFE4";
+  ctx.fillText(v>0?"−":(v<0?"+":"·"), plateX1-14*Sim.dpr, h*0.32-8*Sim.dpr);
+  ctx.fillText(v<0?"−":(v>0?"+":"·"), plateX1-14*Sim.dpr, h*0.68+18*Sim.dpr);
+
+  // Layar berpendar
+  const screenX = w*0.92;
+  ctx.fillStyle = "rgba(95,217,196,.12)";
+  ctx.fillRect(screenX, h*0.28, 6*Sim.dpr, h*0.44);
+
+  // Katode/anode label dots
+  ctx.fillStyle = "#C4934E";
+  ctx.beginPath(); ctx.arc(w*0.1, h*0.5, 5*Sim.dpr, 0, 7); ctx.fill();
+
+  // Partikel elektron animasi
+  const deflect = v * 5 * Sim.dpr; // px per kV kira-kira
+  if(Sim.running){
+    if(Math.random() < 0.35){
+      Sim.thomson.particles.push({ x:w*0.1, y:h*0.5, t:0 });
+    }
+  }
+  ctx.fillStyle = "#5FD9C4";
+  const survivors = [];
+  Sim.thomson.particles.forEach(p=>{
+    p.t += 1;
+    p.x = w*0.1 + p.t * (5*Sim.dpr);
+    let y = h*0.5;
+    if(p.x > plateX1){
+      const progress = Math.min(1, (p.x-plateX1)/(plateX2-plateX1));
+      y = h*0.5 + deflect*progress*progress*2.2;
+    }
+    p.y = y;
+    if(p.x < screenX+20*Sim.dpr){
+      survivors.push(p);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3.4*Sim.dpr, 0, 7);
+      ctx.shadowColor = "#5FD9C4"; ctx.shadowBlur = 8*Sim.dpr;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    } else {
+      // titik pendar di layar
+      ctx.save();
+      ctx.fillStyle = "rgba(95,217,196,.55)";
+      ctx.beginPath(); ctx.arc(screenX+3*Sim.dpr, Math.min(Math.max(p.y,h*0.28), h*0.72), 2.6*Sim.dpr,0,7); ctx.fill();
+      ctx.restore();
+    }
+  });
+  Sim.thomson.particles = survivors.slice(-60);
+}
+
+function drawRutherford(ctx,w,h){
+  const cx = w*0.28, cy = h*0.5, targetR = Math.min(w,h)*0.16;
+
+  // Lingkaran detektor (layar ZnS melingkar)
+  ctx.strokeStyle = "rgba(95,217,196,.18)";
+  ctx.lineWidth = 18*Sim.dpr;
+  ctx.beginPath(); ctx.arc(cx, cy, Math.min(w,h)*0.4, 0, Math.PI*2); ctx.stroke();
+
+  // Lempeng emas — representasi atom-atom
+  if(Sim.rutherford.atomModel === "rutherford"){
+    ctx.fillStyle = "rgba(196,147,78,.12)";
+    ctx.beginPath(); ctx.arc(cx, cy, targetR, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#C4934E";
+    ctx.beginPath(); ctx.arc(cx, cy, 7*Sim.dpr, 0, Math.PI*2); ctx.fill();
+    ctx.shadowColor = "#C4934E"; ctx.shadowBlur = 14*Sim.dpr;
+    ctx.fill(); ctx.shadowBlur = 0;
+  } else {
+    // Thomson: muatan tersebar merata (gradient lembut, tanpa inti padat)
+    const grad = ctx.createRadialGradient(cx,cy,2,cx,cy,targetR);
+    grad.addColorStop(0,"rgba(196,147,78,.28)");
+    grad.addColorStop(1,"rgba(196,147,78,.03)");
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(cx, cy, targetR, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Sumber partikel alfa
+  const srcX = w*0.86, srcY = h*0.5;
+  ctx.fillStyle = "#8a94a8";
+  ctx.fillRect(srcX-10*Sim.dpr, srcY-16*Sim.dpr, 10*Sim.dpr, 32*Sim.dpr);
+
+  if(Sim.running && Math.random() < 0.55){
+    const offset = (Math.random()-0.5) * targetR * 2.4;
+    Sim.rutherford.particles.push({
+      x:srcX, y:srcY+offset, vx:-Sim.rutherford.speed*Sim.dpr*0.6, vy:0,
+      offset, resolved:false, outcome:null
+    });
+  }
+
+  const speedPx = Sim.rutherford.speed*Sim.dpr*0.6;
+  const survivors = [];
+  Sim.rutherford.particles.forEach(p=>{
+    if(!p.resolved){
+      const distToCenter = Math.hypot(p.x-cx, p.y-cy);
+      const nearCore = Math.abs(p.offset) < targetR*0.9;
+      if(p.x <= cx + targetR && p.x >= cx - targetR*0.2 && nearCore){
+        // tentukan hasil begitu memasuki area target
+        if(Sim.rutherford.atomModel === "thomson"){
+          p.outcome = "through";
+          p.vy = (Math.random()-0.5) * 0.4; // pembelokan sangat kecil
+        } else {
+          const closeness = 1 - Math.min(Math.abs(p.offset)/(targetR*0.9), 1);
+          const roll = Math.random();
+          if(closeness > 0.93 && roll < 0.5){
+            p.outcome = "bounced";
+            p.vx = Math.abs(p.vx);
+            p.vy = (Math.random()-0.5)*2*speedPx;
+          } else if(closeness > 0.55){
+            p.outcome = "deflected";
+            p.vy = (p.offset<0?-1:1) * speedPx * (0.5+closeness*0.9);
+          } else {
+            p.outcome = "through";
+            p.vy = (Math.random()-0.5)*0.3;
+          }
+        }
+        p.resolved = true;
+        Sim.rutherford.stats.total++;
+        Sim.rutherford.stats[p.outcome]++;
+        renderReadout();
+      }
+    }
+    p.x += p.vx; p.y += p.vy;
+    const alive = p.x > -20*Sim.dpr && p.x < w+20*Sim.dpr && p.y > -20*Sim.dpr && p.y < h+20*Sim.dpr;
+    if(alive) survivors.push(p);
+
+    ctx.beginPath();
+    ctx.fillStyle = p.outcome==="bounced" ? "#E0725A" : "#5FD9C4";
+    ctx.arc(p.x, p.y, 3*Sim.dpr, 0, 7);
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 6*Sim.dpr;
+    ctx.fill(); ctx.shadowBlur = 0;
+  });
+  Sim.rutherford.particles = survivors.slice(-140);
+}
+
+function startSim(){
+  Sim.running = true;
+  AudioFX.click();
+  if(!Sim.raf) drawFrame();
+  renderReadout();
+}
+function pauseSim(){ Sim.running = false; renderReadout(); }
+function stopSim(){
+  Sim.running = false;
+  Sim.thomson.particles = [];
+  Sim.rutherford.particles = [];
+  if(Sim.raf){ cancelAnimationFrame(Sim.raf); Sim.raf = null; }
+}
+function resetSim(){
+  AudioFX.reset();
+  if(confirm("Kembalikan simulasi ke kondisi awal? Data LKPD tidak akan terhapus.")){
+    Sim.thomson.voltage = 0;
+    Sim.rutherford.stats = {through:0,deflected:0,bounced:0,total:0};
+    stopSim();
+    renderSimControls();
+    drawFrame();
+    showToast("Simulasi direset ke kondisi awal.");
+  }
+}
+function stepSim(){
+  if(!Sim.running){
+    for(let i=0;i<6;i++) drawFrame();
+    cancelAnimationFrame(Sim.raf); Sim.raf = null;
+  }
+}
+
+function initSimulationView(){
+  setupCanvas();
+  renderSimTabs();
+  renderSimControls();
+  renderSimLegend();
+  drawFrame();
+  document.getElementById("sim-start").addEventListener("click", ()=>{ startSim(); unlockView("lkpd"); });
+  document.getElementById("sim-pause").addEventListener("click", pauseSim);
+  document.getElementById("sim-reset").addEventListener("click", resetSim);
+  document.getElementById("sim-step").addEventListener("click", stepSim);
+}
+
+/* =========================================================================
+   10. LKPD
+   ========================================================================= */
+const LKPD_FIELDS = ["prediksi","analisis1","analisis2","q1","q2","kesimpulan","refleksi"];
+let obsRowCount = 0;
+
+function addObsRow(data){
+  const tbody = document.getElementById("obs-tbody");
+  const idx = obsRowCount++;
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><input type="text" data-obs="model-${idx}" placeholder="cth. Rutherford" value="${data&&data.model||""}"></td>
+    <td><input type="text" data-obs="through-${idx}" placeholder="%" value="${data&&data.through||""}"></td>
+    <td><input type="text" data-obs="deflected-${idx}" placeholder="%" value="${data&&data.deflected||""}"></td>
+    <td><input type="text" data-obs="bounced-${idx}" placeholder="%" value="${data&&data.bounced||""}"></td>
+    <td><input type="text" data-obs="conclusion-${idx}" placeholder="Kesimpulan singkat" value="${data&&data.conclusion||""}"></td>`;
+  tbody.appendChild(row);
+}
+
+function renderLKPD(){
+  document.getElementById("lkpd-nama").value = State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value = State.identity.kelas||"";
+  const l = State.lkpd;
+  LKPD_FIELDS.forEach(f=>{
+    const el = document.getElementById("lkpd-"+f);
+    if(el && l[f]) el.value = l[f];
+  });
+  document.getElementById("obs-tbody").innerHTML = "";
+  obsRowCount = 0;
+  const rows = (l.obs && l.obs.length) ? l.obs : [{},{}];
+  rows.forEach(r=>addObsRow(r));
+}
+
+function collectLKPD(){
+  const l = {};
+  LKPD_FIELDS.forEach(f=>{
+    const el = document.getElementById("lkpd-"+f);
+    if(el) l[f] = el.value;
+  });
+  const rowsEl = document.querySelectorAll("#obs-tbody tr");
+  l.obs = Array.from(rowsEl).map(tr=>{
+    const inputs = tr.querySelectorAll("input");
+    return {
+      model:inputs[0].value, through:inputs[1].value, deflected:inputs[2].value,
+      bounced:inputs[3].value, conclusion:inputs[4].value
+    };
+  });
+  return l;
+}
+
+function initLKPD(){
+  document.getElementById("obs-add-row").addEventListener("click", ()=>{ addObsRow(); AudioFX.click(); });
+  document.getElementById("lkpd-save").addEventListener("click", ()=>{
+    State.lkpd = collectLKPD();
+    persistState();
+    document.getElementById("lkpd-status").textContent = "Tersimpan · " + new Date().toLocaleTimeString("id-ID");
+    AudioFX.success();
+    showToast("LKPD berhasil disimpan.", "success");
+    unlockView("evaluasi");
+  });
+  document.getElementById("lkpd-print").addEventListener("click", ()=>{ window.print(); });
+  document.getElementById("btn-print").addEventListener("click", ()=>{ goToView("lkpd"); setTimeout(()=>window.print(), 200); });
+  document.getElementById("lkpd-reset").addEventListener("click", ()=>{
+    if(confirm("Hapus seluruh isian LKPD? Tindakan ini tidak dapat dibatalkan.")){
+      State.lkpd = {};
+      persistState();
+      renderLKPD();
+      AudioFX.reset();
+      showToast("LKPD telah direset.");
+    }
+  });
+}
+
+/* =========================================================================
+   11. EVALUATION / QUIZ
+   ========================================================================= */
+function renderQuiz(){
+  const container = document.getElementById("quiz-questions");
+  container.innerHTML = LAB_DATA.evaluation.map((q,i)=>{
+    const tagClass = q.level;
+    const tagLabel = q.level.toUpperCase();
+    let body = "";
+    if(q.type === "mc"){
+      body = q.options.map((opt,oi)=>`
+        <label class="opt" data-q="${i}" data-oi="${oi}">
+          <input type="radio" name="q${i}" value="${oi}">
+          <span>${opt}</span>
+        </label>`).join("");
+    } else if(q.type === "checkbox"){
+      body = q.options.map((opt,oi)=>`
+        <label class="opt" data-q="${i}" data-oi="${oi}">
+          <input type="checkbox" name="q${i}" value="${oi}">
+          <span>${opt}</span>
+        </label>`).join("");
+    } else if(q.type === "short"){
+      body = `<input type="text" class="short-answer-input" id="q${i}-short" placeholder="Ketik jawabanmu…">`;
+    } else if(q.type === "essay"){
+      body = `<textarea id="q${i}-essay" placeholder="Tuliskan jawaban analisismu…" style="min-height:90px;"></textarea>`;
+    }
+    return `
+      <div class="card q-card" id="qcard-${i}">
+        <span class="q-tag ${tagClass}">${tagLabel} · Soal ${i+1}</span>
+        <div class="q-stem">${q.stem}</div>
+        ${body}
+        <div class="q-explain" id="qexplain-${i}"><b>Pembahasan:</b> ${q.explain}</div>
+      </div>`;
+  }).join("");
+
+  container.addEventListener("change", onQuizAnswerChange);
+  container.querySelectorAll(".short-answer-input, textarea").forEach(el=>{
+    el.addEventListener("input", onQuizAnswerChange);
+  });
+
+  document.getElementById("quiz-begin").parentElement.hidden = true;
+  document.getElementById("quiz-body").hidden = false;
+  updateQuizProgress();
+}
+
+function onQuizAnswerChange(){
+  const answers = {};
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    if(q.type==="mc"){
+      const sel = document.querySelector(`input[name="q${i}"]:checked`);
+      if(sel) answers[i] = Number(sel.value);
+    } else if(q.type==="checkbox"){
+      const sels = document.querySelectorAll(`input[name="q${i}"]:checked`);
+      if(sels.length) answers[i] = Array.from(sels).map(s=>Number(s.value));
+    } else if(q.type==="short"){
+      const val = document.getElementById(`q${i}-short`).value.trim();
+      if(val) answers[i] = val;
+    } else if(q.type==="essay"){
+      const val = document.getElementById(`q${i}-essay`).value.trim();
+      if(val) answers[i] = val;
+    }
+  });
+  State.quiz.answers = answers;
+  persistState();
+  updateQuizProgress();
+}
+
+function updateQuizProgress(){
+  const total = LAB_DATA.evaluation.length;
+  const answered = Object.keys(State.quiz.answers).length;
+  document.getElementById("quiz-progress-fill").style.width = (answered/total*100)+"%";
+  document.getElementById("quiz-progress-label").textContent = `${answered} / ${total} dijawab`;
+}
+
+function normalizeText(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+
+function gradeQuiz(){
+  let scoreItems = 0, gradable = 0;
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const ans = State.quiz.answers[i];
+    if(q.type === "essay") return; // dinilai manual oleh guru
+    gradable++;
+    if(q.type === "mc"){
+      if(ans === q.answer) scoreItems++;
+    } else if(q.type === "checkbox"){
+      if(Array.isArray(ans)){
+        const a = [...ans].sort().join(",");
+        const b = [...q.answerSet].sort().join(",");
+        if(a===b) scoreItems++;
+      }
+    } else if(q.type === "short"){
+      if(ans && q.accepted.includes(normalizeText(ans))) scoreItems++;
+    }
+  });
+  return { scoreItems, gradable, pct: gradable ? Math.round((scoreItems/gradable)*100) : 0 };
+}
+
+function revealAnswers(){
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const explainEl = document.getElementById(`qexplain-${i}`);
+    explainEl.classList.add("is-visible");
+    if(q.type === "mc"){
+      const opts = document.querySelectorAll(`#qcard-${i} .opt`);
+      const sel = State.quiz.answers[i];
+      opts.forEach((optEl,oi)=>{
+        optEl.querySelector("input").disabled = true;
+        if(oi === q.answer) optEl.classList.add("is-correct");
+        else if(oi === sel) optEl.classList.add("is-wrong");
+      });
+    } else if(q.type === "checkbox"){
+      const opts = document.querySelectorAll(`#qcard-${i} .opt`);
+      const sel = State.quiz.answers[i] || [];
+      opts.forEach((optEl,oi)=>{
+        optEl.querySelector("input").disabled = true;
+        if(q.answerSet.includes(oi)) optEl.classList.add("is-correct");
+        else if(sel.includes(oi)) optEl.classList.add("is-wrong");
+      });
+    } else if(q.type === "short"){
+      document.getElementById(`q${i}-short`).disabled = true;
+    } else if(q.type === "essay"){
+      document.getElementById(`q${i}-essay`).disabled = true;
+    }
+  });
+}
+
+function submitQuiz(){
+  const total = LAB_DATA.evaluation.length;
+  const answered = Object.keys(State.quiz.answers).length;
+  if(answered < total){
+    if(!confirm(`Kamu baru menjawab ${answered} dari ${total} soal. Tetap kumpulkan sekarang?`)) return;
+  }
+  const result = gradeQuiz();
+  State.quiz.submitted = true;
+  State.quiz.lastResult = result;
+  persistState();
+  revealAnswers();
+  unlockView("profil");
+
+  document.getElementById("quiz-body").hidden = false;
+  document.getElementById("quiz-submit").hidden = true;
+  document.getElementById("quiz-result").hidden = false;
+  document.getElementById("result-score").textContent = result.pct;
+
+  let desc = "";
+  if(result.pct >= 85) desc = "Istimewa! Pemahamanmu tentang sejarah teori atom dan partikel subatomik sangat kuat.";
+  else if(result.pct >= 70) desc = "Bagus! Sebagian besar konsep sudah kamu kuasai — tinjau kembali bagian yang masih keliru.";
+  else if(result.pct >= 50) desc = "Cukup baik. Baca ulang bagian Teori, khususnya model Thomson dan Rutherford, lalu coba lagi.";
+  else desc = "Perlu belajar lebih dalam. Cobalah ulangi bagian Teori dan Simulasi sebelum mengulang evaluasi.";
+  document.getElementById("result-desc").textContent = desc;
+
+  const badges = [
+    {id:"scholar", icon:"🎓", label:"Skor ≥ 85", earned: result.pct>=85},
+    {id:"explorer", icon:"🔭", label:"Semua Soal Dijawab", earned: answered>=total},
+    {id:"analyst", icon:"⚛", label:"Skor ≥ 70", earned: result.pct>=70}
+  ];
+  document.getElementById("badge-row").innerHTML = badges.map(b=>`
+    <div class="badge ${b.earned?"is-earned":""}"><i>${b.icon}</i><span>${b.label}</span></div>`).join("");
+
+  if(result.pct>=70) AudioFX.complete(); else AudioFX.error();
+  window.scrollTo({top:0, behavior: State.reduceMotion?"auto":"smooth"});
+}
+
+function initQuiz(){
+  document.getElementById("quiz-begin").addEventListener("click", ()=>{ AudioFX.click(); renderQuiz(); });
+  document.getElementById("quiz-submit").addEventListener("click", submitQuiz);
+  document.getElementById("quiz-review").addEventListener("click", ()=>{
+    document.getElementById("quiz-result").hidden = true;
+    document.getElementById("quiz-submit").hidden = true;
+    document.getElementById("quiz-body").hidden = false;
+    window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+  });
+  document.getElementById("quiz-retry").addEventListener("click", ()=>{
+    if(confirm("Ulangi evaluasi dari awal? Jawaban sebelumnya akan dihapus.")){
+      State.quiz = { answers:{}, submitted:false };
+      persistState();
+      document.getElementById("quiz-result").hidden = true;
+      document.getElementById("quiz-intro").hidden = false;
+      document.getElementById("quiz-body").hidden = true;
+      document.getElementById("quiz-submit").hidden = false;
+      AudioFX.reset();
+    }
+  });
+}
+
+/* =========================================================================
+   12. DEVELOPER PROFILE
+   ========================================================================= */
+function renderDevProfile(){
+  document.getElementById("dev-photo").innerHTML = `
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder foto pengembang">
+      <rect width="180" height="180" fill="#1F2C48"/>
+      <circle cx="90" cy="70" r="34" fill="#2C3A5C"/>
+      <path d="M30 168c8-40 40-58 60-58s52 18 60 58z" fill="#2C3A5C"/>
+      <circle cx="90" cy="90" r="88" fill="none" stroke="#C4934E" stroke-width="1.5" opacity="0.4"/>
+    </svg>`;
+}
+
+/* =========================================================================
+   13. RULE-BASED ASSISTANT
+   ========================================================================= */
+const ASSISTANT_RULES = [
+  {keys:["mulai","cara mulai","gimana mulai"], reply:"Klik tombol \"Mulai Praktikum\" pada layar pembuka, isi identitasmu, lalu ikuti tab navigasi dari Teori → Prosedur → Simulasi → LKPD → Evaluasi secara berurutan."},
+  {keys:["thomson","roti kismis"], reply:"Model Thomson menggambarkan atom sebagai bola bermuatan positif dengan elektron tersebar di dalamnya, ibarat kismis dalam roti. Model ini terbantahkan oleh eksperimen Rutherford."},
+  {keys:["rutherford","hamburan","sinar alfa"], reply:"Eksperimen hamburan sinar alfa menembakkan partikel alfa ke lempeng emas. Sebagian kecil partikel dibelokkan tajam atau terpantul balik — bukti adanya inti atom yang padat dan bermuatan positif."},
+  {keys:["elektron"], reply:"Elektron adalah partikel bermuatan negatif, ditemukan oleh J.J. Thomson (1897) melalui eksperimen sinar katode."},
+  {keys:["proton"], reply:"Proton adalah partikel bermuatan positif di inti atom. Diamati pertama kali sebagai sinar terusan oleh Goldstein (1886), lalu diidentifikasi Rutherford (1917–1920)."},
+  {keys:["neutron"], reply:"Neutron adalah partikel tak bermuatan di inti atom, ditemukan James Chadwick pada 1932 dari penembakan berilium dengan partikel alfa."},
+  {keys:["error","macet","tidak jalan","bug"], reply:"Coba muat ulang halaman. Data LKPD dan jawabanmu tersimpan otomatis di perangkat ini, jadi tidak akan hilang."},
+  {keys:["lkpd"], reply:"LKPD dapat diisi setelah kamu mulai menjalankan simulasi. Klik \"Simpan\" secara berkala, dan gunakan \"Cetak / Simpan PDF\" bila ingin dokumen cetak."},
+  {keys:["nilai","skor","evaluasi"], reply:"Evaluasi berisi 18 soal (LOTS-HOTS). Skor otomatis dihitung dari soal pilihan ganda, checkbox, dan isian singkat. Soal esai direkam untuk dinilai gurumu."},
+  {keys:["suara","sound","bunyi"], reply:"Gunakan ikon 🔊 pada bilah atas untuk mengaktifkan atau mematikan efek suara."}
+];
+function assistantReply(text){
+  const q = normalizeText(text);
+  const rule = ASSISTANT_RULES.find(r=>r.keys.some(k=>q.includes(k)));
+  return rule ? rule.reply : "Aku asisten berbasis aturan (bukan AI generatif), jadi jawabanku terbatas pada topik virtual lab ini. Coba tanyakan tentang: Thomson, Rutherford, elektron, proton, neutron, LKPD, atau cara memulai.";
+}
+function initAssistant(){
+  const fab = document.getElementById("assistant-fab");
+  const panel = document.getElementById("assistant-panel");
+  const body = document.getElementById("assistant-body");
+  const chips = document.getElementById("assistant-chips");
+
+  function addMsg(text, who){
+    const div = document.createElement("div");
+    div.className = "assistant-msg" + (who==="user" ? " user" : "");
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+  addMsg("Halo! Aku asisten berbasis aturan untuk membantumu memahami virtual lab ini. Tanyakan tentang Thomson, Rutherford, atau cara pakai fitur.", "bot");
+
+  ["Cara mulai?","Apa itu proton?","Model Thomson vs Rutherford?"].forEach(q=>{
+    const chip = document.createElement("button");
+    chip.className = "assistant-chip";
+    chip.textContent = q;
+    chip.addEventListener("click", ()=>{
+      addMsg(q,"user");
+      setTimeout(()=>addMsg(assistantReply(q),"bot"), 220);
+    });
+    chips.appendChild(chip);
+  });
+
+  fab.addEventListener("click", ()=>{
+    const hidden = panel.hidden;
+    panel.hidden = !hidden;
+    fab.setAttribute("aria-expanded", String(hidden));
+    AudioFX.click();
+  });
+  document.getElementById("assistant-close").addEventListener("click", ()=>{
+    panel.hidden = true; fab.setAttribute("aria-expanded","false");
+  });
+}
+
+/* =========================================================================
+   14. TOP CONTROLS (sound / reduce motion)
+   ========================================================================= */
+function initTopControls(){
+  const soundBtn = document.getElementById("btn-sound");
+  soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+  soundBtn.textContent = State.soundOn ? "🔊" : "🔇";
+  soundBtn.addEventListener("click", ()=>{
+    State.soundOn = !State.soundOn;
+    soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+    soundBtn.textContent = State.soundOn ? "🔊" : "🔇";
+    persistState();
+    if(State.soundOn) AudioFX.click();
+  });
+
+  const rmBtn = document.getElementById("btn-reduce-motion");
+  rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+  document.body.classList.toggle("reduce-motion", State.reduceMotion);
+  rmBtn.addEventListener("click", ()=>{
+    State.reduceMotion = !State.reduceMotion;
+    rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+    document.body.classList.toggle("reduce-motion", State.reduceMotion);
+    persistState();
+  });
+
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    State.reduceMotion = true;
+    document.body.classList.add("reduce-motion");
+    rmBtn.setAttribute("aria-pressed","true");
+  }
+}
+
+/* =========================================================================
+   15. GLOBAL ERROR HANDLING
+   ========================================================================= */
+window.addEventListener("error", (e)=>{
+  console.error("Terjadi kesalahan tak terduga:", e.message);
+});
+
+/* =========================================================================
+   16. BOOTSTRAP
+   ========================================================================= */
+function init(){
+  loadState();
+  initSplash();
+  initTopControls();
+  buildTabs();
+  renderTheory();
+  renderProcedureTabs();
+  renderProcedureSteps();
+  initLKPD();
+  renderLKPD();
+  initQuiz();
+  renderDevProfile();
+  initAssistant();
+  goToView(State.activeView || "teori");
+
+  // Inisialisasi simulasi hanya saat pertama kali tab dibuka (hemat resource)
+  let simInitialized = false;
+  document.getElementById("tab-simulasi").addEventListener("click", ()=>{
+    if(!simInitialized){ initSimulationView(); simInitialized = true; }
+  });
+  // Jika state sebelumnya sudah membuka tab simulasi, siapkan langsung
+  if(State.activeView === "simulasi"){ initSimulationView(); simInitialized = true; }
+
+  if(State.identity.nama && State.identity.kelas){
+    // Sudah pernah isi identitas sebelumnya — splash tetap tampil, tapi form dilewati saat klik mulai
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

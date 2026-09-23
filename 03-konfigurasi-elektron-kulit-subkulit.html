@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Virtual Lab Kimia — Konfigurasi Elektron: Kulit (Bohr) &amp; Subkulit (Mekanika Kuantum)</title>
+<meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: konfigurasi elektron berdasarkan kulit (model atom Bohr) dan subkulit (model atom mekanika kuantum).">
+
+<style>
+:root{
+  --ink-950:#0B1220; --ink-900:#101A2E; --ink-800:#16213A; --ink-700:#1F2C48; --ink-600:#2C3A5C;
+  --brass-500:#C4934E; --brass-400:#D9AC6E; --brass-700:#93672F;
+  --phosphor-500:#5FD9C4; --phosphor-300:#9EEBDC;
+  --ember-500:#E0725A; --ember-300:#F0A38F;
+  --leaf-500:#7FBF7F;
+  --paper-100:#F3EFE4; --paper-300:#D9D3C2; --paper-500:#A9A290;
+  --serif:"Fraunces","Iowan Old Style",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --radius-s:6px; --radius-m:12px; --radius-l:20px;
+  --shadow-deep:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{ margin:0; font-family:var(--sans); background:radial-gradient(1200px 800px at 15% -10%, #16223d 0%, var(--ink-950) 55%); color:var(--paper-100); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+h1,h2,h3,h4{ font-family:var(--serif); font-weight:600; margin:0 0 .4em; letter-spacing:.2px; }
+p{ margin:0 0 1em; line-height:1.65; color:var(--paper-300); }
+a{ color:var(--phosphor-500); }
+button{ font-family:inherit; }
+::selection{ background:var(--brass-500); color:var(--ink-950); }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+body.reduce-motion *{ animation:none !important; transition:none !important; }
+:focus-visible{ outline:2px solid var(--phosphor-500); outline-offset:3px; border-radius:4px; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--ink-600); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--brass-700); }
+.visually-hidden{ position:absolute !important; width:1px;height:1px; padding:0;margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.skip-link{ position:absolute; left:12px; top:-60px; background:var(--brass-500); color:var(--ink-950); padding:10px 16px; border-radius:var(--radius-s); z-index:999; font-weight:600; transition:top .2s var(--ease); }
+.skip-link:focus{ top:12px; }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+.appbar{ display:flex; align-items:center; gap:16px; padding:10px 22px; background:linear-gradient(180deg, rgba(16,26,46,.96), rgba(16,26,46,.88)); border-bottom:1px solid var(--ink-600); position:sticky; top:0; z-index:60; backdrop-filter:blur(6px); }
+.appbar__brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+.appbar__mark{ width:34px;height:34px; border-radius:50%; background:radial-gradient(circle at 32% 28%, var(--phosphor-300), var(--phosphor-500) 45%, #1a6f60 100%); box-shadow:0 0 16px -2px var(--phosphor-500); flex:none; }
+.appbar__title{ font-family:var(--serif); font-size:15px; line-height:1.1; }
+.appbar__title small{ display:block; font-family:var(--sans); font-size:11px; color:var(--paper-500); font-weight:500; }
+.tabs{ display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab-btn{ border:1px solid transparent; background:transparent; color:var(--paper-500); padding:9px 14px; border-radius:999px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease); }
+.tab-btn .tab-num{ width:18px;height:18px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); font-size:10px; display:grid; place-items:center; font-family:var(--mono); flex:none; }
+.tab-btn:hover{ color:var(--paper-100); background:var(--ink-800); }
+.tab-btn[aria-selected="true"]{ color:var(--ink-950); background:var(--brass-500); }
+.tab-btn[aria-selected="true"] .tab-num{ background:rgba(11,18,32,.25); color:var(--ink-950); }
+.tab-btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.tab-btn[disabled]:hover{ background:transparent; color:var(--paper-500); }
+.appbar__actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ width:36px;height:36px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); display:grid; place-items:center; cursor:pointer; font-size:15px; transition:border-color .18s var(--ease), color .18s var(--ease), transform .12s var(--ease); }
+.icon-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.icon-btn:active{ transform:scale(.94); }
+.icon-btn[aria-pressed="false"]{ opacity:.5; }
+.progress-rail{ height:3px; background:var(--ink-700); position:relative; }
+.progress-rail__fill{ height:100%; background:linear-gradient(90deg, var(--brass-700), var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+main{ flex:1; position:relative; }
+.view{ display:none; padding:28px clamp(16px,4vw,56px) 64px; max-width:1240px; margin:0 auto; animation:viewIn .35s var(--ease); }
+.view.is-active{ display:block; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+.view-head{ margin-bottom:26px; }
+.eyebrow-plain{ font-size:12.5px; color:var(--phosphor-500); font-weight:600; margin-bottom:6px; }
+.view-head h2{ font-size:clamp(24px,3.4vw,34px); }
+.view-head p{ max-width:640px; }
+.card{ background:linear-gradient(180deg, var(--ink-800), var(--ink-900)); border:1px solid var(--ink-600); border-radius:var(--radius-l); padding:22px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:900px){ .grid-2{ grid-template-columns:1fr; } }
+
+.btn{ display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:12px 22px; border-radius:999px; border:1px solid transparent; cursor:pointer; font-weight:600; font-size:14.5px; transition:transform .14s var(--ease), box-shadow .2s var(--ease), background .18s; }
+.btn:active{ transform:scale(.97); }
+.btn--primary{ background:linear-gradient(180deg, var(--brass-400), var(--brass-500)); color:#1B1305; box-shadow:0 10px 24px -10px rgba(196,147,78,.55); }
+.btn--primary:hover{ box-shadow:0 14px 30px -10px rgba(196,147,78,.7); }
+.btn--ghost{ background:transparent; border-color:var(--ink-600); color:var(--paper-100); }
+.btn--ghost:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.btn--danger{ background:transparent; border-color:var(--ember-500); color:var(--ember-300); }
+.btn--danger:hover{ background:rgba(224,114,90,.12); }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+.btn--sm{ padding:8px 16px; font-size:13px; }
+.btn--block{ width:100%; }
+
+label{ display:block; font-size:13px; font-weight:600; color:var(--paper-300); margin-bottom:6px; }
+input[type="text"], input[type="number"], select, textarea{ width:100%; background:var(--ink-950); border:1px solid var(--ink-600); color:var(--paper-100); padding:11px 13px; border-radius:var(--radius-s); font-size:14.5px; font-family:inherit; }
+textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+input:focus, select:focus, textarea:focus{ border-color:var(--phosphor-500); }
+.field{ margin-bottom:16px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+.hint{ font-size:12px; color:var(--paper-500); margin-top:5px; }
+
+#splash{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:radial-gradient(900px 500px at 80% 10%, rgba(95,217,196,.10), transparent 60%), radial-gradient(700px 500px at 10% 90%, rgba(196,147,78,.14), transparent 60%), var(--ink-950); padding:24px; text-align:center; transition:opacity .5s var(--ease), visibility .5s; }
+#splash.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.splash__orbit{ position:relative; width:150px;height:150px; margin:0 auto 26px; }
+.splash__nucleus{ position:absolute; inset:0; margin:auto; width:26px;height:26px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); box-shadow:0 0 30px 4px rgba(196,147,78,.55); }
+.splash__ring{ position:absolute; inset:0; border:1px solid rgba(95,217,196,.35); border-radius:50%; }
+.splash__ring:nth-child(2){ inset:14px; animation:spin 6s linear infinite; }
+.splash__ring:nth-child(3){ inset:0; transform:rotate(60deg); animation:spin 9s linear infinite reverse; }
+.splash__ring:nth-child(4){ inset:0; transform:rotate(-60deg); animation:spin 12s linear infinite; }
+.splash__electron{ position:absolute; width:8px;height:8px;border-radius:50%; background:var(--phosphor-500); box-shadow:0 0 10px 2px var(--phosphor-500); top:-4px; left:50%; margin-left:-4px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+body.reduce-motion .splash__ring{ animation:none; }
+.splash__eyebrow{ letter-spacing:.4px; color:var(--phosphor-500); font-weight:700; font-size:13px; margin-bottom:10px; }
+.splash h1{ font-size:clamp(26px,4.6vw,42px); max-width:800px; margin:0 auto 10px; }
+.splash__topic{ color:var(--brass-400); font-weight:600; font-size:clamp(15px,2vw,19px); margin-bottom:26px; }
+.splash__meta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+.chip{ border:1px solid var(--ink-600); border-radius:999px; padding:6px 14px; font-size:12.5px; color:var(--paper-300); background:var(--ink-800); }
+
+.modal-scrim{ position:fixed; inset:0; background:rgba(6,9,16,.72); z-index:210; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-scrim[hidden]{ display:none; }
+.modal{ background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); max-width:460px; width:100%; padding:28px; box-shadow:var(--shadow-deep); }
+.modal h2{ font-size:22px; }
+
+.theory-toc{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.toc-pill{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:7px 13px; border-radius:999px; font-size:12.5px; cursor:pointer; font-weight:600; }
+.toc-pill:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.theory-section{ margin-bottom:30px; scroll-margin-top:90px; }
+.theory-section h3{ font-size:20px; border-bottom:1px solid var(--ink-600); padding-bottom:10px; margin-bottom:14px; }
+.term-list{ display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+.term-list dt{ font-weight:700; color:var(--paper-100); font-size:13.5px; }
+.term-list dd{ margin:0 0 12px; color:var(--paper-500); font-size:13.2px; }
+@media (max-width:700px){ .term-list{ grid-template-columns:1fr; } }
+.misconception{ border-left:3px solid var(--ember-500); background:rgba(224,114,90,.08); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:12px 16px; margin-bottom:10px; }
+.misconception b{ color:var(--ember-300); }
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+table.data-table th{ text-align:left; font-family:var(--serif); font-weight:600; color:var(--brass-400); padding:10px 12px; border-bottom:2px solid var(--ink-600); }
+table.data-table td{ padding:10px 12px; border-bottom:1px solid var(--ink-700); color:var(--paper-300); }
+table.data-table tr:last-child td{ border-bottom:none; }
+.table-wrap{ overflow-x:auto; }
+
+.anatomy-diagram{ display:flex; align-items:center; justify-content:center; gap:30px; flex-wrap:wrap; padding:26px; background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); margin:16px 0; }
+.anatomy-label{ display:flex; flex-direction:column; align-items:center; gap:8px; font-size:11.5px; color:var(--paper-500); text-align:center; max-width:220px; }
+.anatomy-label b{ color:var(--paper-100); font-size:12.5px; }
+.anatomy-notation{ font-family:var(--mono); font-size:16px; color:var(--phosphor-500); background:var(--ink-900); border:1px solid var(--ink-700); padding:10px 14px; border-radius:var(--radius-s); letter-spacing:.5px; }
+.anatomy-arrow{ color:var(--ink-600); font-size:22px; }
+
+.proc-tabs{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.proc-tab{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:10px 16px; border-radius:var(--radius-m); cursor:pointer; font-weight:600; font-size:13.5px; text-align:left; }
+.proc-tab[aria-selected="true"]{ border-color:var(--brass-500); color:var(--brass-400); background:rgba(196,147,78,.09); }
+.step-list{ counter-reset:step; }
+.step{ display:grid; grid-template-columns:40px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--ink-700); opacity:.5; }
+.step.is-unlocked{ opacity:1; }
+.step:last-child{ border-bottom:none; }
+.step__num{ width:34px;height:34px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; }
+.step.is-unlocked .step__num{ background:var(--brass-500); color:#1B1305; }
+.step.is-done .step__num{ background:var(--leaf-500); color:#0c2410; }
+.step h4{ font-size:15.5px; margin-bottom:6px; }
+.step__meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--paper-500); margin:8px 0; }
+.step__meta span{ display:flex; gap:5px; align-items:center; }
+.step__meta b{ color:var(--paper-300); font-weight:600; }
+.step-actions{ margin-top:10px; }
+.progress-track{ height:8px; background:var(--ink-700); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+.progress-track__fill{ height:100%; background:linear-gradient(90deg, var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+
+.sim-shell{ display:grid; grid-template-columns:300px 1fr; gap:20px; }
+@media (max-width:980px){ .sim-shell{ grid-template-columns:1fr; } }
+.sim-panel{ display:flex; flex-direction:column; gap:16px; }
+.sim-stage{ position:relative; border-radius:var(--radius-l); border:1px solid var(--ink-600); background:radial-gradient(ellipse at 50% 30%, #0e1a30 0%, #060a14 72%); overflow:hidden; min-height:460px; }
+.sim-stage canvas{ display:block; width:100%; height:100%; }
+.sim-toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--ink-600); background:rgba(11,18,32,.7); }
+.mode-switch{ display:flex; gap:6px; background:var(--ink-800); border:1px solid var(--ink-600); border-radius:999px; padding:4px; }
+.mode-switch button{ border:none; background:transparent; color:var(--paper-500); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; cursor:pointer; }
+.mode-switch button[aria-pressed="true"]{ background:var(--phosphor-500); color:#04211c; }
+.readout{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:var(--mono); font-size:12.5px; }
+.readout div{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:8px 10px; }
+.readout b{ display:block; color:var(--phosphor-500); font-size:10.5px; letter-spacing:.4px; margin-bottom:2px; font-family:var(--sans); }
+.readout span{ color:var(--paper-100); font-size:13.5px; word-break:break-word; }
+.control-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-500); }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.legend i{ width:10px;height:10px;border-radius:50%; display:inline-block; }
+.sim-note{ font-size:12.5px; background:rgba(95,217,196,.08); border:1px solid rgba(95,217,196,.25); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+.stepper-field{ margin-bottom:16px; }
+.stepper-row{ display:flex; align-items:center; gap:10px; }
+.stepper-btn{ width:34px;height:34px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-100); font-size:17px; font-weight:700; cursor:pointer; display:grid; place-items:center; flex:none; }
+.stepper-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.stepper-btn:active{ transform:scale(.92); }
+.stepper-val{ flex:1; text-align:center; font-family:var(--mono); font-size:18px; color:var(--paper-100); background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:7px 0; }
+
+/* Aufbau DOM layer (diagram orbital) */
+.aufbau-layer{ position:absolute; inset:0; overflow-y:auto; padding:22px; display:none; }
+.aufbau-layer.is-active{ display:block; }
+.aufbau-notation{ font-family:var(--mono); font-size:clamp(15px,2.4vw,20px); color:var(--paper-100); text-align:center; letter-spacing:.5px; margin-bottom:6px; word-break:break-word; }
+.aufbau-shorthand{ text-align:center; font-family:var(--mono); font-size:13px; color:var(--phosphor-500); margin-bottom:22px; }
+.orbital-row{ display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+.orbital-row-label{ width:38px; font-family:var(--mono); font-weight:700; color:var(--brass-400); font-size:14px; flex:none; }
+.orbital-boxes{ display:flex; gap:4px; }
+.orbital-box{ width:30px;height:30px; border:1.5px solid var(--ink-600); border-radius:4px; background:var(--ink-950); display:grid; place-items:center; font-size:13px; color:var(--phosphor-300); flex:none; }
+.orbital-box.has-1{ border-color:var(--brass-500); }
+.orbital-box.has-2{ border-color:var(--phosphor-500); background:rgba(95,217,196,.08); }
+.orbital-row-meta{ font-size:11px; color:var(--paper-500); font-family:var(--mono); }
+.aufbau-exception-note{ margin-top:16px; font-size:12px; background:rgba(224,114,90,.08); border:1px solid rgba(224,114,90,.3); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+.lkpd-section{ margin-bottom:24px; }
+.lkpd-section h3{ font-size:16px; display:flex; align-items:center; gap:8px; }
+.lkpd-section h3 em{ font-style:normal; font-family:var(--mono); font-size:11px; color:var(--paper-500); background:var(--ink-700); padding:3px 8px; border-radius:5px; }
+.obs-table td, .obs-table th{ padding:8px; }
+.obs-table input{ padding:7px 9px; font-size:13px; }
+.add-row-btn{ margin-top:8px; }
+.lkpd-toolbar{ display:flex; gap:10px; flex-wrap:wrap; position:sticky; bottom:14px; z-index:5; background:var(--ink-900); border:1px solid var(--ink-600); padding:12px; border-radius:var(--radius-m); box-shadow:var(--shadow-deep); }
+.save-status{ font-size:12px; color:var(--paper-500); align-self:center; margin-left:auto; }
+
+.quiz-progress{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+.quiz-progress .progress-track{ flex:1; margin:0; }
+.quiz-meta{ font-family:var(--mono); font-size:12.5px; color:var(--paper-500); white-space:nowrap; }
+.q-card{ margin-bottom:18px; }
+.q-tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:3px 9px; border-radius:999px; margin-bottom:12px; }
+.q-tag.lots{ background:rgba(127,191,127,.16); color:var(--leaf-500); }
+.q-tag.mots{ background:rgba(196,147,78,.18); color:var(--brass-400); }
+.q-tag.hots{ background:rgba(224,114,90,.18); color:var(--ember-300); }
+.q-stem{ font-size:15.5px; color:var(--paper-100); margin-bottom:14px; font-weight:500; line-height:1.55; }
+.opt{ display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border:1px solid var(--ink-600); border-radius:var(--radius-m); margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s; }
+.opt:hover{ border-color:var(--brass-500); }
+.opt input{ margin-top:3px; accent-color:var(--brass-500); flex:none; }
+.opt span{ font-size:14px; color:var(--paper-300); }
+.opt.is-correct{ border-color:var(--leaf-500); background:rgba(127,191,127,.09); }
+.opt.is-wrong{ border-color:var(--ember-500); background:rgba(224,114,90,.09); }
+.q-explain{ display:none; margin-top:12px; padding:12px 14px; border-radius:var(--radius-s); background:var(--ink-950); border:1px solid var(--ink-700); font-size:13px; color:var(--paper-300); }
+.q-explain.is-visible{ display:block; }
+.q-explain b{ color:var(--phosphor-500); }
+.short-answer-input{ margin-top:6px; }
+.result-hero{ text-align:center; padding:38px 22px; }
+.result-score{ font-family:var(--serif); font-size:56px; color:var(--brass-400); }
+.badge-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.badge{ display:flex; flex-direction:column; align-items:center; gap:6px; width:96px; opacity:.3; }
+.badge.is-earned{ opacity:1; }
+.badge i{ width:44px;height:44px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); display:grid; place-items:center; font-style:normal; font-size:18px; }
+.badge span{ font-size:10.5px; text-align:center; color:var(--paper-500); font-weight:600; }
+
+.dev-card{ display:grid; grid-template-columns:180px 1fr; gap:26px; align-items:start; }
+@media (max-width:640px){ .dev-card{ grid-template-columns:1fr; } }
+.dev-photo{ width:180px;height:180px; border-radius:var(--radius-l); overflow:hidden; border:1px solid var(--ink-600); background:var(--ink-700); }
+.dev-photo svg{ width:100%; height:100%; display:block; }
+.dev-competency{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+.assistant-fab{ position:fixed; right:20px; bottom:20px; z-index:150; width:56px;height:56px; border-radius:50%; background:linear-gradient(160deg, var(--phosphor-300), var(--phosphor-500)); border:none; cursor:pointer; box-shadow:0 14px 30px -10px rgba(95,217,196,.6); font-size:22px; display:grid; place-items:center; color:#052c25; }
+.assistant-panel{ position:fixed; right:20px; bottom:88px; width:min(340px, calc(100vw - 40px)); max-height:60vh; z-index:150; background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); box-shadow:var(--shadow-deep); display:flex; flex-direction:column; overflow:hidden; }
+.assistant-panel[hidden]{ display:none; }
+.assistant-head{ padding:14px 16px; border-bottom:1px solid var(--ink-600); display:flex; justify-content:space-between; align-items:center; }
+.assistant-head h4{ margin:0; font-size:14.5px; }
+.assistant-body{ padding:14px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.assistant-msg{ background:var(--ink-800); border-radius:var(--radius-s); padding:9px 11px; color:var(--paper-300); align-self:flex-start; max-width:88%; }
+.assistant-msg.user{ background:var(--brass-700); color:#fff; align-self:flex-end; }
+.assistant-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; }
+.assistant-chip{ font-size:11.5px; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:6px 10px; border-radius:999px; cursor:pointer; }
+
+#toast-region{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.toast{ background:var(--ink-800); border:1px solid var(--ink-600); color:var(--paper-100); padding:10px 18px; border-radius:999px; font-size:13px; box-shadow:var(--shadow-deep); animation:toastIn .25s var(--ease); }
+.toast.success{ border-color:var(--leaf-500); }
+.toast.error{ border-color:var(--ember-500); }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} }
+footer.appfoot{ text-align:center; padding:20px; font-size:11.5px; color:var(--paper-500); border-top:1px solid var(--ink-600); }
+
+@media (max-width:760px){
+  .appbar{ flex-wrap:wrap; padding:10px 14px; row-gap:8px; }
+  .appbar__brand{ margin-right:0; }
+  .appbar__title small{ display:none; }
+  .tabs{ order:3; width:100%; padding-top:2px; }
+  .appbar__actions{ margin-left:auto; }
+  .assistant-panel{ right:12px; left:12px; width:auto; bottom:80px; }
+  .assistant-fab{ right:14px; bottom:14px; }
+}
+@media print{
+  .appbar,.assistant-fab,.assistant-panel,footer.appfoot,.lkpd-toolbar,#splash,.modal-scrim,.progress-rail{ display:none !important; }
+  body{ background:#fff; color:#111; }
+  .view{ display:block !important; }
+  main .view:not(#view-lkpd){ display:none !important; }
+  .card{ border:1px solid #ccc; background:#fff; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<div id="splash" role="dialog" aria-labelledby="splash-title">
+  <div>
+    <div class="splash__orbit" aria-hidden="true">
+      <div class="splash__ring"></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__nucleus"></div>
+    </div>
+    <div class="splash__eyebrow">Virtual Laboratory — Kimia SMA</div>
+    <h1 id="splash-title">Konfigurasi Elektron: Kulit (Bohr) &amp; Subkulit (Mekanika Kuantum)</h1>
+    <div class="splash__topic">Dua cara memetakan "alamat" setiap elektron dalam atom</div>
+    <div class="splash__meta">
+      <span class="chip">Fase E · Kelas X</span>
+      <span class="chip">Struktur Atom</span>
+      <span class="chip">± 60 menit</span>
+    </div>
+    <button class="btn btn--primary" id="btn-start" style="font-size:16px;padding:15px 34px;">Mulai Praktikum</button>
+  </div>
+</div>
+
+<div class="modal-scrim" id="modal-identity" hidden>
+  <form class="modal" id="form-identity" novalidate>
+    <h2>Identitas Praktikan</h2>
+    <p style="font-size:13px;">Data ini digunakan pada LKPD, evaluasi, dan rekap hasil belajarmu.</p>
+    <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama" required autocomplete="name" placeholder="cth. Ahmad Zaki"></div>
+    <div class="field-row">
+      <div class="field"><label for="inp-kelas">Kelas</label><input type="text" id="inp-kelas" required placeholder="cth. X-4"></div>
+      <div class="field"><label for="inp-id">No. Absen / ID</label><input type="text" id="inp-id" placeholder="cth. 17"></div>
+    </div>
+    <p class="hint" id="identity-error" style="color:var(--ember-300); display:none;">Nama dan kelas wajib diisi sebelum memulai.</p>
+    <button type="submit" class="btn btn--primary btn--block">Simpan &amp; Masuk Laboratorium</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="appbar">
+    <div class="appbar__brand">
+      <div class="appbar__mark" aria-hidden="true"></div>
+      <div class="appbar__title">Virtual Lab Kimia<small>Konfigurasi Elektron: Kulit &amp; Subkulit</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Navigasi bagian praktikum" role="tablist"></nav>
+    <div class="appbar__actions">
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Suara ON/OFF" aria-label="Aktifkan atau matikan suara">🔊</button>
+      <button class="icon-btn" id="btn-reduce-motion" aria-pressed="false" title="Kurangi animasi" aria-label="Kurangi animasi">✧</button>
+      <button class="icon-btn" id="btn-print" title="Cetak LKPD" aria-label="Cetak LKPD">🖨</button>
+    </div>
+  </header>
+  <div class="progress-rail"><div class="progress-rail__fill" id="global-progress"></div></div>
+
+  <main id="main-content">
+
+    <!-- ============================= TEORI ============================= -->
+    <section class="view" id="view-teori" data-view="teori">
+      <div class="view-head">
+        <div class="eyebrow-plain">01 · Teori</div>
+        <h2>Memetakan Alamat Setiap Elektron</h2>
+        <p>Bagaimana cara elektron-elektron "tertata rapi" di dalam atom? Model atom Bohr menjawabnya dengan kulit-kulit bernomor, sementara model mekanika kuantum menjelaskannya lebih rinci lagi lewat subkulit dan orbital.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:26px;">
+        <h3 style="font-size:16px;margin-bottom:12px;">Tujuan Pembelajaran</h3>
+        <ul id="tp-list" style="margin:0; padding-left:20px; color:var(--paper-300); font-size:14px; line-height:1.8;"></ul>
+      </div>
+
+      <div class="theory-toc" id="theory-toc" aria-label="Lompat ke subtopik teori"></div>
+
+      <div class="anatomy-diagram">
+        <div class="anatomy-label">
+          <div class="anatomy-notation">2, 8, 8, 2</div>
+          <b>Konfigurasi Kulit (Model Bohr)</b>
+          Kalsium (Ca, Z=20) — elektron dikelompokkan per kulit K, L, M, N
+        </div>
+        <div class="anatomy-arrow">≈</div>
+        <div class="anatomy-label">
+          <div class="anatomy-notation">1s²2s²2p⁶3s²3p⁶4s²</div>
+          <b>Konfigurasi Subkulit (Mekanika Kuantum)</b>
+          Kalsium (Ca, Z=20) — elektron dirinci per subkulit s, p, d, f
+        </div>
+      </div>
+
+      <div id="theory-sections"></div>
+    </section>
+
+    <!-- ============================= PROSEDUR ============================= -->
+    <section class="view" id="view-prosedur" data-view="prosedur">
+      <div class="view-head">
+        <div class="eyebrow-plain">02 · Prosedur</div>
+        <h2>Langkah Kerja Praktikum</h2>
+        <p>Pilih salah satu aktivitas untuk melihat urutan langkah kerjanya. Selesaikan langkah secara berurutan sebelum melanjutkan ke simulasi.</p>
+      </div>
+      <div class="proc-tabs" id="proc-tabs" role="tablist" aria-label="Pilih aktivitas"></div>
+      <div class="progress-track"><div class="progress-track__fill" id="proc-progress"></div></div>
+      <div class="card"><div class="step-list" id="proc-steps"></div></div>
+    </section>
+
+    <!-- ============================= SIMULASI ============================= -->
+    <section class="view" id="view-simulasi" data-view="simulasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">03 · Simulasi</div>
+        <h2>Laboratorium Interaktif</h2>
+        <p>Bangun konfigurasi elektron kulit demi kulit, atau telusuri urutan pengisian subkulit lengkap dengan diagram orbital dan aturan Hund.</p>
+      </div>
+      <div class="proc-tabs" id="sim-tabs" role="tablist" aria-label="Pilih simulasi" style="margin-bottom:18px;"></div>
+
+      <div class="sim-shell">
+        <div class="sim-panel">
+          <div class="card" id="sim-controls"></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Pembacaan Instrumen</h4><div class="readout" id="sim-readout"></div></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Legenda</h4><div class="legend" id="sim-legend"></div></div>
+        </div>
+        <div>
+          <div class="sim-stage" id="sim-stage">
+            <canvas id="sim-canvas" role="img" aria-label="Kanvas simulasi laboratorium"></canvas>
+            <div class="aufbau-layer" id="aufbau-layer"></div>
+          </div>
+          <div class="sim-toolbar">
+            <div class="control-row"><button class="btn btn--danger btn--sm" id="sim-reset">↺ Reset</button></div>
+            <div class="mode-switch" id="sim-mode-switch" role="group" aria-label="Mode tampilan"></div>
+          </div>
+          <p class="sim-note" id="sim-note" style="margin-top:14px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= LKPD ============================= -->
+    <section class="view" id="view-lkpd" data-view="lkpd">
+      <div class="view-head">
+        <div class="eyebrow-plain">04 · LKPD Digital</div>
+        <h2>Lembar Kerja Peserta Didik</h2>
+        <p>Isi setiap bagian berdasarkan pengamatanmu pada simulasi. Data tersimpan otomatis di perangkatmu.</p>
+      </div>
+      <div class="card">
+        <form id="form-lkpd">
+          <div class="lkpd-section">
+            <h3>A. Identitas <em>identitas</em></h3>
+            <div class="field-row">
+              <div class="field"><label>Nama</label><input type="text" id="lkpd-nama" readonly></div>
+              <div class="field"><label>Kelas</label><input type="text" id="lkpd-kelas" readonly></div>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>B. Tujuan <em>tujuan</em></h3>
+            <p style="font-size:13.5px;">Menuliskan dan menganalisis konfigurasi elektron berdasarkan kulit (model Bohr) dan subkulit (model mekanika kuantum), serta menjelaskan asas Aufbau, aturan Hund, dan larangan Pauli.</p>
+          </div>
+          <div class="lkpd-section">
+            <h3>C. Prediksi <em>hipotesis</em></h3>
+            <div class="field">
+              <label for="lkpd-prediksi">Menurutmu, apakah kulit M (n=3) akan langsung terisi hingga 18 elektron sebelum kulit N mulai terisi? Tuliskan prediksimu, lalu buktikan dengan simulator pada unsur Kalium (K, Z=19).</label>
+              <textarea id="lkpd-prediksi"></textarea>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>D. Alat &amp; Bahan <em>otomatis</em></h3>
+            <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px;">
+              <li>Simulator Konfigurasi Kulit (Model Bohr) — diagram cincin elektron</li>
+              <li>Simulator Konfigurasi Subkulit (Aufbau) — diagram orbital dan notasi subkulit</li>
+              <li>Panel pembacaan instrumen (notasi, elektron valensi, elektron tak berpasangan)</li>
+            </ul>
+          </div>
+          <div class="lkpd-section">
+            <h3>E. Pengamatan — Konfigurasi Kulit <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-1">
+                <thead><tr><th>Unsur (Z)</th><th>Notasi Kulit</th><th>Jumlah Kulit</th><th>Elektron Valensi</th></tr></thead>
+                <tbody id="obs-tbody-1"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="1">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>E2. Pengamatan — Konfigurasi Subkulit <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-2">
+                <thead><tr><th>Unsur (Z)</th><th>Notasi Subkulit</th><th>Bentuk Singkat</th><th>Elektron Tak Berpasangan</th></tr></thead>
+                <tbody id="obs-tbody-2"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="2">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>F. Analisis <em>esai singkat</em></h3>
+            <div class="field"><label for="lkpd-analisis1">1. Mengapa konfigurasi kulit unsur Kalium (K) dan Kalsium (Ca) tidak mengikuti rumus 2n² secara penuh pada kulit M?</label><textarea id="lkpd-analisis1"></textarea></div>
+            <div class="field"><label for="lkpd-analisis2">2. Jelaskan mengapa Kromium (Cr) dan Tembaga (Cu) mengalami penyimpangan dari asas Aufbau yang biasa.</label><textarea id="lkpd-analisis2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>G. Pertanyaan Pemandu <em>diskusi</em></h3>
+            <div class="field"><label for="lkpd-q1">Apa perbedaan mendasar cara model Bohr dan model mekanika kuantum menggambarkan posisi elektron dalam atom?</label><textarea id="lkpd-q1"></textarea></div>
+            <div class="field"><label for="lkpd-q2">Bagaimana aturan Hund memengaruhi jumlah elektron tak berpasangan pada suatu subkulit? Berikan satu contoh dari simulasimu.</label><textarea id="lkpd-q2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>H. Kesimpulan <em>ringkasan</em></h3>
+            <div class="field"><label for="lkpd-kesimpulan">Tuliskan kesimpulan akhir praktikummu (kaitkan dengan tujuan pembelajaran).</label><textarea id="lkpd-kesimpulan" style="min-height:100px;"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>I. Refleksi <em>metakognisi</em></h3>
+            <div class="field"><label for="lkpd-refleksi">Bagian mana dari materi ini yang paling menantang bagimu, dan strategi apa yang kamu pakai untuk memahaminya?</label><textarea id="lkpd-refleksi"></textarea></div>
+          </div>
+          <div class="lkpd-toolbar">
+            <button type="button" class="btn btn--primary btn--sm" id="lkpd-save">💾 Simpan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="lkpd-print">🖨 Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn--danger btn--sm" id="lkpd-reset">↺ Reset LKPD</button>
+            <span class="save-status" id="lkpd-status">Belum disimpan</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= EVALUASI ============================= -->
+    <section class="view" id="view-evaluasi" data-view="evaluasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">05 · Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>18 soal (LOTS–HOTS) untuk mengukur pemahamanmu tentang konfigurasi elektron kulit dan subkulit.</p>
+      </div>
+      <div id="quiz-intro" class="card">
+        <h3 style="font-size:17px;">Sebelum mulai</h3>
+        <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px; line-height:1.8;">
+          <li>18 soal: pilihan ganda, pilihan ganda kompleks (checkbox), isian singkat, dan analisis singkat.</li>
+          <li>Beberapa soal membahas penyimpangan Aufbau pada Kromium dan Tembaga.</li>
+          <li>Pembahasan setiap soal akan muncul setelah kamu menjawab.</li>
+        </ul>
+        <button class="btn btn--primary" id="quiz-begin" style="margin-top:8px;">Mulai Evaluasi</button>
+      </div>
+      <div id="quiz-body" hidden>
+        <div class="quiz-progress">
+          <div class="progress-track"><div class="progress-track__fill" id="quiz-progress-fill"></div></div>
+          <span class="quiz-meta" id="quiz-progress-label">0 / 18 dijawab</span>
+        </div>
+        <div id="quiz-questions"></div>
+        <button class="btn btn--primary btn--block" id="quiz-submit">Kumpulkan &amp; Lihat Skor</button>
+      </div>
+      <div id="quiz-result" hidden>
+        <div class="card result-hero">
+          <div style="font-size:13px; color:var(--paper-500); letter-spacing:.4px; text-transform:uppercase;">Skor Akhir</div>
+          <div class="result-score" id="result-score">0</div>
+          <p id="result-desc" style="max-width:440px;margin:10px auto 0;"></p>
+          <div class="badge-row" id="badge-row"></div>
+          <div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="quiz-review">Lihat Pembahasan</button>
+            <button class="btn btn--danger btn--sm" id="quiz-retry">Ulangi Evaluasi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= PROFIL PENGEMBANG ============================= -->
+    <section class="view" id="view-profil" data-view="profil">
+      <div class="view-head"><div class="eyebrow-plain">06 · Profil Pengembang</div><h2>Tentang Pengembang</h2></div>
+      <div class="card dev-card">
+        <div class="dev-photo" id="dev-photo"></div>
+        <div>
+          <h3 style="font-size:22px;">S.D. Sabirin, S.Si., Gr.</h3>
+          <p style="color:var(--brass-400); font-weight:600; margin-bottom:14px;">Guru Kimia &amp; Pengembang Media Pembelajaran Digital</p>
+          <p style="font-size:14px;">Mengajar Kimia di SMA Islam Al Azhar 5 Cirebon dan aktif membimbing siswa dalam kompetisi riset (LPIR, OSN, COSMII, OPSI, OSA). Saat ini menempuh studi Magister Kimia di Universitas Padjadjaran melalui program Beasiswa Guru SMUP. Virtual lab ini dikembangkan sebagai bagian dari upaya menghadirkan pembelajaran Kimia yang kontekstual, interaktif, dan berbasis bukti eksperimen.</p>
+          <div class="dev-competency">
+            <span class="chip">Pendidikan Kimia</span>
+            <span class="chip">Pengembangan Media Pembelajaran</span>
+            <span class="chip">Pembimbingan Riset Siswa</span>
+            <span class="chip">Deep Learning Pedagogy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="appfoot">Virtual Lab Kimia — Konfigurasi Elektron · Dikembangkan oleh S.D. Sabirin, S.Si., Gr. · Referensi: LibreTexts Chemistry &amp; IUPAC</footer>
+</div>
+
+<button class="assistant-fab" id="assistant-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="assistant-panel" aria-label="Buka asisten bantuan">?</button>
+<div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Asisten Bantuan" hidden>
+  <div class="assistant-head"><h4>Asisten Lab (berbasis aturan)</h4><button class="icon-btn" id="assistant-close" aria-label="Tutup asisten" style="width:28px;height:28px;">✕</button></div>
+  <div class="assistant-body" id="assistant-body"></div>
+  <div class="assistant-chips" id="assistant-chips"></div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   1. LAB_DATA
+   ========================================================================= */
+const ELEMENTS = [
+  {z:1,sym:"H",name:"Hidrogen"},{z:2,sym:"He",name:"Helium"},{z:3,sym:"Li",name:"Litium"},
+  {z:4,sym:"Be",name:"Berilium"},{z:5,sym:"B",name:"Boron"},{z:6,sym:"C",name:"Karbon"},
+  {z:7,sym:"N",name:"Nitrogen"},{z:8,sym:"O",name:"Oksigen"},{z:9,sym:"F",name:"Fluor"},
+  {z:10,sym:"Ne",name:"Neon"},{z:11,sym:"Na",name:"Natrium"},{z:12,sym:"Mg",name:"Magnesium"},
+  {z:13,sym:"Al",name:"Aluminium"},{z:14,sym:"Si",name:"Silikon"},{z:15,sym:"P",name:"Fosforus"},
+  {z:16,sym:"S",name:"Belerang"},{z:17,sym:"Cl",name:"Klorin"},{z:18,sym:"Ar",name:"Argon"},
+  {z:19,sym:"K",name:"Kalium"},{z:20,sym:"Ca",name:"Kalsium"},
+  {z:21,sym:"Sc",name:"Skandium"},{z:22,sym:"Ti",name:"Titanium"},{z:23,sym:"V",name:"Vanadium"},
+  {z:24,sym:"Cr",name:"Kromium"},{z:25,sym:"Mn",name:"Mangan"},{z:26,sym:"Fe",name:"Besi"},
+  {z:27,sym:"Co",name:"Kobalt"},{z:28,sym:"Ni",name:"Nikel"},{z:29,sym:"Cu",name:"Tembaga"},
+  {z:30,sym:"Zn",name:"Seng"},{z:31,sym:"Ga",name:"Galium"},{z:32,sym:"Ge",name:"Germanium"},
+  {z:33,sym:"As",name:"Arsen"},{z:34,sym:"Se",name:"Selenium"},{z:35,sym:"Br",name:"Bromin"},
+  {z:36,sym:"Kr",name:"Kripton"}
+];
+
+const LAB_DATA = {
+  objectives:[
+    "Menjelaskan konsep kulit elektron menurut model atom Bohr dan aturan pengisiannya (2n² dengan batas 8 pada kulit terluar).",
+    "Menentukan konfigurasi elektron berdasarkan kulit serta elektron valensi suatu unsur.",
+    "Menerapkan asas Aufbau, aturan Hund, dan larangan Pauli untuk menuliskan konfigurasi elektron berdasarkan subkulit.",
+    "Menganalisis penyimpangan (anomali) konfigurasi elektron pada unsur Kromium dan Tembaga."
+  ],
+
+  theorySections:[
+    {
+      id:"model-bohr", title:"1. Model Atom Bohr dan Konsep Kulit Elektron",
+      body:[
+        "Pada tahun 1913, Niels Bohr mengusulkan bahwa elektron tidak mengelilingi inti secara sembarangan, melainkan menempati lintasan-lintasan tertentu dengan tingkat energi tetap, yang disebut kulit elektron.",
+        "Setiap kulit diberi nomor kulit (n = 1, 2, 3, …) sekaligus nama huruf: kulit K (n=1), L (n=2), M (n=3), N (n=4), dan seterusnya. Semakin besar nomor kulit, semakin jauh jaraknya dari inti dan semakin tinggi tingkat energinya.",
+        "Model ini berhasil menjelaskan dengan baik spektrum garis atom hidrogen, dan menjadi dasar penting bagi pemahaman konfigurasi elektron yang diajarkan secara sederhana di tingkat sekolah menengah."
+      ],
+      example:"Bayangkan kulit elektron seperti tribun-tribun melingkar pada sebuah stadion: penonton (elektron) menempati tribun (kulit) tertentu, dengan tribun terdalam berkapasitas paling sedikit dan tribun-tribun berikutnya berkapasitas lebih besar.",
+      limitation:"Model Bohr awalnya dikembangkan khusus untuk atom hidrogen (satu elektron) dan kurang akurat ketika diterapkan pada atom berelektron banyak — keterbatasan inilah yang kelak mendorong lahirnya model mekanika kuantum."
+    },
+    {
+      id:"aturan-kulit", title:"2. Aturan Pengisian Konfigurasi Elektron Berdasarkan Kulit",
+      body:[
+        "Setiap kulit memiliki kapasitas maksimum teoretis sebesar 2n² elektron. Namun, dalam praktiknya, kulit terluar (kulit valensi) tidak pernah diisi lebih dari 8 elektron terlebih dahulu, kecuali kulit tersebut adalah kulit K yang maksimal hanya 2 elektron.",
+        "Elektron mengisi kulit dari yang berenergi paling rendah (kulit K, paling dekat inti) terlebih dahulu, baru kemudian kulit-kulit berikutnya, hingga seluruh elektron atom tersebut habis terisi.",
+        "Elektron pada kulit terluar disebut elektron valensi. Jumlah elektron valensi ini sangat penting karena berkaitan erat dengan golongan unsur (khususnya unsur golongan utama) pada tabel periodik."
+      ],
+      list:[
+        "Kapasitas maksimum kulit ke-n = 2n² (K=2, L=8, M=18, N=32, …)",
+        "Kulit terluar diisi maksimal 8 elektron sebelum kulit berikutnya mulai terisi (kecuali kulit K, maksimal 2)",
+        "Jumlah kulit yang terisi = periode unsur pada tabel periodik",
+        "Jumlah elektron pada kulit terluar = elektron valensi"
+      ],
+      example:"Aluminium (Al, Z=13) memiliki konfigurasi kulit 2, 8, 3 — artinya kulit K berisi 2, kulit L berisi 8, dan kulit M (kulit terluar) berisi 3 elektron valensi, dengan unsur ini berada pada periode 3.",
+      limitation:"Aturan \"maksimal 8 pada kulit terluar\" ini sebenarnya adalah penyederhanaan dari aturan energi subkulit yang lebih mendasar (dibahas pada bagian mekanika kuantum) — bukan aturan yang berdiri sendiri tanpa alasan fisis."
+    },
+    {
+      id:"anomali-kulit", title:"3. Fenomena Menarik: Konfigurasi Kulit Kalium dan Kalsium",
+      body:[
+        "Perhatikan Kalium (K, Z=19) dan Kalsium (Ca, Z=20). Jika mengikuti rumus 2n² secara penuh, kulit M (n=3, kapasitas 18) semestinya masih bisa menampung elektron ke-19 dan ke-20 sebelum kulit N mulai terisi.",
+        "Namun kenyataannya, konfigurasi kulit Kalium adalah 2, 8, 8, 1 — bukan 2, 8, 9. Begitu pula Kalsium adalah 2, 8, 8, 2 — bukan 2, 8, 10. Elektron ke-19 dan ke-20 ternyata \"melompat\" ke kulit N meskipun kulit M belum penuh menurut rumus 2n²."
+      ],
+      example:"Fenomena ini terjadi karena subkulit 4s (bagian dari kulit N) memiliki tingkat energi yang sedikit lebih rendah daripada subkulit 3d (bagian dari kulit M) yang belum terisi, sehingga elektron mengisi 4s terlebih dahulu — sesuatu yang baru bisa dijelaskan tuntas lewat model mekanika kuantum pada bagian berikutnya.",
+      limitation:"Ini adalah contoh nyata bahwa model kulit sederhana (Bohr) tidak selalu cukup untuk menjelaskan urutan pengisian elektron yang sesungguhnya — kita memerlukan model subkulit untuk memahami alasannya secara utuh."
+    },
+    {
+      id:"model-kuantum", title:"4. Model Mekanika Kuantum: Subkulit dan Orbital",
+      body:[
+        "Pada 1926, Erwin Schrödinger mengembangkan model mekanika kuantum, yang menggambarkan posisi elektron bukan sebagai lintasan pasti seperti pada model Bohr, melainkan sebagai orbital: daerah ruang di sekitar inti tempat elektron paling mungkin ditemukan.",
+        "Setiap kulit (n) ternyata terbagi lagi menjadi beberapa subkulit yang dilambangkan huruf s, p, d, dan f. Tiap jenis subkulit memiliki jumlah orbital dan kapasitas elektron maksimum yang berbeda-beda.",
+        "Kulit K (n=1) hanya memiliki subkulit s. Kulit L (n=2) memiliki subkulit s dan p. Kulit M (n=3) memiliki subkulit s, p, dan d. Kulit N (n=4) memiliki subkulit s, p, d, dan f."
+      ],
+      list:[
+        "Subkulit s → 1 orbital → maksimal 2 elektron",
+        "Subkulit p → 3 orbital → maksimal 6 elektron",
+        "Subkulit d → 5 orbital → maksimal 10 elektron",
+        "Subkulit f → 7 orbital → maksimal 14 elektron"
+      ],
+      example:"Subkulit 2p misalnya, terdiri dari 3 orbital (2px, 2py, 2pz) yang masing-masing dapat diisi maksimal 2 elektron, sehingga subkulit 2p secara keseluruhan berkapasitas 6 elektron.",
+      limitation:"Bentuk dan orientasi orbital (misalnya bentuk \"balon\" pada orbital p) merupakan hasil perhitungan matematis mekanika kuantum yang kompleks; pada tingkat SMA, cukup dipahami jumlah orbital dan kapasitasnya saja tanpa perlu menurunkan bentuk orbital secara matematis."
+    },
+    {
+      id:"asas-aturan", title:"5. Asas Aufbau, Aturan Hund, dan Larangan Pauli",
+      body:[
+        "Asas Aufbau menyatakan bahwa elektron mengisi subkulit-subkulit berenergi paling rendah terlebih dahulu, mengikuti urutan: 1s, 2s, 2p, 3s, 3p, 4s, 3d, 4p, 5s, 4d, 5p, 6s, 4f, … Perhatikan bahwa 4s diisi sebelum 3d — inilah alasan di balik fenomena Kalium dan Kalsium pada bagian sebelumnya.",
+        "Aturan Hund menyatakan bahwa pada subkulit dengan beberapa orbital setingkat energi (misalnya p, d, atau f), elektron akan mengisi satu per satu ke setiap orbital kosong dengan arah spin sejajar terlebih dahulu, sebelum mulai membentuk pasangan pada orbital yang sama.",
+        "Larangan Pauli menyatakan bahwa setiap orbital hanya dapat diisi maksimal 2 elektron, dan kedua elektron tersebut harus memiliki arah spin yang berlawanan (dilambangkan panah ke atas ↑ dan panah ke bawah ↓)."
+      ],
+      example:"Pada subkulit 2p³ (misalnya pada atom Nitrogen), tiga elektron akan menempati tiga orbital 2p yang berbeda dengan spin sejajar (↑ ↑ ↑), bukan dua elektron berpasangan di satu orbital dan satu elektron sendirian di orbital lain.",
+      limitation:"Ketiga asas dan aturan ini bekerja bersama-sama, bukan saling menggantikan — Aufbau menentukan urutan subkulit mana yang diisi, Hund menentukan cara pengisian dalam satu subkulit, dan Pauli membatasi kapasitas tiap orbital."
+    },
+    {
+      id:"penyimpangan-aufbau", title:"6. Penyimpangan (Anomali) Aufbau pada Kromium dan Tembaga",
+      body:[
+        "Meskipun asas Aufbau berlaku pada sebagian besar unsur, terdapat dua pengecualian klasik yang penting dipahami: Kromium (Cr, Z=24) dan Tembaga (Cu, Z=29).",
+        "Berdasarkan asas Aufbau biasa, konfigurasi Kromium seharusnya [Ar] 4s² 3d⁴. Namun, konfigurasi sebenarnya adalah [Ar] 4s¹ 3d⁵ — satu elektron dari subkulit 4s \"berpindah\" ke 3d, karena subkulit d yang terisi setengah penuh (d⁵, lima orbital masing-masing berisi satu elektron) memiliki kestabilan ekstra.",
+        "Hal serupa terjadi pada Tembaga: seharusnya [Ar] 4s² 3d⁹, namun konfigurasi sebenarnya adalah [Ar] 4s¹ 3d¹⁰ — karena subkulit d yang terisi penuh (d¹⁰) juga memiliki kestabilan ekstra."
+      ],
+      example:"Fenomena ini menunjukkan bahwa kestabilan elektron tidak hanya ditentukan oleh urutan energi subkulit semata, tetapi juga oleh kecenderungan alami menuju konfigurasi yang lebih simetris dan stabil (subkulit setengah penuh atau penuh).",
+      limitation:"Anomali semacam ini hanya terjadi pada sejumlah kecil unsur (terutama golongan transisi) dan tidak perlu dihafal untuk semua unsur — cukup dipahami sebagai bukti bahwa asas Aufbau adalah panduan umum, bukan hukum mutlak tanpa pengecualian."
+    }
+  ],
+
+  shellCapacityTable:[
+    {n:1,huruf:"K",rumus:"2×1²",kapasitas:2},
+    {n:2,huruf:"L",rumus:"2×2²",kapasitas:8},
+    {n:3,huruf:"M",rumus:"2×3²",kapasitas:18},
+    {n:4,huruf:"N",rumus:"2×4²",kapasitas:32}
+  ],
+  subshellCapacityTable:[
+    {sub:"s",orbital:1,kapasitas:2},
+    {sub:"p",orbital:3,kapasitas:6},
+    {sub:"d",orbital:5,kapasitas:10},
+    {sub:"f",orbital:7,kapasitas:14}
+  ],
+
+  terms:[
+    {t:"Kulit elektron", d:"Lintasan/tingkat energi elektron menurut model Bohr, diberi label K, L, M, N, … untuk n=1,2,3,4,…"},
+    {t:"Elektron valensi", d:"Elektron yang berada pada kulit terluar suatu atom; berkaitan erat dengan golongan unsur."},
+    {t:"Orbital", d:"Daerah ruang di sekitar inti tempat elektron paling mungkin ditemukan, menurut model mekanika kuantum."},
+    {t:"Subkulit", d:"Pembagian lebih rinci dari suatu kulit, dilambangkan s, p, d, f, masing-masing dengan jumlah orbital berbeda."},
+    {t:"Asas Aufbau", d:"Aturan bahwa elektron mengisi subkulit berenergi rendah terlebih dahulu."},
+    {t:"Aturan Hund", d:"Aturan bahwa elektron mengisi orbital kosong satu-satu dengan spin sejajar sebelum berpasangan."},
+    {t:"Larangan Pauli", d:"Aturan bahwa setiap orbital maksimal diisi 2 elektron dengan spin berlawanan."},
+    {t:"Diagram orbital", d:"Representasi visual konfigurasi elektron berupa kotak-kotak (orbital) berisi panah (elektron)."}
+  ],
+
+  misconceptions:[
+    {wrong:"Elektron bergerak mengelilingi inti pada lintasan tetap seperti planet mengelilingi matahari.", right:"Gambaran lintasan tetap hanyalah penyederhanaan model Bohr; model mekanika kuantum menjelaskan posisi elektron sebagai daerah probabilitas (orbital), bukan lintasan pasti."},
+    {wrong:"Konfigurasi kulit dan konfigurasi subkulit adalah dua teori yang saling bertentangan.", right:"Keduanya konsisten satu sama lain — konfigurasi subkulit hanya memberikan rincian lebih detail tentang apa yang terjadi di dalam tiap kulit pada model Bohr."},
+    {wrong:"Semua kulit selalu terisi penuh sesuai rumus 2n² sebelum kulit berikutnya mulai diisi.", right:"Pengisian sesungguhnya mengikuti asas Aufbau (4s sebelum 3d), sehingga kulit M pada Kalium dan Kalsium baru berisi 8 elektron, belum 18, ketika kulit N mulai terisi."},
+    {wrong:"Aturan Hund berarti elektron harus langsung berpasangan begitu subkulit mulai diisi.", right:"Aturan Hund justru menyatakan sebaliknya: elektron mengisi orbital kosong satu-satu dengan spin sejajar terlebih dahulu, baru mulai berpasangan setelah semua orbital terisi satu elektron."}
+  ],
+
+  summary:"Model atom Bohr memperkenalkan konsep kulit elektron (K, L, M, N, …) dengan aturan pengisian 2n² dan batas 8 elektron pada kulit terluar — cukup untuk menjelaskan sebagian besar unsur, tetapi mulai menunjukkan keanehan pada Kalium dan Kalsium. Model mekanika kuantum menjawab keanehan tersebut lewat konsep subkulit (s, p, d, f) dan tiga aturan penting — asas Aufbau, aturan Hund, dan larangan Pauli — yang bersama-sama menjelaskan urutan dan cara pengisian elektron secara lebih akurat, termasuk anomali khusus pada Kromium dan Tembaga.",
+
+  procedures:{
+    bohr:{
+      label:"Konfigurasi Kulit (Model Bohr)",
+      steps:[
+        {title:"Pilih unsur yang ingin dianalisis", instruction:"Gunakan kendali proton (Z) untuk memilih unsur.", tools:"Kendali stepper Z (1–20)", initial:"Z = 11 (Natrium)", action:"Ubah nilai Z menggunakan tombol +/−.", observe:"Notasi kulit (contoh: 2, 8, 1) dan diagram cincin elektron berubah mengikuti unsur yang dipilih."},
+        {title:"Amati pengisian kulit K, L, M, …", instruction:"Perhatikan urutan dan jumlah elektron pada tiap kulit.", tools:"Diagram cincin elektron", initial:"Unsur telah dipilih pada langkah 1", action:"Amati label K, L, M, N pada tiap cincin di kanvas simulasi.", observe:"Kulit terdalam (K) terisi maksimal 2, kulit berikutnya maksimal 8, sebelum kulit baru mulai terisi."},
+        {title:"Identifikasi periode dan elektron valensi", instruction:"Tentukan jumlah kulit yang terisi dan jumlah elektron pada kulit terluar.", tools:"Panel pembacaan instrumen", initial:"Diagram kulit telah teramati", action:"Baca panel pembacaan instrumen di sisi kiri layar.", observe:"Jumlah kulit terisi = periode unsur; jumlah elektron kulit terluar = elektron valensi."},
+        {title:"Uji unsur Kalium dan Kalsium", instruction:"Ubah Z menjadi 19 (Kalium) dan 20 (Kalsium), amati pola pengisian kulit M dan N.", tools:"Kendali stepper Z", initial:"Elektron valensi unsur lain telah teramati", action:"Atur Z=19 lalu Z=20, amati notasi kulit yang dihasilkan.", observe:"Notasi kulit menjadi 2,8,8,1 dan 2,8,8,2 — bukan 2,8,9 atau 2,8,10 — membuktikan kulit M berhenti di 8 meski kapasitas maksimumnya 18."}
+      ]
+    },
+    aufbau:{
+      label:"Konfigurasi Subkulit (Aufbau)",
+      steps:[
+        {title:"Pilih unsur yang ingin dianalisis", instruction:"Gunakan kendali proton (Z) untuk memilih unsur, termasuk unsur transisi.", tools:"Kendali stepper Z (1–36)", initial:"Z = 11 (Natrium)", action:"Ubah nilai Z menggunakan tombol +/− atau pilih dari daftar cepat.", observe:"Notasi subkulit (contoh: 1s²2s²2p⁶3s¹) dan diagram orbital berubah mengikuti unsur yang dipilih."},
+        {title:"Amati urutan pengisian subkulit", instruction:"Perhatikan urutan subkulit yang terisi sesuai asas Aufbau.", tools:"Panel notasi subkulit", initial:"Unsur telah dipilih pada langkah 1", action:"Baca urutan subkulit dari notasi yang dihasilkan.", observe:"Subkulit 4s terisi sebelum 3d, sesuai asas Aufbau (bukan urutan nomor kulit semata)."},
+        {title:"Amati diagram orbital dan aturan Hund", instruction:"Perhatikan pola panah pada kotak-kotak orbital tiap subkulit.", tools:"Diagram orbital (kotak &amp; panah)", initial:"Notasi subkulit telah teramati", action:"Cari subkulit p atau d yang terisi sebagian pada unsur pilihanmu.", observe:"Elektron mengisi orbital kosong satu-satu (panah searah) sebelum mulai berpasangan (panah berlawanan arah)."},
+        {title:"Uji unsur Kromium dan Tembaga", instruction:"Atur Z=24 (Kromium) dan Z=29 (Tembaga), bandingkan dengan prediksi Aufbau biasa.", tools:"Kendali stepper Z", initial:"Pola Hund telah teramati pada unsur lain", action:"Atur Z=24 lalu Z=29, baca notasi subkulit yang dihasilkan serta catatan penyimpangan.", observe:"Notasi menjadi 4s¹3d⁵ dan 4s¹3d¹⁰ — bukan 4s²3d⁴ atau 4s²3d⁹ — sesuai penyimpangan Aufbau yang telah dipelajari."}
+      ]
+    }
+  },
+
+  simulationNotes:{
+    bohr:"Simulasi kulit ini dibatasi pada unsur Z=1–20 (golongan utama), karena pada rentang ini aturan sederhana \"kulit terluar maksimal 8\" sudah cukup merepresentasikan konfigurasi kulit yang sesungguhnya.",
+    aufbau:"Simulasi subkulit ini mencakup Z=1–36 agar dapat menunjukkan pengisian subkulit d pada unsur transisi, termasuk dua penyimpangan klasik pada Kromium (Z=24) dan Tembaga (Z=29)."
+  },
+
+  evaluation:[
+    {type:"mc", level:"lots", stem:"Menurut model atom Bohr, kapasitas maksimum teoretis suatu kulit dirumuskan dengan …", options:["n²","2n²","2n","n+2"], answer:1, explain:"Kapasitas maksimum kulit ke-n menurut model Bohr dirumuskan sebagai 2n²."},
+    {type:"mc", level:"lots", stem:"Kapasitas maksimum kulit M (n=3) menurut rumus 2n² adalah …", options:["8","9","18","32"], answer:2, explain:"2n² untuk n=3 adalah 2×9 = 18."},
+    {type:"mc", level:"lots", stem:"Jumlah orbital pada subkulit p adalah …", options:["1","3","5","7"], answer:1, explain:"Subkulit p memiliki 3 orbital (px, py, pz)."},
+    {type:"mc", level:"lots", stem:"Kapasitas maksimum elektron pada subkulit d adalah …", options:["2","6","10","14"], answer:2, explain:"Subkulit d memiliki 5 orbital, masing-masing berkapasitas 2 elektron, sehingga totalnya 10 elektron."},
+    {type:"mc", level:"lots", stem:"Lambang huruf untuk kulit dengan n=2 adalah …", options:["K","L","M","N"], answer:1, explain:"Kulit dengan n=2 diberi lambang L (setelah K untuk n=1)."},
+    {type:"mc", level:"mots", stem:"Konfigurasi elektron kulit untuk Aluminium (Al, Z=13) adalah …", options:["2, 8, 3","2, 3, 8","2, 8, 2, 1","2, 11"], answer:0, explain:"13 elektron terdistribusi: kulit K=2, kulit L=8, kulit M (terluar)=3, sesuai aturan maksimal 8 pada kulit non-K."},
+    {type:"mc", level:"mots", stem:"Konfigurasi elektron kulit untuk Kalsium (Ca, Z=20) adalah …", options:["2, 8, 8, 2","2, 8, 10","2, 10, 8","2, 8, 9, 1"], answer:0, explain:"Kulit M berhenti di 8 (bukan 18) karena subkulit 4s mulai terisi lebih dulu, sehingga konfigurasinya 2, 8, 8, 2."},
+    {type:"mc", level:"mots", stem:"Berdasarkan asas Aufbau, subkulit yang diisi tepat setelah 3p adalah …", options:["3d","4s","4p","3f"], answer:1, explain:"Urutan Aufbau: …3s, 3p, 4s, 3d, 4p… sehingga 4s diisi sebelum 3d."},
+    {type:"mc", level:"mots", stem:"Konfigurasi elektron subkulit untuk Natrium (Na, Z=11) adalah …", options:["1s² 2s² 2p⁶ 3s¹","1s² 2s² 2p⁷","1s² 2s² 2p⁶ 3s²","1s² 2p⁶ 3s¹"], answer:0, explain:"11 elektron: 1s²(2) + 2s²(2) + 2p⁶(6) + 3s¹(1) = 11, sesuai urutan Aufbau."},
+    {type:"mc", level:"mots", stem:"Bentuk singkat konfigurasi elektron Klorin (Cl, Z=17) menggunakan lambang gas mulia terdekat adalah …", options:["[Ne] 3s² 3p⁵","[Ar] 3s² 3p⁵","[Ne] 3s² 3p⁶","[He] 3s² 3p⁵"], answer:0, explain:"Neon (Ne, Z=10) adalah gas mulia terdekat sebelum Cl. Sisa 17−10=7 elektron mengisi 3s²3p⁵."},
+    {type:"mc", level:"mots", stem:"Elektron valensi unsur dengan konfigurasi kulit 2, 8, 7 adalah …", options:["2","7","8","17"], answer:1, explain:"Elektron valensi adalah jumlah elektron pada kulit terluar, yaitu 7."},
+    {type:"mc", level:"hots", stem:"Mengapa konfigurasi kulit Kalium dan Kalsium menjadi 2,8,8,1 dan 2,8,8,2 — bukan 2,8,9 atau 2,8,10?", options:["Karena subkulit 4s diisi lebih dulu daripada 3d menurut asas Aufbau, sehingga kulit M baru berisi 8 ketika kulit N mulai terisi","Karena kulit M kedua unsur ini memang tidak pernah bisa menampung lebih dari 8 elektron sama sekali","Karena jumlah neutron Kalium dan Kalsium membatasi kapasitas kulit M","Karena elektron terakhir kedua unsur ini hilang akibat gaya tolak-menolak"], answer:0, explain:"Subkulit 4s memiliki energi sedikit lebih rendah daripada 3d, sehingga menurut asas Aufbau, 4s terisi lebih dulu meskipun kulit M (yang memuat 3d) belum penuh."},
+    {type:"mc", level:"hots", stem:"Mengapa konfigurasi Kromium (Cr, Z=24) adalah [Ar]4s¹3d⁵, bukan [Ar]4s²3d⁴ seperti prediksi Aufbau biasa?", options:["Karena subkulit d yang terisi setengah penuh (d⁵) memberikan kestabilan ekstra","Karena jumlah proton Cr yang genap membuat elektron harus dipindah","Karena asas Aufbau tidak berlaku sama sekali untuk unsur transisi","Karena subkulit 4s Cr tidak mampu menampung 2 elektron"], answer:0, explain:"Subkulit d yang terisi setengah penuh (5 orbital masing-masing 1 elektron) memiliki kestabilan ekstra, sehingga satu elektron 4s berpindah ke 3d."},
+    {type:"mc", level:"hots", stem:"Bagaimana diagram orbital subkulit 2p³ (misalnya pada Nitrogen) digambarkan menurut aturan Hund?", options:["Tiga orbital 2p masing-masing berisi 1 elektron dengan spin sejajar (tidak berpasangan)","Dua orbital 2p berpasangan penuh dan satu orbital kosong","Ketiga orbital 2p berpasangan penuh dengan spin berlawanan","Seluruh 3 elektron menumpuk pada satu orbital yang sama"], answer:0, explain:"Sesuai aturan Hund, elektron mengisi orbital kosong satu-satu dengan spin sejajar sebelum berpasangan — sehingga 2p³ menghasilkan 3 orbital terisi 1 elektron masing-masing."},
+    {type:"checkbox", level:"mots", stem:"Manakah pernyataan berikut yang BENAR tentang asas Aufbau, aturan Hund, dan larangan Pauli? (Pilih semua yang sesuai)", options:["Asas Aufbau menyatakan elektron mengisi subkulit berenergi rendah terlebih dahulu","Aturan Hund menyatakan elektron mengisi orbital kosong satu-satu dengan spin sejajar sebelum berpasangan","Larangan Pauli menyatakan setiap orbital dapat diisi maksimal 2 elektron dengan spin berlawanan","Aturan Hund menyatakan elektron harus langsung berpasangan begitu subkulit mulai diisi"], answerSet:[0,1,2], explain:"Tiga pernyataan pertama benar sesuai definisi masing-masing aturan; pernyataan keempat keliru karena bertentangan dengan aturan Hund yang sesungguhnya."},
+    {type:"checkbox", level:"mots", stem:"Manakah pasangan unsur dan konfigurasi subkulitnya yang BENAR? (Pilih semua yang sesuai)", options:["Na (Z=11): [Ne] 3s¹","Mg (Z=12): [Ne] 3s²","Cr (Z=24): [Ar] 4s² 3d⁴","Cu (Z=29): [Ar] 4s¹ 3d¹⁰"], answerSet:[0,1,3], explain:"Na dan Mg mengikuti Aufbau biasa dan benar. Cr yang benar adalah [Ar]4s¹3d⁵ (bukan 4s²3d⁴), sedangkan Cu memang benar [Ar]4s¹3d¹⁰."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Kapasitas maksimum elektron pada subkulit f adalah ____________.", accepted:["14"], explain:"Subkulit f memiliki 7 orbital × 2 elektron = 14 elektron."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Aturan yang menyatakan setiap orbital maksimal diisi 2 elektron dengan spin berlawanan disebut larangan ____________.", accepted:["pauli"], explain:"Jawaban yang tepat adalah larangan Pauli."},
+    {type:"essay", level:"hots", stem:"Jelaskan keterbatasan model atom Bohr yang mendorong lahirnya model mekanika kuantum, serta satu perbedaan utama dalam cara masing-masing model menggambarkan posisi elektron. (Jawaban akan direkam untuk penilaian guru)", explain:"Kunci jawaban: model Bohr dikembangkan untuk atom berelektron tunggal (hidrogen) dan kurang akurat untuk atom berelektron banyak serta tidak dapat menjelaskan sepenuhnya fenomena seperti penyimpangan Aufbau. Model Bohr menggambarkan elektron pada lintasan pasti (orbit), sedangkan model mekanika kuantum menggambarkan elektron sebagai daerah probabilitas (orbital) tanpa lintasan yang pasti."}
+  ]
+};
+
+/* =========================================================================
+   2. STATE
+   ========================================================================= */
+const STORAGE_KEY = "vlab_konfigurasi_elektron_v1";
+const State = {
+  identity:{ nama:"", kelas:"", id:"" },
+  soundOn:true, reduceMotion:false,
+  activeView:"teori", unlockedViews:["teori"],
+  procedure:{ active:"bohr", done:{ bohr:[], aufbau:[] } },
+  simulation:{ active:"bohr", mode:"submikroskopik" },
+  lkpd:{}, quiz:{ answers:{}, submitted:false }
+};
+function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) Object.assign(State, JSON.parse(raw)); }catch(e){} }
+function persistState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(State)); }catch(e){} }
+
+/* =========================================================================
+   3. AUDIO
+   ========================================================================= */
+const AudioFX = (() => {
+  let ctx = null;
+  function ensureCtx(){ if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx=null; } } return ctx; }
+  function tone(freq,dur,type,gainVal){
+    if(!State.soundOn) return;
+    const c = ensureCtx(); if(!c) return;
+    try{
+      const osc=c.createOscillator(), gain=c.createGain();
+      osc.type=type||"sine"; osc.frequency.value=freq; gain.gain.value=gainVal||0.05;
+      osc.connect(gain); gain.connect(c.destination);
+      const now=c.currentTime;
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+      osc.start(now); osc.stop(now+dur);
+    }catch(e){}
+  }
+  return {
+    click:()=>tone(720,0.06,"square",0.035),
+    success:()=>{ tone(520,0.12,"sine",0.06); setTimeout(()=>tone(780,0.16,"sine",0.06),90); },
+    error:()=>tone(160,0.22,"sawtooth",0.05),
+    reset:()=>tone(300,0.18,"triangle",0.045),
+    complete:()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.18,"sine",0.05), i*110)); },
+    ping:()=>tone(1400,0.05,"sine",0.03)
+  };
+})();
+
+/* =========================================================================
+   4. TOAST
+   ========================================================================= */
+function showToast(msg,kind){
+  const region=document.getElementById("toast-region");
+  const el=document.createElement("div");
+  el.className="toast"+(kind?" "+kind:"");
+  el.textContent=msg;
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(),320); },2600);
+}
+
+/* =========================================================================
+   5. SPLASH & IDENTITY
+   ========================================================================= */
+function initSplash(){
+  document.getElementById("btn-start").addEventListener("click", ()=>{
+    AudioFX.click();
+    if(State.identity.nama && State.identity.kelas) enterApp();
+    else{ document.getElementById("modal-identity").hidden=false; document.getElementById("inp-nama").focus(); }
+  });
+  document.getElementById("form-identity").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nama=document.getElementById("inp-nama").value.trim();
+    const kelas=document.getElementById("inp-kelas").value.trim();
+    const id=document.getElementById("inp-id").value.trim();
+    const err=document.getElementById("identity-error");
+    if(!nama||!kelas){ err.style.display="block"; AudioFX.error(); return; }
+    err.style.display="none";
+    State.identity={nama,kelas,id}; persistState();
+    document.getElementById("modal-identity").hidden=true;
+    AudioFX.success(); enterApp();
+  });
+}
+function enterApp(){
+  document.getElementById("splash").classList.add("is-hidden");
+  document.getElementById("app").hidden=false;
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  showToast(`Selamat datang, ${State.identity.nama||"Praktikan"}!`,"success");
+}
+
+/* =========================================================================
+   6. NAVIGATION
+   ========================================================================= */
+const VIEWS=[
+  {id:"teori",label:"Teori"},{id:"prosedur",label:"Prosedur"},{id:"simulasi",label:"Simulasi"},
+  {id:"lkpd",label:"LKPD"},{id:"evaluasi",label:"Evaluasi"},{id:"profil",label:"Profil Pengembang"}
+];
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  VIEWS.forEach((v,i)=>{
+    const btn=document.createElement("button");
+    btn.className="tab-btn"; btn.setAttribute("role","tab"); btn.id="tab-"+v.id;
+    btn.setAttribute("aria-controls","view-"+v.id);
+    btn.innerHTML=`<span class="tab-num">${i+1}</span><span>${v.label}</span>`;
+    btn.addEventListener("click", ()=>{ if(btn.disabled) return; AudioFX.click(); goToView(v.id); });
+    nav.appendChild(btn);
+  });
+  refreshTabsState();
+}
+function refreshTabsState(){
+  VIEWS.forEach(v=>{
+    const btn=document.getElementById("tab-"+v.id);
+    btn.disabled=!State.unlockedViews.includes(v.id);
+    btn.setAttribute("aria-selected", String(State.activeView===v.id));
+  });
+  const idx=VIEWS.findIndex(v=>v.id===State.activeView);
+  const pct=((State.unlockedViews.length-1)/(VIEWS.length-1))*100;
+  document.getElementById("global-progress").style.width=Math.max(pct,(idx/(VIEWS.length-1))*100)+"%";
+}
+function unlockView(id){ if(!State.unlockedViews.includes(id)){ State.unlockedViews.push(id); persistState(); refreshTabsState(); } }
+function goToView(id){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("is-active"));
+  const target=document.getElementById("view-"+id); if(target) target.classList.add("is-active");
+  State.activeView=id; persistState(); refreshTabsState();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+
+/* =========================================================================
+   7. THEORY RENDER
+   ========================================================================= */
+function renderTheory(){
+  document.getElementById("tp-list").innerHTML = LAB_DATA.objectives.map(o=>`<li>${o}</li>`).join("");
+
+  const toc=document.getElementById("theory-toc");
+  toc.innerHTML = LAB_DATA.theorySections.map(s=>`<button class="toc-pill" data-target="${s.id}">${s.title.replace(/^[0-9]+\.\s*/,"")}</button>`).join("")
+    + `<button class="toc-pill" data-target="referensi">Tabel Referensi</button><button class="toc-pill" data-target="istilah">Istilah</button><button class="toc-pill" data-target="miskonsepsi">Miskonsepsi</button>`;
+  toc.querySelectorAll(".toc-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const el=document.getElementById("sec-"+btn.dataset.target);
+      if(el) el.scrollIntoView({behavior:State.reduceMotion?"auto":"smooth", block:"start"});
+    });
+  });
+
+  const container=document.getElementById("theory-sections");
+  container.innerHTML = LAB_DATA.theorySections.map(s=>`
+    <div class="theory-section" id="sec-${s.id}">
+      <h3>${s.title}</h3>
+      ${s.body.map(p=>`<p>${p}</p>`).join("")}
+      ${s.list?`<ul style="padding-left:20px;color:var(--paper-300);font-size:14px;line-height:1.8;">${s.list.map(li=>`<li>${li}</li>`).join("")}</ul>`:""}
+      <div class="card" style="background:var(--ink-900);margin:14px 0;">
+        <strong style="color:var(--phosphor-500);font-size:12.5px;">CONTOH / ANALOGI</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.example}</p>
+      </div>
+      <div class="card" style="background:rgba(224,114,90,.06);border-color:rgba(224,114,90,.3);">
+        <strong style="color:var(--ember-300);font-size:12.5px;">CATATAN / KETERBATASAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.limitation}</p>
+      </div>
+    </div>`).join("") + `
+    <div class="theory-section" id="sec-referensi">
+      <h3>Tabel Referensi</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Kulit (n)</th><th>Lambang</th><th>Rumus 2n²</th><th>Kapasitas Maksimum</th></tr></thead>
+          <tbody>${LAB_DATA.shellCapacityTable.map(s=>`<tr><td>${s.n}</td><td>${s.huruf}</td><td>${s.rumus}</td><td>${s.kapasitas}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+      <div class="table-wrap" style="margin-top:18px;">
+        <table class="data-table">
+          <thead><tr><th>Subkulit</th><th>Jumlah Orbital</th><th>Kapasitas Maksimum</th></tr></thead>
+          <tbody>${LAB_DATA.subshellCapacityTable.map(s=>`<tr><td>${s.sub}</td><td>${s.orbital}</td><td>${s.kapasitas}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="theory-section" id="sec-istilah">
+      <h3>Istilah Penting</h3>
+      <dl class="term-list">${LAB_DATA.terms.map(t=>`<dt>${t.t}</dt><dd>${t.d}</dd>`).join("")}</dl>
+    </div>
+    <div class="theory-section" id="sec-miskonsepsi">
+      <h3>Miskonsepsi Umum</h3>
+      ${LAB_DATA.misconceptions.map(m=>`<div class="misconception"><div><b>✗ Anggapan keliru:</b> ${m.wrong}</div><div style="margin-top:4px;"><b style="color:var(--leaf-500);">✓ Yang benar:</b> ${m.right}</div></div>`).join("")}
+    </div>
+    <div class="theory-section" id="sec-ringkasan">
+      <h3>Ringkasan</h3>
+      <p>${LAB_DATA.summary}</p>
+      <button class="btn btn--primary" id="theory-continue">Lanjut ke Prosedur →</button>
+    </div>`;
+  document.getElementById("theory-continue").addEventListener("click", ()=>{ AudioFX.success(); unlockView("prosedur"); goToView("prosedur"); });
+}
+
+/* =========================================================================
+   8. PROCEDURE
+   ========================================================================= */
+function renderProcedureTabs(){
+  const wrap=document.getElementById("proc-tabs"); wrap.innerHTML="";
+  Object.keys(LAB_DATA.procedures).forEach(key=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(State.procedure.active===key));
+    btn.textContent=LAB_DATA.procedures[key].label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); State.procedure.active=key; persistState(); renderProcedureTabs(); renderProcedureSteps(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderProcedureSteps(){
+  const key=State.procedure.active;
+  const proc=LAB_DATA.procedures[key];
+  const doneArr=State.procedure.done[key];
+  const unlockedIndex=doneArr.length;
+  const list=document.getElementById("proc-steps");
+  list.innerHTML=proc.steps.map((s,i)=>{
+    const isDone=doneArr.includes(i);
+    const isUnlocked=i<=unlockedIndex;
+    return `<div class="step ${isUnlocked?"is-unlocked":""} ${isDone?"is-done":""}" data-i="${i}">
+      <div class="step__num">${isDone?"✓":(i+1)}</div>
+      <div>
+        <h4>${s.title}</h4>
+        <p style="margin:0 0 6px;font-size:13.5px;">${s.instruction}</p>
+        <div class="step__meta"><span><b>Alat/Bahan:</b> ${s.tools}</span><span><b>Kondisi Awal:</b> ${s.initial}</span></div>
+        <div class="step__meta"><span><b>Tindakan:</b> ${s.action}</span></div>
+        <div class="step__meta"><span><b>Hasil Diamati:</b> ${s.observe}</span></div>
+        ${isUnlocked&&!isDone?`<div class="step-actions"><button class="btn btn--primary btn--sm" data-mark="${i}">Tandai Selesai</button></div>`:""}
+      </div></div>`;
+  }).join("");
+  list.querySelectorAll("[data-mark]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i=Number(btn.dataset.mark);
+      if(!doneArr.includes(i)) doneArr.push(i);
+      AudioFX.success(); persistState(); renderProcedureSteps(); updateProcProgress();
+      const totalDone=State.procedure.done.bohr.length+State.procedure.done.aufbau.length;
+      if(totalDone>=4) unlockView("simulasi");
+    });
+  });
+  updateProcProgress();
+}
+function updateProcProgress(){
+  const key=State.procedure.active;
+  const total=LAB_DATA.procedures[key].steps.length;
+  const done=State.procedure.done[key].length;
+  document.getElementById("proc-progress").style.width=(done/total*100)+"%";
+}
+
+/* =========================================================================
+   9. SIMULATION — Konfigurasi Kulit (Bohr) & Subkulit (Aufbau)
+   ========================================================================= */
+const SUP_DIGITS={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function toSup(n){ return String(n).split('').map(d=>SUP_DIGITS[d]||d).join(''); }
+
+const SHELL_LETTERS=["K","L","M","N","O","P","Q"];
+function shellConfig(Z){
+  const caps=[2,8,8,8,8,8,8];
+  let remaining=Z, shells=[];
+  for(let i=0;i<caps.length && remaining>0;i++){
+    const fill=Math.min(caps[i], remaining);
+    shells.push(fill);
+    remaining-=fill;
+  }
+  return shells;
+}
+
+const AUFBAU_ORDER=[
+  {sub:"1s",l:"s",cap:2},{sub:"2s",l:"s",cap:2},{sub:"2p",l:"p",cap:6},
+  {sub:"3s",l:"s",cap:2},{sub:"3p",l:"p",cap:6},{sub:"4s",l:"s",cap:2},
+  {sub:"3d",l:"d",cap:10},{sub:"4p",l:"p",cap:6}
+];
+const NOBLE_GASES=[{z:2,sym:"He",boundary:"1s"},{z:10,sym:"Ne",boundary:"2p"},{z:18,sym:"Ar",boundary:"3p"},{z:36,sym:"Kr",boundary:"4p"}];
+
+function buildAufbauConfig(Z){
+  let remaining=Z, entries=[];
+  for(const orb of AUFBAU_ORDER){
+    if(remaining<=0) break;
+    const fill=Math.min(orb.cap, remaining);
+    entries.push({sub:orb.sub, l:orb.l, cap:orb.cap, filled:fill});
+    remaining-=fill;
+  }
+  if(Z===24){ entries=entries.map(e=> e.sub==="4s"?{...e,filled:1}: e.sub==="3d"?{...e,filled:5}:e); }
+  if(Z===29){ entries=entries.map(e=> e.sub==="4s"?{...e,filled:1}: e.sub==="3d"?{...e,filled:10}:e); }
+  return entries.filter(e=>e.filled>0);
+}
+function noblegasShorthand(Z, entries){
+  let gas=null;
+  for(const g of NOBLE_GASES){ if(g.z<Z) gas=g; else break; }
+  if(!gas) return { prefix:"", rest:entries };
+  const bIdx = entries.findIndex(e=>e.sub===gas.boundary);
+  if(bIdx===-1) return { prefix:"", rest:entries };
+  return { prefix:`[${gas.sym}]`, rest: entries.slice(bIdx+1) };
+}
+function orbitalOccupancy(entry){
+  const orbCount={s:1,p:3,d:5,f:7}[entry.l];
+  const counts=new Array(orbCount).fill(0);
+  let e=entry.filled;
+  for(let i=0;i<orbCount && e>0;i++){ counts[i]=1; e--; }
+  for(let i=0;i<orbCount && e>0;i++){ counts[i]=2; e--; }
+  return counts;
+}
+function unpairedCount(entries){
+  let total=0;
+  entries.forEach(e=>{ orbitalOccupancy(e).forEach(c=>{ if(c===1) total++; }); });
+  return total;
+}
+function configNotation(entries){ return entries.map(e=> e.sub+toSup(e.filled)).join(" "); }
+
+const Sim = {
+  key:"bohr", mode:"submikroskopik",
+  bohr:{ Z:11 }, aufbau:{ Z:11 },
+  canvas:null, ctx:null, dpr:1
+};
+function setupCanvas(){
+  Sim.canvas=document.getElementById("sim-canvas"); Sim.ctx=Sim.canvas.getContext("2d");
+  resizeCanvas(); window.addEventListener("resize", resizeCanvas);
+}
+function resizeCanvas(){
+  const stage=document.getElementById("sim-stage"); const rect=stage.getBoundingClientRect();
+  Sim.dpr=Math.min(window.devicePixelRatio||1,2);
+  Sim.canvas.width=Math.max(320,rect.width)*Sim.dpr;
+  Sim.canvas.height=Math.max(420,rect.height)*Sim.dpr;
+  Sim.canvas.style.width="100%"; Sim.canvas.style.height=rect.height+"px";
+  drawCurrentSim();
+}
+function renderSimTabs(){
+  const wrap=document.getElementById("sim-tabs"); wrap.innerHTML="";
+  [{key:"bohr",label:"Konfigurasi Kulit (Bohr)"},{key:"aufbau",label:"Konfigurasi Subkulit (Aufbau)"}].forEach(it=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab"); btn.setAttribute("aria-selected", String(Sim.key===it.key));
+    btn.textContent=it.label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); Sim.key=it.key; renderSimTabs(); renderSimControls(); renderSimLegend(); toggleSimLayer(); drawCurrentSim(); });
+    wrap.appendChild(btn);
+  });
+}
+function toggleSimLayer(){
+  const layer=document.getElementById("aufbau-layer");
+  const canvas=document.getElementById("sim-canvas");
+  if(Sim.key==="aufbau"){ layer.classList.add("is-active"); canvas.style.display="none"; }
+  else { layer.classList.remove("is-active"); canvas.style.display="block"; }
+}
+function renderSimControls(){
+  const modeSwitch=document.getElementById("sim-mode-switch");
+  modeSwitch.innerHTML=["makroskopik","submikroskopik","simbolik"].map(m=>`<button data-mode="${m}" aria-pressed="${Sim.mode===m}">${m[0].toUpperCase()+m.slice(1)}</button>`).join("");
+  modeSwitch.querySelectorAll("button").forEach(b=>b.addEventListener("click", ()=>{ Sim.mode=b.dataset.mode; renderSimControls(); drawCurrentSim(); }));
+
+  document.getElementById("sim-note").textContent = Sim.key==="bohr" ? LAB_DATA.simulationNotes.bohr : LAB_DATA.simulationNotes.aufbau;
+  const controls=document.getElementById("sim-controls");
+  const maxZ = Sim.key==="bohr" ? 20 : 36;
+  const zState = Sim.key==="bohr" ? Sim.bohr : Sim.aufbau;
+
+  controls.innerHTML=`
+    <h4 style="font-size:13px;margin-bottom:12px;">Variabel — ${Sim.key==="bohr"?"Konfigurasi Kulit":"Konfigurasi Subkulit"}</h4>
+    <div class="stepper-field"><label>Nomor Atom (Z)</label>
+      <div class="stepper-row"><button class="stepper-btn" id="z-dec">−</button><div class="stepper-val" id="val-Z">${zState.Z}</div><button class="stepper-btn" id="z-inc">+</button></div></div>
+    <p class="hint">Rentang Z: 1–${maxZ}</p>
+    ${Sim.key==="aufbau"?`<div class="field"><label for="quick-select">Pilihan Cepat</label><select id="quick-select">
+        <option value="">— pilih unsur menarik —</option>
+        <option value="24">Kromium (Cr, Z=24) — anomali</option>
+        <option value="29">Tembaga (Cu, Z=29) — anomali</option>
+        <option value="26">Besi (Fe, Z=26)</option>
+        <option value="7">Nitrogen (N, Z=7) — aturan Hund</option>
+      </select></div>`:""}
+  `;
+  document.getElementById("z-dec").addEventListener("click", ()=>adjustZ(-1));
+  document.getElementById("z-inc").addEventListener("click", ()=>adjustZ(1));
+  if(Sim.key==="aufbau"){
+    document.getElementById("quick-select").addEventListener("change",(e)=>{
+      if(e.target.value){ Sim.aufbau.Z=Number(e.target.value); AudioFX.ping(); document.getElementById("val-Z").textContent=Sim.aufbau.Z; drawCurrentSim(); renderReadout(); unlockView("lkpd"); }
+    });
+  }
+  renderReadout();
+}
+function adjustZ(dir){
+  const maxZ = Sim.key==="bohr" ? 20 : 36;
+  const zState = Sim.key==="bohr" ? Sim.bohr : Sim.aufbau;
+  zState.Z = Math.min(maxZ, Math.max(1, zState.Z+dir));
+  AudioFX.ping();
+  document.getElementById("val-Z").textContent=zState.Z;
+  drawCurrentSim(); renderReadout(); unlockView("lkpd");
+}
+function renderSimLegend(){
+  const legend=document.getElementById("sim-legend");
+  if(Sim.key==="bohr"){
+    legend.innerHTML=`<span><i style="background:var(--brass-500);"></i> Inti atom</span><span><i style="background:var(--phosphor-500);"></i> Elektron</span><span><i style="background:var(--ink-600);"></i> Kulit (K, L, M, …)</span>`;
+  } else {
+    legend.innerHTML=`<span><i style="background:var(--brass-500);"></i> Orbital kosong</span><span><i style="background:var(--phosphor-500);"></i> Orbital terisi</span><span>↑ Elektron spin ke atas &nbsp; ↑↓ Elektron berpasangan</span>`;
+  }
+}
+function renderReadout(){
+  const readout=document.getElementById("sim-readout");
+  if(Sim.key==="bohr"){
+    const Z=Sim.bohr.Z; const shells=shellConfig(Z); const el=ELEMENTS[Z-1];
+    const notation=shells.join(", ");
+    const valensi=shells[shells.length-1];
+    readout.innerHTML=`
+      <div><b>Unsur</b><span>${el.name} (${el.sym})</span></div>
+      <div><b>Notasi Kulit</b><span>${notation}</span></div>
+      <div><b>Jumlah Kulit</b><span>${shells.length} (Periode ${shells.length})</span></div>
+      <div><b>Elektron Valensi</b><span>${valensi}</span></div>`;
+  } else {
+    const Z=Sim.aufbau.Z; const entries=buildAufbauConfig(Z); const el=ELEMENTS[Z-1];
+    const notation=configNotation(entries);
+    const {prefix,rest}=noblegasShorthand(Z,entries);
+    const shorthand = prefix ? `${prefix} ${configNotation(rest)}`.trim() : notation;
+    const unpaired=unpairedCount(entries);
+    const isException = (Z===24||Z===29);
+    readout.innerHTML=`
+      <div><b>Unsur</b><span>${el.name} (${el.sym})</span></div>
+      <div><b>Notasi Subkulit</b><span>${notation}</span></div>
+      <div><b>Bentuk Singkat</b><span>${shorthand}</span></div>
+      <div><b>Elektron Tak Berpasangan</b><span>${unpaired}</span></div>
+      ${isException?`<div style="grid-column:1/-1;"><b>Status</b><span>⚠ Penyimpangan Aufbau (kestabilan subkulit d)</span></div>`:""}`;
+  }
+}
+
+function drawCurrentSim(){
+  if(Sim.key==="bohr"){ toggleSimLayer(); if(!Sim.ctx) return; drawBohr(); }
+  else{ toggleSimLayer(); drawAufbauLayer(); }
+}
+
+function drawBohr(){
+  const ctx=Sim.ctx, w=Sim.canvas.width, h=Sim.canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const Z=Sim.bohr.Z; const shells=shellConfig(Z); const el=ELEMENTS[Z-1];
+  const cx=w*0.5, cy=h*0.52;
+  const baseR=Math.min(w,h)*0.09;
+  const gap=Math.min(w,h)*0.085;
+
+  // Nukleus
+  ctx.beginPath(); ctx.fillStyle="#C4934E";
+  ctx.arc(cx,cy, baseR*0.55, 0, 7);
+  ctx.shadowColor="#C4934E"; ctx.shadowBlur=14*Sim.dpr; ctx.fill(); ctx.shadowBlur=0;
+  ctx.fillStyle="#0B1220"; ctx.font=`700 ${13*Sim.dpr}px sans-serif`; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText(el.sym, cx, cy);
+
+  shells.forEach((count,i)=>{
+    const r = baseR + (i+1)*gap;
+    ctx.strokeStyle="rgba(217,211,194,.28)"; ctx.lineWidth=1.4*Sim.dpr;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+
+    if(Sim.mode!=="simbolik"){
+      for(let k=0;k<count;k++){
+        const ang=(k/count)*Math.PI*2 + i*0.3;
+        const x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
+        ctx.beginPath(); ctx.fillStyle="#5FD9C4";
+        ctx.shadowColor="#5FD9C4"; ctx.shadowBlur=6*Sim.dpr;
+        ctx.arc(x,y,4.4*Sim.dpr,0,7); ctx.fill(); ctx.shadowBlur=0;
+      }
+    }
+    ctx.fillStyle="#D9AC6E"; ctx.font=`600 ${12*Sim.dpr}px monospace`; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+    ctx.fillText(`${SHELL_LETTERS[i]} (${count})`, cx + r*Math.cos(-Math.PI/2.3), cy + r*Math.sin(-Math.PI/2.3));
+  });
+
+  if(Sim.mode==="makroskopik"){
+    ctx.fillStyle="rgba(196,147,78,.85)"; ctx.font=`600 ${15*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+    ctx.fillText(`Periode ${shells.length} · Golongan (valensi ${shells[shells.length-1]})`, cx, h*0.92);
+  }
+}
+
+function drawAufbauLayer(){
+  const Z=Sim.aufbau.Z;
+  const entries=buildAufbauConfig(Z);
+  const el=ELEMENTS[Z-1];
+  const notation=configNotation(entries);
+  const {prefix,rest}=noblegasShorthand(Z,entries);
+  const shorthand = prefix ? `${prefix} ${configNotation(rest)}`.trim() : notation;
+  const isException=(Z===24||Z===29);
+
+  let html = `<div class="aufbau-notation"><strong>${el.name} (${el.sym}, Z=${Z})</strong><br>${notation}</div>`;
+  html += `<div class="aufbau-shorthand">Bentuk singkat: ${shorthand}</div>`;
+
+  entries.forEach(e=>{
+    const occ=orbitalOccupancy(e);
+    const boxes=occ.map(c=>{
+      const cls = c===0?"":(c===1?"has-1":"has-2");
+      const arrow = c===0?"":(c===1?"↑":"↑↓");
+      return `<div class="orbital-box ${cls}">${arrow}</div>`;
+    }).join("");
+    const unpaired=occ.filter(c=>c===1).length;
+    html += `<div class="orbital-row">
+      <div class="orbital-row-label">${e.sub}</div>
+      <div class="orbital-boxes">${boxes}</div>
+      <div class="orbital-row-meta">${e.filled} e⁻ ${unpaired>0?`· ${unpaired} tak berpasangan`:"· berpasangan penuh"}</div>
+    </div>`;
+  });
+
+  if(isException){
+    html += `<div class="aufbau-exception-note">⚠ <b>${el.name}</b> mengalami penyimpangan asas Aufbau: satu elektron dari subkulit 4s berpindah ke 3d agar subkulit d mencapai kondisi ${Z===24?"setengah penuh (d⁵)":"penuh (d¹⁰)"} yang lebih stabil.</div>`;
+  }
+
+  document.getElementById("aufbau-layer").innerHTML = html;
+}
+
+function resetSim(){
+  AudioFX.reset();
+  if(confirm("Kembalikan simulasi ke kondisi awal? Data LKPD tidak akan terhapus.")){
+    Sim.bohr={Z:11}; Sim.aufbau={Z:11};
+    renderSimControls(); drawCurrentSim();
+    showToast("Simulasi direset ke kondisi awal.");
+  }
+}
+function initSimulationView(){
+  setupCanvas();
+  renderSimTabs();
+  renderSimControls();
+  renderSimLegend();
+  toggleSimLayer();
+  drawCurrentSim();
+  document.getElementById("sim-reset").addEventListener("click", resetSim);
+}
+
+/* =========================================================================
+   10. LKPD
+   ========================================================================= */
+const LKPD_FIELDS=["prediksi","analisis1","analisis2","q1","q2","kesimpulan","refleksi"];
+let obsRowCount1=0, obsRowCount2=0;
+function addObsRow1(data){
+  const tbody=document.getElementById("obs-tbody-1"); const idx=obsRowCount1++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. Ca (Z=20)" value="${data&&data.unsur||""}"></td>
+    <td><input type="text" placeholder="cth. 2,8,8,2" value="${data&&data.notasi||""}"></td>
+    <td><input type="text" placeholder="cth. 4" value="${data&&data.kulit||""}"></td>
+    <td><input type="text" placeholder="cth. 2" value="${data&&data.valensi||""}"></td>`;
+  tbody.appendChild(row);
+}
+function addObsRow2(data){
+  const tbody=document.getElementById("obs-tbody-2"); const idx=obsRowCount2++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. Cr (Z=24)" value="${data&&data.unsur||""}"></td>
+    <td><input type="text" placeholder="cth. 1s2 2s2 2p6..." value="${data&&data.notasi||""}"></td>
+    <td><input type="text" placeholder="cth. [Ar]4s1 3d5" value="${data&&data.singkat||""}"></td>
+    <td><input type="text" placeholder="cth. 6" value="${data&&data.takberpasangan||""}"></td>`;
+  tbody.appendChild(row);
+}
+function renderLKPD(){
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  const l=State.lkpd;
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el&&l[f]) el.value=l[f]; });
+  document.getElementById("obs-tbody-1").innerHTML=""; obsRowCount1=0;
+  (l.obs1&&l.obs1.length?l.obs1:[{},{}]).forEach(r=>addObsRow1(r));
+  document.getElementById("obs-tbody-2").innerHTML=""; obsRowCount2=0;
+  (l.obs2&&l.obs2.length?l.obs2:[{},{}]).forEach(r=>addObsRow2(r));
+}
+function collectLKPD(){
+  const l={};
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el) l[f]=el.value; });
+  l.obs1 = Array.from(document.querySelectorAll("#obs-tbody-1 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {unsur:i[0].value, notasi:i[1].value, kulit:i[2].value, valensi:i[3].value};
+  });
+  l.obs2 = Array.from(document.querySelectorAll("#obs-tbody-2 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {unsur:i[0].value, notasi:i[1].value, singkat:i[2].value, takberpasangan:i[3].value};
+  });
+  return l;
+}
+function initLKPD(){
+  document.querySelectorAll("[data-add]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ AudioFX.click(); btn.dataset.add==="1"?addObsRow1():addObsRow2(); });
+  });
+  document.getElementById("lkpd-save").addEventListener("click", ()=>{
+    State.lkpd=collectLKPD(); persistState();
+    document.getElementById("lkpd-status").textContent="Tersimpan · "+new Date().toLocaleTimeString("id-ID");
+    AudioFX.success(); showToast("LKPD berhasil disimpan.","success");
+    unlockView("evaluasi");
+  });
+  document.getElementById("lkpd-print").addEventListener("click", ()=>window.print());
+  document.getElementById("btn-print").addEventListener("click", ()=>{ goToView("lkpd"); setTimeout(()=>window.print(),200); });
+  document.getElementById("lkpd-reset").addEventListener("click", ()=>{
+    if(confirm("Hapus seluruh isian LKPD? Tindakan ini tidak dapat dibatalkan.")){
+      State.lkpd={}; persistState(); renderLKPD(); AudioFX.reset(); showToast("LKPD telah direset.");
+    }
+  });
+}
+
+/* =========================================================================
+   11. EVALUATION
+   ========================================================================= */
+function renderQuiz(){
+  const container=document.getElementById("quiz-questions");
+  container.innerHTML=LAB_DATA.evaluation.map((q,i)=>{
+    let body="";
+    if(q.type==="mc") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="radio" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="checkbox") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="checkbox" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="short") body=`<input type="text" class="short-answer-input" id="q${i}-short" placeholder="Ketik jawabanmu…">`;
+    else if(q.type==="essay") body=`<textarea id="q${i}-essay" placeholder="Tuliskan jawaban analisismu…" style="min-height:90px;"></textarea>`;
+    return `<div class="card q-card" id="qcard-${i}">
+      <span class="q-tag ${q.level}">${q.level.toUpperCase()} · Soal ${i+1}</span>
+      <div class="q-stem">${q.stem}</div>${body}
+      <div class="q-explain" id="qexplain-${i}"><b>Pembahasan:</b> ${q.explain}</div>
+    </div>`;
+  }).join("");
+  container.addEventListener("change", onQuizAnswerChange);
+  container.querySelectorAll(".short-answer-input, textarea").forEach(el=>el.addEventListener("input", onQuizAnswerChange));
+  document.getElementById("quiz-begin").parentElement.hidden=true;
+  document.getElementById("quiz-body").hidden=false;
+  updateQuizProgress();
+}
+function onQuizAnswerChange(){
+  const answers={};
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    if(q.type==="mc"){ const sel=document.querySelector(`input[name="q${i}"]:checked`); if(sel) answers[i]=Number(sel.value); }
+    else if(q.type==="checkbox"){ const sels=document.querySelectorAll(`input[name="q${i}"]:checked`); if(sels.length) answers[i]=Array.from(sels).map(s=>Number(s.value)); }
+    else if(q.type==="short"){ const val=document.getElementById(`q${i}-short`).value.trim(); if(val) answers[i]=val; }
+    else if(q.type==="essay"){ const val=document.getElementById(`q${i}-essay`).value.trim(); if(val) answers[i]=val; }
+  });
+  State.quiz.answers=answers; persistState(); updateQuizProgress();
+}
+function updateQuizProgress(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  document.getElementById("quiz-progress-fill").style.width=(answered/total*100)+"%";
+  document.getElementById("quiz-progress-label").textContent=`${answered} / ${total} dijawab`;
+}
+function normalizeText(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+function gradeQuiz(){
+  let scoreItems=0, gradable=0;
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const ans=State.quiz.answers[i];
+    if(q.type==="essay") return;
+    gradable++;
+    if(q.type==="mc"){ if(ans===q.answer) scoreItems++; }
+    else if(q.type==="checkbox"){ if(Array.isArray(ans)){ const a=[...ans].sort().join(","), b=[...q.answerSet].sort().join(","); if(a===b) scoreItems++; } }
+    else if(q.type==="short"){ if(ans && q.accepted.includes(normalizeText(ans))) scoreItems++; }
+  });
+  return { scoreItems, gradable, pct: gradable?Math.round((scoreItems/gradable)*100):0 };
+}
+function revealAnswers(){
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    document.getElementById(`qexplain-${i}`).classList.add("is-visible");
+    if(q.type==="mc"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(oi===q.answer) optEl.classList.add("is-correct"); else if(oi===sel) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="checkbox"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i]||[];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(q.answerSet.includes(oi)) optEl.classList.add("is-correct"); else if(sel.includes(oi)) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="short"){ document.getElementById(`q${i}-short`).disabled=true; }
+    else if(q.type==="essay"){ document.getElementById(`q${i}-essay`).disabled=true; }
+  });
+}
+function submitQuiz(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  if(answered<total){ if(!confirm(`Kamu baru menjawab ${answered} dari ${total} soal. Tetap kumpulkan sekarang?`)) return; }
+  const result=gradeQuiz();
+  State.quiz.submitted=true; State.quiz.lastResult=result; persistState();
+  revealAnswers(); unlockView("profil");
+  document.getElementById("quiz-submit").hidden=true;
+  document.getElementById("quiz-result").hidden=false;
+  document.getElementById("result-score").textContent=result.pct;
+  let desc="";
+  if(result.pct>=85) desc="Istimewa! Pemahamanmu tentang konfigurasi kulit dan subkulit sangat kuat.";
+  else if(result.pct>=70) desc="Bagus! Sebagian besar konsep sudah kamu kuasai — tinjau kembali bagian yang masih keliru.";
+  else if(result.pct>=50) desc="Cukup baik. Baca ulang bagian Teori, khususnya asas Aufbau dan aturan Hund, lalu coba lagi.";
+  else desc="Perlu belajar lebih dalam. Cobalah ulangi bagian Teori dan Simulasi sebelum mengulang evaluasi.";
+  document.getElementById("result-desc").textContent=desc;
+  const badges=[
+    {icon:"🎓",label:"Skor ≥ 85",earned:result.pct>=85},
+    {icon:"⚛",label:"Semua Soal Dijawab",earned:answered>=total},
+    {icon:"🔬",label:"Skor ≥ 70",earned:result.pct>=70}
+  ];
+  document.getElementById("badge-row").innerHTML=badges.map(b=>`<div class="badge ${b.earned?"is-earned":""}"><i>${b.icon}</i><span>${b.label}</span></div>`).join("");
+  if(result.pct>=70) AudioFX.complete(); else AudioFX.error();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+function initQuiz(){
+  document.getElementById("quiz-begin").addEventListener("click", ()=>{ AudioFX.click(); renderQuiz(); });
+  document.getElementById("quiz-submit").addEventListener("click", submitQuiz);
+  document.getElementById("quiz-review").addEventListener("click", ()=>{
+    document.getElementById("quiz-result").hidden=true;
+    document.getElementById("quiz-body").hidden=false;
+    window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+  });
+  document.getElementById("quiz-retry").addEventListener("click", ()=>{
+    if(confirm("Ulangi evaluasi dari awal? Jawaban sebelumnya akan dihapus.")){
+      State.quiz={answers:{},submitted:false}; persistState();
+      document.getElementById("quiz-result").hidden=true;
+      document.getElementById("quiz-intro").hidden=false;
+      document.getElementById("quiz-body").hidden=true;
+      document.getElementById("quiz-submit").hidden=false;
+      AudioFX.reset();
+    }
+  });
+}
+
+/* =========================================================================
+   12. DEVELOPER PROFILE
+   ========================================================================= */
+function renderDevProfile(){
+  document.getElementById("dev-photo").innerHTML=`
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder foto pengembang">
+      <rect width="180" height="180" fill="#1F2C48"/>
+      <circle cx="90" cy="70" r="34" fill="#2C3A5C"/>
+      <path d="M30 168c8-40 40-58 60-58s52 18 60 58z" fill="#2C3A5C"/>
+      <circle cx="90" cy="90" r="88" fill="none" stroke="#C4934E" stroke-width="1.5" opacity="0.4"/>
+    </svg>`;
+}
+
+/* =========================================================================
+   13. ASSISTANT
+   ========================================================================= */
+const ASSISTANT_RULES=[
+  {keys:["mulai","cara mulai"], reply:"Klik \"Mulai Praktikum\", isi identitasmu, lalu ikuti tab navigasi dari Teori → Prosedur → Simulasi → LKPD → Evaluasi secara berurutan."},
+  {keys:["kulit","bohr"], reply:"Model Bohr menggambarkan elektron menempati kulit-kulit (K,L,M,N,...) dengan kapasitas maksimum 2n², tapi kulit terluar maksimal 8 elektron (kecuali K maksimal 2)."},
+  {keys:["subkulit","orbital"], reply:"Subkulit (s,p,d,f) adalah rincian lebih detail dari tiap kulit menurut model mekanika kuantum. s=1 orbital(2e), p=3 orbital(6e), d=5 orbital(10e), f=7 orbital(14e)."},
+  {keys:["aufbau"], reply:"Asas Aufbau: elektron mengisi subkulit berenergi rendah dulu, urutannya 1s,2s,2p,3s,3p,4s,3d,4p,... (perhatikan 4s sebelum 3d!)"},
+  {keys:["hund"], reply:"Aturan Hund: elektron mengisi orbital kosong satu-satu dengan spin sejajar dulu, baru berpasangan setelah semua orbital di subkulit itu terisi 1 elektron."},
+  {keys:["pauli"], reply:"Larangan Pauli: setiap orbital maksimal diisi 2 elektron, dengan spin yang berlawanan arah."},
+  {keys:["valensi"], reply:"Elektron valensi adalah elektron pada kulit terluar (model Bohr), penting untuk menentukan golongan unsur golongan utama."},
+  {keys:["kromium","cr","tembaga","cu","anomali","penyimpangan"], reply:"Cr (Z=24) dan Cu (Z=29) menyimpang dari asas Aufbau biasa karena subkulit d yang setengah penuh (d⁵) atau penuh (d¹⁰) lebih stabil. Coba pilih Cr/Cu di simulator Aufbau untuk melihatnya!"},
+  {keys:["lkpd"], reply:"LKPD dapat diisi setelah kamu mencoba simulasi. Klik \"Simpan\" secara berkala, dan gunakan \"Cetak / Simpan PDF\" bila perlu dokumen cetak."},
+  {keys:["nilai","skor","evaluasi"], reply:"Evaluasi berisi 18 soal (LOTS-HOTS). Skor otomatis dihitung dari soal pilihan ganda, checkbox, dan isian singkat. Soal esai direkam untuk dinilai gurumu."},
+  {keys:["error","macet","bug"], reply:"Coba muat ulang halaman. Data LKPD dan jawabanmu tersimpan otomatis di perangkat ini."}
+];
+function assistantReply(text){
+  const q=normalizeText(text);
+  const rule=ASSISTANT_RULES.find(r=>r.keys.some(k=>q.includes(k)));
+  return rule?rule.reply:"Aku asisten berbasis aturan (bukan AI generatif), jadi jawabanku terbatas pada topik virtual lab ini. Coba tanyakan tentang: kulit, subkulit, Aufbau, Hund, Pauli, elektron valensi, atau Kromium/Tembaga.";
+}
+function initAssistant(){
+  const fab=document.getElementById("assistant-fab"), panel=document.getElementById("assistant-panel"), body=document.getElementById("assistant-body"), chips=document.getElementById("assistant-chips");
+  function addMsg(text,who){ const div=document.createElement("div"); div.className="assistant-msg"+(who==="user"?" user":""); div.textContent=text; body.appendChild(div); body.scrollTop=body.scrollHeight; }
+  addMsg("Halo! Aku asisten berbasis aturan untuk membantumu memahami konfigurasi elektron kulit dan subkulit. Silakan bertanya.","bot");
+  ["Apa itu asas Aufbau?","Bedanya kulit & subkulit?","Kenapa Cr menyimpang?"].forEach(q=>{
+    const chip=document.createElement("button"); chip.className="assistant-chip"; chip.textContent=q;
+    chip.addEventListener("click", ()=>{ addMsg(q,"user"); setTimeout(()=>addMsg(assistantReply(q),"bot"),220); });
+    chips.appendChild(chip);
+  });
+  fab.addEventListener("click", ()=>{ const hidden=panel.hidden; panel.hidden=!hidden; fab.setAttribute("aria-expanded", String(hidden)); AudioFX.click(); });
+  document.getElementById("assistant-close").addEventListener("click", ()=>{ panel.hidden=true; fab.setAttribute("aria-expanded","false"); });
+}
+
+/* =========================================================================
+   14. TOP CONTROLS
+   ========================================================================= */
+function initTopControls(){
+  const soundBtn=document.getElementById("btn-sound");
+  soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+  soundBtn.textContent=State.soundOn?"🔊":"🔇";
+  soundBtn.addEventListener("click", ()=>{
+    State.soundOn=!State.soundOn;
+    soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+    soundBtn.textContent=State.soundOn?"🔊":"🔇";
+    persistState(); if(State.soundOn) AudioFX.click();
+  });
+  const rmBtn=document.getElementById("btn-reduce-motion");
+  rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+  document.body.classList.toggle("reduce-motion", State.reduceMotion);
+  rmBtn.addEventListener("click", ()=>{
+    State.reduceMotion=!State.reduceMotion;
+    rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+    document.body.classList.toggle("reduce-motion", State.reduceMotion);
+    persistState();
+  });
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    State.reduceMotion=true; document.body.classList.add("reduce-motion"); rmBtn.setAttribute("aria-pressed","true");
+  }
+}
+
+window.addEventListener("error",(e)=>{ console.error("Terjadi kesalahan tak terduga:", e.message); });
+
+/* =========================================================================
+   15. BOOTSTRAP
+   ========================================================================= */
+function init(){
+  loadState();
+  initSplash();
+  initTopControls();
+  buildTabs();
+  renderTheory();
+  renderProcedureTabs();
+  renderProcedureSteps();
+  initLKPD();
+  renderLKPD();
+  initQuiz();
+  renderDevProfile();
+  initAssistant();
+  goToView(State.activeView||"teori");
+
+  let simInitialized=false;
+  document.getElementById("tab-simulasi").addEventListener("click", ()=>{ if(!simInitialized){ initSimulationView(); simInitialized=true; } });
+  if(State.activeView==="simulasi"){ initSimulationView(); simInitialized=true; }
+}
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

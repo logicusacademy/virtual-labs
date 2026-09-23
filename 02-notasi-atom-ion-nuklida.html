@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Virtual Lab Kimia — Notasi Atom, Notasi Ion &amp; Jenis-Jenis Nuklida</title>
+<meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: notasi atom, notasi ion, dan jenis-jenis nuklida (isotop, isobar, isoton).">
+
+<style>
+/* =========================================================================
+   DESIGN TOKENS — konsisten dengan seri Virtual Lab Struktur Atom
+   (tema "Instrumen Penemuan": biru malam, kuningan instrumen, pendar fosfor)
+   ========================================================================= */
+:root{
+  --ink-950:#0B1220; --ink-900:#101A2E; --ink-800:#16213A; --ink-700:#1F2C48; --ink-600:#2C3A5C;
+  --brass-500:#C4934E; --brass-400:#D9AC6E; --brass-700:#93672F;
+  --phosphor-500:#5FD9C4; --phosphor-300:#9EEBDC;
+  --ember-500:#E0725A; --ember-300:#F0A38F;
+  --leaf-500:#7FBF7F;
+  --paper-100:#F3EFE4; --paper-300:#D9D3C2; --paper-500:#A9A290;
+  --serif:"Fraunces","Iowan Old Style",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --radius-s:6px; --radius-m:12px; --radius-l:20px;
+  --shadow-deep:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{ margin:0; font-family:var(--sans); background:radial-gradient(1200px 800px at 15% -10%, #16223d 0%, var(--ink-950) 55%); color:var(--paper-100); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+h1,h2,h3,h4{ font-family:var(--serif); font-weight:600; margin:0 0 .4em; letter-spacing:.2px; }
+p{ margin:0 0 1em; line-height:1.65; color:var(--paper-300); }
+a{ color:var(--phosphor-500); }
+button{ font-family:inherit; }
+::selection{ background:var(--brass-500); color:var(--ink-950); }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+body.reduce-motion *{ animation:none !important; transition:none !important; }
+:focus-visible{ outline:2px solid var(--phosphor-500); outline-offset:3px; border-radius:4px; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--ink-600); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--brass-700); }
+.visually-hidden{ position:absolute !important; width:1px;height:1px; padding:0;margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.skip-link{ position:absolute; left:12px; top:-60px; background:var(--brass-500); color:var(--ink-950); padding:10px 16px; border-radius:var(--radius-s); z-index:999; font-weight:600; transition:top .2s var(--ease); }
+.skip-link:focus{ top:12px; }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+.appbar{ display:flex; align-items:center; gap:16px; padding:10px 22px; background:linear-gradient(180deg, rgba(16,26,46,.96), rgba(16,26,46,.88)); border-bottom:1px solid var(--ink-600); position:sticky; top:0; z-index:60; backdrop-filter:blur(6px); }
+.appbar__brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+.appbar__mark{ width:34px;height:34px; border-radius:50%; background:radial-gradient(circle at 32% 28%, var(--phosphor-300), var(--phosphor-500) 45%, #1a6f60 100%); box-shadow:0 0 16px -2px var(--phosphor-500); flex:none; }
+.appbar__title{ font-family:var(--serif); font-size:15px; line-height:1.1; }
+.appbar__title small{ display:block; font-family:var(--sans); font-size:11px; color:var(--paper-500); font-weight:500; }
+.tabs{ display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab-btn{ border:1px solid transparent; background:transparent; color:var(--paper-500); padding:9px 14px; border-radius:999px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease); }
+.tab-btn .tab-num{ width:18px;height:18px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); font-size:10px; display:grid; place-items:center; font-family:var(--mono); flex:none; }
+.tab-btn:hover{ color:var(--paper-100); background:var(--ink-800); }
+.tab-btn[aria-selected="true"]{ color:var(--ink-950); background:var(--brass-500); }
+.tab-btn[aria-selected="true"] .tab-num{ background:rgba(11,18,32,.25); color:var(--ink-950); }
+.tab-btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.tab-btn[disabled]:hover{ background:transparent; color:var(--paper-500); }
+.appbar__actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ width:36px;height:36px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); display:grid; place-items:center; cursor:pointer; font-size:15px; transition:border-color .18s var(--ease), color .18s var(--ease), transform .12s var(--ease); }
+.icon-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.icon-btn:active{ transform:scale(.94); }
+.icon-btn[aria-pressed="false"]{ opacity:.5; }
+.progress-rail{ height:3px; background:var(--ink-700); position:relative; }
+.progress-rail__fill{ height:100%; background:linear-gradient(90deg, var(--brass-700), var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+main{ flex:1; position:relative; }
+.view{ display:none; padding:28px clamp(16px,4vw,56px) 64px; max-width:1240px; margin:0 auto; animation:viewIn .35s var(--ease); }
+.view.is-active{ display:block; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+.view-head{ margin-bottom:26px; }
+.eyebrow-plain{ font-size:12.5px; color:var(--phosphor-500); font-weight:600; margin-bottom:6px; }
+.view-head h2{ font-size:clamp(24px,3.4vw,34px); }
+.view-head p{ max-width:640px; }
+.card{ background:linear-gradient(180deg, var(--ink-800), var(--ink-900)); border:1px solid var(--ink-600); border-radius:var(--radius-l); padding:22px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media (max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+.btn{ display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:12px 22px; border-radius:999px; border:1px solid transparent; cursor:pointer; font-weight:600; font-size:14.5px; transition:transform .14s var(--ease), box-shadow .2s var(--ease), background .18s; }
+.btn:active{ transform:scale(.97); }
+.btn--primary{ background:linear-gradient(180deg, var(--brass-400), var(--brass-500)); color:#1B1305; box-shadow:0 10px 24px -10px rgba(196,147,78,.55); }
+.btn--primary:hover{ box-shadow:0 14px 30px -10px rgba(196,147,78,.7); }
+.btn--ghost{ background:transparent; border-color:var(--ink-600); color:var(--paper-100); }
+.btn--ghost:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.btn--danger{ background:transparent; border-color:var(--ember-500); color:var(--ember-300); }
+.btn--danger:hover{ background:rgba(224,114,90,.12); }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+.btn--sm{ padding:8px 16px; font-size:13px; }
+.btn--block{ width:100%; }
+
+label{ display:block; font-size:13px; font-weight:600; color:var(--paper-300); margin-bottom:6px; }
+input[type="text"], input[type="number"], select, textarea{ width:100%; background:var(--ink-950); border:1px solid var(--ink-600); color:var(--paper-100); padding:11px 13px; border-radius:var(--radius-s); font-size:14.5px; font-family:inherit; }
+textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+input:focus, select:focus, textarea:focus{ border-color:var(--phosphor-500); }
+.field{ margin-bottom:16px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+.hint{ font-size:12px; color:var(--paper-500); margin-top:5px; }
+
+#splash{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:radial-gradient(900px 500px at 80% 10%, rgba(95,217,196,.10), transparent 60%), radial-gradient(700px 500px at 10% 90%, rgba(196,147,78,.14), transparent 60%), var(--ink-950); padding:24px; text-align:center; transition:opacity .5s var(--ease), visibility .5s; }
+#splash.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.splash__orbit{ position:relative; width:150px;height:150px; margin:0 auto 26px; }
+.splash__nucleus{ position:absolute; inset:0; margin:auto; width:26px;height:26px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); box-shadow:0 0 30px 4px rgba(196,147,78,.55); }
+.splash__ring{ position:absolute; inset:0; border:1px solid rgba(95,217,196,.35); border-radius:50%; }
+.splash__ring:nth-child(2){ inset:14px; animation:spin 6s linear infinite; }
+.splash__ring:nth-child(3){ inset:0; transform:rotate(60deg); animation:spin 9s linear infinite reverse; }
+.splash__ring:nth-child(4){ inset:0; transform:rotate(-60deg); animation:spin 12s linear infinite; }
+.splash__electron{ position:absolute; width:8px;height:8px;border-radius:50%; background:var(--phosphor-500); box-shadow:0 0 10px 2px var(--phosphor-500); top:-4px; left:50%; margin-left:-4px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+body.reduce-motion .splash__ring{ animation:none; }
+.splash__eyebrow{ letter-spacing:.4px; color:var(--phosphor-500); font-weight:700; font-size:13px; margin-bottom:10px; }
+.splash h1{ font-size:clamp(28px,5vw,46px); max-width:760px; margin:0 auto 10px; }
+.splash__topic{ color:var(--brass-400); font-weight:600; font-size:clamp(15px,2vw,19px); margin-bottom:26px; }
+.splash__meta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+.chip{ border:1px solid var(--ink-600); border-radius:999px; padding:6px 14px; font-size:12.5px; color:var(--paper-300); background:var(--ink-800); }
+
+.modal-scrim{ position:fixed; inset:0; background:rgba(6,9,16,.72); z-index:210; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-scrim[hidden]{ display:none; }
+.modal{ background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); max-width:460px; width:100%; padding:28px; box-shadow:var(--shadow-deep); }
+.modal h2{ font-size:22px; }
+
+.theory-toc{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.toc-pill{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:7px 13px; border-radius:999px; font-size:12.5px; cursor:pointer; font-weight:600; }
+.toc-pill:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.theory-section{ margin-bottom:30px; scroll-margin-top:90px; }
+.theory-section h3{ font-size:20px; border-bottom:1px solid var(--ink-600); padding-bottom:10px; margin-bottom:14px; }
+.term-list{ display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+.term-list dt{ font-weight:700; color:var(--paper-100); font-size:13.5px; }
+.term-list dd{ margin:0 0 12px; color:var(--paper-500); font-size:13.2px; }
+@media (max-width:700px){ .term-list{ grid-template-columns:1fr; } }
+.misconception{ border-left:3px solid var(--ember-500); background:rgba(224,114,90,.08); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:12px 16px; margin-bottom:10px; }
+.misconception b{ color:var(--ember-300); }
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+table.data-table th{ text-align:left; font-family:var(--serif); font-weight:600; color:var(--brass-400); padding:10px 12px; border-bottom:2px solid var(--ink-600); }
+table.data-table td{ padding:10px 12px; border-bottom:1px solid var(--ink-700); color:var(--paper-300); }
+table.data-table tr:last-child td{ border-bottom:none; }
+.table-wrap{ overflow-x:auto; }
+
+/* Notation badge — anatomi notasi atom/ion */
+.notation-badge{ display:inline-flex; align-items:center; }
+.notation-stack{ display:flex; flex-direction:column; font-family:var(--mono); font-size:13px; line-height:1.05; text-align:right; margin-right:5px; }
+.notation-mass{ color:var(--phosphor-500); font-weight:700; }
+.notation-atomic{ color:var(--brass-400); font-weight:700; }
+.notation-symbol{ font-family:var(--serif); font-size:32px; font-weight:700; color:var(--paper-100); }
+.notation-charge{ align-self:flex-start; font-family:var(--mono); font-size:13px; color:var(--ember-300); font-weight:700; margin-left:3px; margin-top:-4px; }
+.notation-badge.lg .notation-symbol{ font-size:52px; }
+.notation-badge.lg .notation-stack{ font-size:16px; margin-right:8px; }
+.notation-badge.lg .notation-charge{ font-size:16px; }
+
+.anatomy-diagram{ display:flex; align-items:center; justify-content:center; gap:26px; flex-wrap:wrap; padding:26px; background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); margin:16px 0; }
+.anatomy-label{ display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11.5px; color:var(--paper-500); text-align:center; max-width:150px; }
+.anatomy-label b{ color:var(--paper-100); font-size:12.5px; }
+.anatomy-arrow{ color:var(--ink-600); font-size:20px; }
+
+.proc-tabs{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.proc-tab{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:10px 16px; border-radius:var(--radius-m); cursor:pointer; font-weight:600; font-size:13.5px; text-align:left; }
+.proc-tab[aria-selected="true"]{ border-color:var(--brass-500); color:var(--brass-400); background:rgba(196,147,78,.09); }
+.step-list{ counter-reset:step; }
+.step{ display:grid; grid-template-columns:40px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--ink-700); opacity:.5; }
+.step.is-unlocked{ opacity:1; }
+.step:last-child{ border-bottom:none; }
+.step__num{ width:34px;height:34px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; }
+.step.is-unlocked .step__num{ background:var(--brass-500); color:#1B1305; }
+.step.is-done .step__num{ background:var(--leaf-500); color:#0c2410; }
+.step h4{ font-size:15.5px; margin-bottom:6px; }
+.step__meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--paper-500); margin:8px 0; }
+.step__meta span{ display:flex; gap:5px; align-items:center; }
+.step__meta b{ color:var(--paper-300); font-weight:600; }
+.step-actions{ margin-top:10px; }
+.progress-track{ height:8px; background:var(--ink-700); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+.progress-track__fill{ height:100%; background:linear-gradient(90deg, var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+
+.sim-shell{ display:grid; grid-template-columns:300px 1fr; gap:20px; }
+@media (max-width:980px){ .sim-shell{ grid-template-columns:1fr; } }
+.sim-panel{ display:flex; flex-direction:column; gap:16px; }
+.sim-stage{ position:relative; border-radius:var(--radius-l); border:1px solid var(--ink-600); background:radial-gradient(ellipse at 50% 30%, #0e1a30 0%, #060a14 72%); overflow:hidden; min-height:440px; }
+.sim-stage canvas{ display:block; width:100%; height:100%; }
+.sim-toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--ink-600); background:rgba(11,18,32,.7); }
+.mode-switch{ display:flex; gap:6px; background:var(--ink-800); border:1px solid var(--ink-600); border-radius:999px; padding:4px; }
+.mode-switch button{ border:none; background:transparent; color:var(--paper-500); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; cursor:pointer; }
+.mode-switch button[aria-pressed="true"]{ background:var(--phosphor-500); color:#04211c; }
+.readout{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:var(--mono); font-size:12.5px; }
+.readout div{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:8px 10px; }
+.readout b{ display:block; color:var(--phosphor-500); font-size:10.5px; letter-spacing:.4px; margin-bottom:2px; font-family:var(--sans); }
+.readout span{ color:var(--paper-100); font-size:14px; }
+.slider-field{ margin-bottom:14px; }
+.slider-field .val{ float:right; font-family:var(--mono); color:var(--brass-400); font-size:12.5px; }
+input[type="range"]{ width:100%; accent-color:var(--brass-500); }
+.control-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-500); }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.legend i{ width:10px;height:10px;border-radius:50%; display:inline-block; }
+.sim-note{ font-size:12.5px; background:rgba(95,217,196,.08); border:1px solid rgba(95,217,196,.25); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+/* Stepper (builder controls) */
+.stepper-field{ margin-bottom:16px; }
+.stepper-row{ display:flex; align-items:center; gap:10px; }
+.stepper-btn{ width:34px;height:34px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-100); font-size:17px; font-weight:700; cursor:pointer; display:grid; place-items:center; flex:none; }
+.stepper-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.stepper-btn:active{ transform:scale(.92); }
+.stepper-val{ flex:1; text-align:center; font-family:var(--mono); font-size:18px; color:var(--paper-100); background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:7px 0; }
+
+/* Nuclide classifier result */
+.verdict{ text-align:center; padding:14px; border-radius:var(--radius-m); border:1px solid var(--ink-600); background:var(--ink-950); }
+.verdict.is-related{ border-color:var(--leaf-500); background:rgba(127,191,127,.08); }
+.verdict-title{ font-family:var(--serif); font-size:22px; color:var(--brass-400); margin-bottom:4px; }
+.verdict.is-related .verdict-title{ color:var(--leaf-500); }
+.verdict-desc{ font-size:12.5px; color:var(--paper-300); }
+
+.lkpd-section{ margin-bottom:24px; }
+.lkpd-section h3{ font-size:16px; display:flex; align-items:center; gap:8px; }
+.lkpd-section h3 em{ font-style:normal; font-family:var(--mono); font-size:11px; color:var(--paper-500); background:var(--ink-700); padding:3px 8px; border-radius:5px; }
+.obs-table td, .obs-table th{ padding:8px; }
+.obs-table input{ padding:7px 9px; font-size:13px; }
+.add-row-btn{ margin-top:8px; }
+.lkpd-toolbar{ display:flex; gap:10px; flex-wrap:wrap; position:sticky; bottom:14px; z-index:5; background:var(--ink-900); border:1px solid var(--ink-600); padding:12px; border-radius:var(--radius-m); box-shadow:var(--shadow-deep); }
+.save-status{ font-size:12px; color:var(--paper-500); align-self:center; margin-left:auto; }
+
+.quiz-progress{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+.quiz-progress .progress-track{ flex:1; margin:0; }
+.quiz-meta{ font-family:var(--mono); font-size:12.5px; color:var(--paper-500); white-space:nowrap; }
+.q-card{ margin-bottom:18px; }
+.q-tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:3px 9px; border-radius:999px; margin-bottom:12px; }
+.q-tag.lots{ background:rgba(127,191,127,.16); color:var(--leaf-500); }
+.q-tag.mots{ background:rgba(196,147,78,.18); color:var(--brass-400); }
+.q-tag.hots{ background:rgba(224,114,90,.18); color:var(--ember-300); }
+.q-stem{ font-size:15.5px; color:var(--paper-100); margin-bottom:14px; font-weight:500; line-height:1.55; }
+.opt{ display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border:1px solid var(--ink-600); border-radius:var(--radius-m); margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s; }
+.opt:hover{ border-color:var(--brass-500); }
+.opt input{ margin-top:3px; accent-color:var(--brass-500); flex:none; }
+.opt span{ font-size:14px; color:var(--paper-300); }
+.opt.is-correct{ border-color:var(--leaf-500); background:rgba(127,191,127,.09); }
+.opt.is-wrong{ border-color:var(--ember-500); background:rgba(224,114,90,.09); }
+.q-explain{ display:none; margin-top:12px; padding:12px 14px; border-radius:var(--radius-s); background:var(--ink-950); border:1px solid var(--ink-700); font-size:13px; color:var(--paper-300); }
+.q-explain.is-visible{ display:block; }
+.q-explain b{ color:var(--phosphor-500); }
+.short-answer-input{ margin-top:6px; }
+.result-hero{ text-align:center; padding:38px 22px; }
+.result-score{ font-family:var(--serif); font-size:56px; color:var(--brass-400); }
+.badge-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.badge{ display:flex; flex-direction:column; align-items:center; gap:6px; width:96px; opacity:.3; }
+.badge.is-earned{ opacity:1; }
+.badge i{ width:44px;height:44px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); display:grid; place-items:center; font-style:normal; font-size:18px; }
+.badge span{ font-size:10.5px; text-align:center; color:var(--paper-500); font-weight:600; }
+
+.dev-card{ display:grid; grid-template-columns:180px 1fr; gap:26px; align-items:start; }
+@media (max-width:640px){ .dev-card{ grid-template-columns:1fr; } }
+.dev-photo{ width:180px;height:180px; border-radius:var(--radius-l); overflow:hidden; border:1px solid var(--ink-600); background:var(--ink-700); }
+.dev-photo svg{ width:100%; height:100%; display:block; }
+.dev-competency{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+.assistant-fab{ position:fixed; right:20px; bottom:20px; z-index:150; width:56px;height:56px; border-radius:50%; background:linear-gradient(160deg, var(--phosphor-300), var(--phosphor-500)); border:none; cursor:pointer; box-shadow:0 14px 30px -10px rgba(95,217,196,.6); font-size:22px; display:grid; place-items:center; color:#052c25; }
+.assistant-panel{ position:fixed; right:20px; bottom:88px; width:min(340px, calc(100vw - 40px)); max-height:60vh; z-index:150; background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); box-shadow:var(--shadow-deep); display:flex; flex-direction:column; overflow:hidden; }
+.assistant-panel[hidden]{ display:none; }
+.assistant-head{ padding:14px 16px; border-bottom:1px solid var(--ink-600); display:flex; justify-content:space-between; align-items:center; }
+.assistant-head h4{ margin:0; font-size:14.5px; }
+.assistant-body{ padding:14px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.assistant-msg{ background:var(--ink-800); border-radius:var(--radius-s); padding:9px 11px; color:var(--paper-300); align-self:flex-start; max-width:88%; }
+.assistant-msg.user{ background:var(--brass-700); color:#fff; align-self:flex-end; }
+.assistant-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; }
+.assistant-chip{ font-size:11.5px; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:6px 10px; border-radius:999px; cursor:pointer; }
+
+#toast-region{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.toast{ background:var(--ink-800); border:1px solid var(--ink-600); color:var(--paper-100); padding:10px 18px; border-radius:999px; font-size:13px; box-shadow:var(--shadow-deep); animation:toastIn .25s var(--ease); }
+.toast.success{ border-color:var(--leaf-500); }
+.toast.error{ border-color:var(--ember-500); }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} }
+footer.appfoot{ text-align:center; padding:20px; font-size:11.5px; color:var(--paper-500); border-top:1px solid var(--ink-600); }
+
+@media (max-width:760px){
+  .appbar{ flex-wrap:wrap; padding:10px 14px; row-gap:8px; }
+  .appbar__brand{ margin-right:0; }
+  .appbar__title small{ display:none; }
+  .tabs{ order:3; width:100%; padding-top:2px; }
+  .appbar__actions{ margin-left:auto; }
+  .assistant-panel{ right:12px; left:12px; width:auto; bottom:80px; }
+  .assistant-fab{ right:14px; bottom:14px; }
+}
+@media print{
+  .appbar,.assistant-fab,.assistant-panel,footer.appfoot,.lkpd-toolbar,#splash,.modal-scrim,.progress-rail{ display:none !important; }
+  body{ background:#fff; color:#111; }
+  .view{ display:block !important; }
+  main .view:not(#view-lkpd){ display:none !important; }
+  .card{ border:1px solid #ccc; background:#fff; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<div id="splash" role="dialog" aria-labelledby="splash-title">
+  <div>
+    <div class="splash__orbit" aria-hidden="true">
+      <div class="splash__ring"></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__nucleus"></div>
+    </div>
+    <div class="splash__eyebrow">Virtual Laboratory — Kimia SMA</div>
+    <h1 id="splash-title">Notasi Atom, Notasi Ion &amp; Jenis-Jenis Nuklida</h1>
+    <div class="splash__topic">Membaca "KTP" sebuah atom: nomor atom, nomor massa, dan muatan</div>
+    <div class="splash__meta">
+      <span class="chip">Fase E · Kelas X</span>
+      <span class="chip">Struktur Atom</span>
+      <span class="chip">± 45–60 menit</span>
+    </div>
+    <button class="btn btn--primary" id="btn-start" style="font-size:16px;padding:15px 34px;">Mulai Praktikum</button>
+  </div>
+</div>
+
+<div class="modal-scrim" id="modal-identity" hidden>
+  <form class="modal" id="form-identity" novalidate>
+    <h2>Identitas Praktikan</h2>
+    <p style="font-size:13px;">Data ini digunakan pada LKPD, evaluasi, dan rekap hasil belajarmu.</p>
+    <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama" required autocomplete="name" placeholder="cth. Ahmad Zaki"></div>
+    <div class="field-row">
+      <div class="field"><label for="inp-kelas">Kelas</label><input type="text" id="inp-kelas" required placeholder="cth. X-4"></div>
+      <div class="field"><label for="inp-id">No. Absen / ID</label><input type="text" id="inp-id" placeholder="cth. 17"></div>
+    </div>
+    <p class="hint" id="identity-error" style="color:var(--ember-300); display:none;">Nama dan kelas wajib diisi sebelum memulai.</p>
+    <button type="submit" class="btn btn--primary btn--block">Simpan &amp; Masuk Laboratorium</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="appbar">
+    <div class="appbar__brand">
+      <div class="appbar__mark" aria-hidden="true"></div>
+      <div class="appbar__title">Virtual Lab Kimia<small>Notasi Atom, Ion &amp; Jenis Nuklida</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Navigasi bagian praktikum" role="tablist"></nav>
+    <div class="appbar__actions">
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Suara ON/OFF" aria-label="Aktifkan atau matikan suara">🔊</button>
+      <button class="icon-btn" id="btn-reduce-motion" aria-pressed="false" title="Kurangi animasi" aria-label="Kurangi animasi">✧</button>
+      <button class="icon-btn" id="btn-print" title="Cetak LKPD" aria-label="Cetak LKPD">🖨</button>
+    </div>
+  </header>
+  <div class="progress-rail"><div class="progress-rail__fill" id="global-progress"></div></div>
+
+  <main id="main-content">
+
+    <!-- ============================= TEORI ============================= -->
+    <section class="view" id="view-teori" data-view="teori">
+      <div class="view-head">
+        <div class="eyebrow-plain">01 · Teori</div>
+        <h2>Cara Membaca "Identitas" Sebuah Atom</h2>
+        <p>Setiap atom punya "KTP" berupa notasi yang memuat nomor atom dan nomor massa. Dari notasi sesingkat itu, kita bisa mengetahui persis berapa proton, neutron, dan elektron yang dimilikinya — bahkan ketika atom tersebut berubah menjadi ion.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:26px;">
+        <h3 style="font-size:16px;margin-bottom:12px;">Tujuan Pembelajaran</h3>
+        <ul id="tp-list" style="margin:0; padding-left:20px; color:var(--paper-300); font-size:14px; line-height:1.8;"></ul>
+      </div>
+
+      <div class="theory-toc" id="theory-toc" aria-label="Lompat ke subtopik teori"></div>
+
+      <div class="anatomy-diagram">
+        <div class="anatomy-label">
+          <div class="notation-badge lg">
+            <span class="notation-stack"><span class="notation-mass">23</span><span class="notation-atomic">11</span></span>
+            <span class="notation-symbol">Na</span>
+          </div>
+          <b>Notasi Atom Netral</b>
+          Angka atas = nomor massa (A) · Angka bawah = nomor atom (Z)
+        </div>
+        <div class="anatomy-arrow">→</div>
+        <div class="anatomy-label">
+          <div class="notation-badge lg">
+            <span class="notation-stack"><span class="notation-mass">24</span><span class="notation-atomic">12</span></span>
+            <span class="notation-symbol">Mg</span>
+            <span class="notation-charge">2+</span>
+          </div>
+          <b>Notasi Ion (Kation)</b>
+          Kehilangan 2 elektron → muatan 2+, jumlah proton tidak berubah
+        </div>
+        <div class="anatomy-arrow">→</div>
+        <div class="anatomy-label">
+          <div class="notation-badge lg">
+            <span class="notation-stack"><span class="notation-mass">35</span><span class="notation-atomic">17</span></span>
+            <span class="notation-symbol">Cl</span>
+            <span class="notation-charge">−</span>
+          </div>
+          <b>Notasi Ion (Anion)</b>
+          Menerima 1 elektron → muatan 1−
+        </div>
+      </div>
+
+      <div id="theory-sections"></div>
+    </section>
+
+    <!-- ============================= PROSEDUR ============================= -->
+    <section class="view" id="view-prosedur" data-view="prosedur">
+      <div class="view-head">
+        <div class="eyebrow-plain">02 · Prosedur</div>
+        <h2>Langkah Kerja Praktikum</h2>
+        <p>Pilih salah satu aktivitas untuk melihat urutan langkah kerjanya. Selesaikan langkah secara berurutan sebelum melanjutkan ke simulasi.</p>
+      </div>
+      <div class="proc-tabs" id="proc-tabs" role="tablist" aria-label="Pilih aktivitas"></div>
+      <div class="progress-track"><div class="progress-track__fill" id="proc-progress"></div></div>
+      <div class="card"><div class="step-list" id="proc-steps"></div></div>
+    </section>
+
+    <!-- ============================= SIMULASI ============================= -->
+    <section class="view" id="view-simulasi" data-view="simulasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">03 · Simulasi</div>
+        <h2>Laboratorium Interaktif</h2>
+        <p>Susun atom dan ion secara langsung, atau bandingkan dua nuklida untuk melihat hubungan isotop, isobar, maupun isoton.</p>
+      </div>
+      <div class="proc-tabs" id="sim-tabs" role="tablist" aria-label="Pilih simulasi" style="margin-bottom:18px;"></div>
+
+      <div class="sim-shell">
+        <div class="sim-panel">
+          <div class="card" id="sim-controls"></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Pembacaan Instrumen</h4><div class="readout" id="sim-readout"></div></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Legenda</h4><div class="legend" id="sim-legend"></div></div>
+        </div>
+        <div>
+          <div class="sim-stage" id="sim-stage"><canvas id="sim-canvas" role="img" aria-label="Kanvas simulasi laboratorium"></canvas></div>
+          <div class="sim-toolbar">
+            <div class="control-row"><button class="btn btn--danger btn--sm" id="sim-reset">↺ Reset</button></div>
+            <div class="mode-switch" id="sim-mode-switch" role="group" aria-label="Mode tampilan"></div>
+          </div>
+          <p class="sim-note" id="sim-note" style="margin-top:14px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= LKPD ============================= -->
+    <section class="view" id="view-lkpd" data-view="lkpd">
+      <div class="view-head">
+        <div class="eyebrow-plain">04 · LKPD Digital</div>
+        <h2>Lembar Kerja Peserta Didik</h2>
+        <p>Isi setiap bagian berdasarkan pengamatanmu pada simulasi. Data tersimpan otomatis di perangkatmu.</p>
+      </div>
+      <div class="card">
+        <form id="form-lkpd">
+          <div class="lkpd-section">
+            <h3>A. Identitas <em>identitas</em></h3>
+            <div class="field-row">
+              <div class="field"><label>Nama</label><input type="text" id="lkpd-nama" readonly></div>
+              <div class="field"><label>Kelas</label><input type="text" id="lkpd-kelas" readonly></div>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>B. Tujuan <em>tujuan</em></h3>
+            <p style="font-size:13.5px;">Menerapkan notasi atom dan ion untuk menentukan jumlah proton, elektron, dan neutron, serta mengklasifikasikan hubungan antarnuklida (isotop, isobar, isoton).</p>
+          </div>
+          <div class="lkpd-section">
+            <h3>C. Prediksi <em>hipotesis</em></h3>
+            <div class="field">
+              <label for="lkpd-prediksi">Jika sebuah atom netral melepaskan 2 elektron, apa yang terjadi pada muatan dan jenis ionnya (kation/anion)? Tuliskan prediksimu sebelum mencoba di simulator.</label>
+              <textarea id="lkpd-prediksi"></textarea>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>D. Alat &amp; Bahan <em>otomatis</em></h3>
+            <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px;">
+              <li>Simulator Atom/Ion Builder virtual (pengatur proton, neutron, elektron)</li>
+              <li>Simulator Pengklasifikasi Nuklida virtual (basis data 18 nuklida)</li>
+              <li>Panel pembacaan instrumen (notasi, muatan, jenis ion/hubungan nuklida)</li>
+            </ul>
+          </div>
+          <div class="lkpd-section">
+            <h3>E. Pengamatan — Atom/Ion Builder <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-1">
+                <thead><tr><th>Notasi Dibuat</th><th>Z (proton)</th><th>N (neutron)</th><th>E (elektron)</th><th>Muatan</th><th>Jenis</th></tr></thead>
+                <tbody id="obs-tbody-1"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="1">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>E2. Pengamatan — Pengklasifikasi Nuklida <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-2">
+                <thead><tr><th>Nuklida 1</th><th>Nuklida 2</th><th>Selisih Z</th><th>Selisih A</th><th>Hubungan</th></tr></thead>
+                <tbody id="obs-tbody-2"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="2">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>F. Analisis <em>esai singkat</em></h3>
+            <div class="field"><label for="lkpd-analisis1">1. Mengapa jumlah proton tidak pernah berubah ketika sebuah atom membentuk ion?</label><textarea id="lkpd-analisis1"></textarea></div>
+            <div class="field"><label for="lkpd-analisis2">2. Jelaskan perbedaan mendasar antara isotop dan isobar berdasarkan hasil pengamatanmu.</label><textarea id="lkpd-analisis2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>G. Pertanyaan Pemandu <em>diskusi</em></h3>
+            <div class="field"><label for="lkpd-q1">Mengapa isotop suatu unsur memiliki sifat kimia yang mirip, tetapi sifat fisika (seperti massa) yang berbeda?</label><textarea id="lkpd-q1"></textarea></div>
+            <div class="field"><label for="lkpd-q2">Berikan satu contoh pemanfaatan isotop/radioisotop dalam kehidupan sehari-hari beserta penjelasan singkatnya.</label><textarea id="lkpd-q2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>H. Kesimpulan <em>ringkasan</em></h3>
+            <div class="field"><label for="lkpd-kesimpulan">Tuliskan kesimpulan akhir praktikummu (kaitkan dengan tujuan pembelajaran).</label><textarea id="lkpd-kesimpulan" style="min-height:100px;"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>I. Refleksi <em>metakognisi</em></h3>
+            <div class="field"><label for="lkpd-refleksi">Bagian mana dari materi ini yang paling menantang bagimu, dan strategi apa yang kamu pakai untuk memahaminya?</label><textarea id="lkpd-refleksi"></textarea></div>
+          </div>
+          <div class="lkpd-toolbar">
+            <button type="button" class="btn btn--primary btn--sm" id="lkpd-save">💾 Simpan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="lkpd-print">🖨 Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn--danger btn--sm" id="lkpd-reset">↺ Reset LKPD</button>
+            <span class="save-status" id="lkpd-status">Belum disimpan</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= EVALUASI ============================= -->
+    <section class="view" id="view-evaluasi" data-view="evaluasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">05 · Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>18 soal (LOTS–HOTS) untuk mengukur pemahamanmu tentang notasi atom, notasi ion, dan jenis-jenis nuklida.</p>
+      </div>
+      <div id="quiz-intro" class="card">
+        <h3 style="font-size:17px;">Sebelum mulai</h3>
+        <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px; line-height:1.8;">
+          <li>18 soal: pilihan ganda, pilihan ganda kompleks (checkbox), isian singkat, dan analisis singkat.</li>
+          <li>Beberapa soal memerlukan perhitungan sederhana (jumlah partikel dasar, massa atom relatif).</li>
+          <li>Pembahasan setiap soal akan muncul setelah kamu menjawab.</li>
+        </ul>
+        <button class="btn btn--primary" id="quiz-begin" style="margin-top:8px;">Mulai Evaluasi</button>
+      </div>
+      <div id="quiz-body" hidden>
+        <div class="quiz-progress">
+          <div class="progress-track"><div class="progress-track__fill" id="quiz-progress-fill"></div></div>
+          <span class="quiz-meta" id="quiz-progress-label">0 / 18 dijawab</span>
+        </div>
+        <div id="quiz-questions"></div>
+        <button class="btn btn--primary btn--block" id="quiz-submit">Kumpulkan &amp; Lihat Skor</button>
+      </div>
+      <div id="quiz-result" hidden>
+        <div class="card result-hero">
+          <div style="font-size:13px; color:var(--paper-500); letter-spacing:.4px; text-transform:uppercase;">Skor Akhir</div>
+          <div class="result-score" id="result-score">0</div>
+          <p id="result-desc" style="max-width:440px;margin:10px auto 0;"></p>
+          <div class="badge-row" id="badge-row"></div>
+          <div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="quiz-review">Lihat Pembahasan</button>
+            <button class="btn btn--danger btn--sm" id="quiz-retry">Ulangi Evaluasi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= PROFIL PENGEMBANG ============================= -->
+    <section class="view" id="view-profil" data-view="profil">
+      <div class="view-head"><div class="eyebrow-plain">06 · Profil Pengembang</div><h2>Tentang Pengembang</h2></div>
+      <div class="card dev-card">
+        <div class="dev-photo" id="dev-photo"></div>
+        <div>
+          <h3 style="font-size:22px;">S.D. Sabirin, S.Si., Gr.</h3>
+          <p style="color:var(--brass-400); font-weight:600; margin-bottom:14px;">Guru Kimia &amp; Pengembang Media Pembelajaran Digital</p>
+          <p style="font-size:14px;">Mengajar Kimia di SMA Islam Al Azhar 5 Cirebon dan aktif membimbing siswa dalam kompetisi riset (LPIR, OSN, COSMII, OPSI, OSA). Saat ini menempuh studi Magister Kimia di Universitas Padjadjaran melalui program Beasiswa Guru SMUP. Virtual lab ini dikembangkan sebagai bagian dari upaya menghadirkan pembelajaran Kimia yang kontekstual, interaktif, dan berbasis bukti eksperimen.</p>
+          <div class="dev-competency">
+            <span class="chip">Pendidikan Kimia</span>
+            <span class="chip">Pengembangan Media Pembelajaran</span>
+            <span class="chip">Pembimbingan Riset Siswa</span>
+            <span class="chip">Deep Learning Pedagogy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="appfoot">Virtual Lab Kimia — Notasi Atom, Ion &amp; Jenis Nuklida · Dikembangkan oleh S.D. Sabirin, S.Si., Gr. · Referensi: LibreTexts Chemistry &amp; IUPAC</footer>
+</div>
+
+<button class="assistant-fab" id="assistant-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="assistant-panel" aria-label="Buka asisten bantuan">?</button>
+<div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Asisten Bantuan" hidden>
+  <div class="assistant-head"><h4>Asisten Lab (berbasis aturan)</h4><button class="icon-btn" id="assistant-close" aria-label="Tutup asisten" style="width:28px;height:28px;">✕</button></div>
+  <div class="assistant-body" id="assistant-body"></div>
+  <div class="assistant-chips" id="assistant-chips"></div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   1. LAB_DATA
+   ========================================================================= */
+const ELEMENTS = [
+  {z:1,sym:"H",name:"Hidrogen"},{z:2,sym:"He",name:"Helium"},{z:3,sym:"Li",name:"Litium"},
+  {z:4,sym:"Be",name:"Berilium"},{z:5,sym:"B",name:"Boron"},{z:6,sym:"C",name:"Karbon"},
+  {z:7,sym:"N",name:"Nitrogen"},{z:8,sym:"O",name:"Oksigen"},{z:9,sym:"F",name:"Fluor"},
+  {z:10,sym:"Ne",name:"Neon"},{z:11,sym:"Na",name:"Natrium"},{z:12,sym:"Mg",name:"Magnesium"},
+  {z:13,sym:"Al",name:"Aluminium"},{z:14,sym:"Si",name:"Silikon"},{z:15,sym:"P",name:"Fosforus"},
+  {z:16,sym:"S",name:"Belerang"},{z:17,sym:"Cl",name:"Klorin"},{z:18,sym:"Ar",name:"Argon"},
+  {z:19,sym:"K",name:"Kalium"},{z:20,sym:"Ca",name:"Kalsium"}
+];
+
+const NUCLIDES = [
+  {sym:"H", name:"Hidrogen-1", Z:1, A:1},
+  {sym:"H", name:"Deuterium (H-2)", Z:1, A:2},
+  {sym:"H", name:"Tritium (H-3)", Z:1, A:3},
+  {sym:"C", name:"Karbon-12", Z:6, A:12},
+  {sym:"C", name:"Karbon-13", Z:6, A:13},
+  {sym:"C", name:"Karbon-14", Z:6, A:14},
+  {sym:"N", name:"Nitrogen-14", Z:7, A:14},
+  {sym:"N", name:"Nitrogen-15", Z:7, A:15},
+  {sym:"O", name:"Oksigen-16", Z:8, A:16},
+  {sym:"O", name:"Oksigen-18", Z:8, A:18},
+  {sym:"Na", name:"Natrium-23", Z:11, A:23},
+  {sym:"Mg", name:"Magnesium-24", Z:12, A:24},
+  {sym:"Cl", name:"Klorin-35", Z:17, A:35},
+  {sym:"Cl", name:"Klorin-37", Z:17, A:37},
+  {sym:"Ar", name:"Argon-40", Z:18, A:40},
+  {sym:"K", name:"Kalium-39", Z:19, A:39},
+  {sym:"K", name:"Kalium-40", Z:19, A:40},
+  {sym:"Ca", name:"Kalsium-40", Z:20, A:40}
+];
+
+const LAB_DATA = {
+  meta:{ title:"Virtual Lab Kimia — Notasi Atom, Ion &amp; Nuklida", fase:"Fase E / Kelas X" },
+
+  objectives:[
+    "Membaca dan menuliskan notasi atom (nomor atom dan nomor massa) suatu unsur dengan tepat.",
+    "Menentukan jumlah proton, elektron, dan neutron dari notasi atom netral maupun ion (kation/anion).",
+    "Membedakan dan mengklasifikasikan hubungan antarnuklida: isotop, isobar, dan isoton.",
+    "Menjelaskan konsep massa atom relatif (Ar) sebagai rata-rata tertimbang dari kelimpahan isotop di alam."
+  ],
+
+  theorySections:[
+    {
+      id:"notasi-atom", title:"1. Notasi Atom (Lambang Atom)",
+      body:[
+        "Setiap nuklida (jenis atom spesifik) dapat dituliskan dalam notasi baku yang memuat dua angka penting: nomor atom (Z) dan nomor massa (A), ditulis di sekitar lambang unsur.",
+        "Nomor atom (Z) menyatakan jumlah proton di dalam inti atom. Karena jumlah proton inilah yang menentukan identitas suatu unsur, setiap unsur memiliki nomor atom yang unik dan tidak mungkin sama dengan unsur lain.",
+        "Nomor massa (A) menyatakan jumlah total proton dan neutron di dalam inti atom (disebut juga nukleon). Karena elektron bermassa sangat kecil dibanding proton/neutron, massa atom hampir sepenuhnya ditentukan oleh A."
+      ],
+      list:[
+        "Nomor atom (Z) = jumlah proton = jumlah elektron (khusus atom netral)",
+        "Nomor massa (A) = jumlah proton + jumlah neutron",
+        "Jumlah neutron = nomor massa − nomor atom = A − Z"
+      ],
+      example:"Notasi Natrium-23 dituliskan dengan nomor massa 23 dan nomor atom 11. Artinya, atom ini memiliki 11 proton dan 23−11 = 12 neutron.",
+      limitation:"Notasi atom hanya menggambarkan satu jenis nuklida spesifik, bukan gambaran seluruh atom unsur tersebut di alam — karena di alam, satu unsur bisa memiliki lebih dari satu jenis nuklida (isotop) sekaligus."
+    },
+    {
+      id:"partikel-notasi", title:"2. Menentukan Partikel Dasar dari Notasi Atom",
+      body:[
+        "Karena notasi atom sudah memuat Z dan A, jumlah ketiga partikel dasar (proton, elektron, neutron) pada atom netral dapat ditentukan langsung tanpa perhitungan rumit.",
+        "Untuk atom netral: jumlah proton = jumlah elektron = Z, sedangkan jumlah neutron = A − Z. Prosedur ini berlaku untuk seluruh unsur, dari hidrogen hingga unsur-unsur yang jauh lebih berat."
+      ],
+      list:[
+        "Langkah 1 — Baca nomor atom (Z): tentukan jumlah proton.",
+        "Langkah 2 — Untuk atom netral, jumlah elektron = jumlah proton = Z.",
+        "Langkah 3 — Hitung jumlah neutron dengan rumus neutron = A − Z."
+      ],
+      example:"Aluminium-27 memiliki Z = 13 dan A = 27. Maka: proton = 13, elektron = 13 (atom netral), dan neutron = 27 − 13 = 14.",
+      limitation:"Perhitungan jumlah elektron = Z hanya berlaku pada atom netral. Begitu atom melepas atau menerima elektron dan menjadi ion, jumlah elektronnya tidak lagi sama dengan Z (dibahas pada bagian berikutnya)."
+    },
+    {
+      id:"notasi-ion", title:"3. Notasi Ion: Kation dan Anion",
+      body:[
+        "Ion terbentuk ketika sebuah atom netral melepaskan atau menerima elektron. Yang berubah hanyalah jumlah elektron — jumlah proton di dalam inti tidak pernah berubah melalui proses kimia biasa, sehingga identitas unsur tetap sama.",
+        "Jika atom melepaskan elektron, jumlah elektron menjadi lebih sedikit daripada proton, sehingga atom bermuatan positif. Ion bermuatan positif ini disebut kation.",
+        "Jika atom menerima elektron tambahan, jumlah elektron menjadi lebih banyak daripada proton, sehingga atom bermuatan negatif. Ion bermuatan negatif ini disebut anion.",
+        "Muatan ion dituliskan sebagai superskrip di sebelah kanan atas lambang unsur, misalnya Mg²⁺ (kation, melepas 2 elektron) atau Cl⁻ (anion, menerima 1 elektron)."
+      ],
+      list:[
+        "Kation (ion positif): jumlah elektron = Z − muatan (lebih sedikit dari proton)",
+        "Anion (ion negatif): jumlah elektron = Z + muatan (lebih banyak dari proton)",
+        "Notasi umum: X^(n+) untuk kation, X^(n−) untuk anion, dengan n = besar muatan"
+      ],
+      example:"Ion Mg²⁺ terbentuk dari atom Mg (Z=12) yang melepas 2 elektron, sehingga elektronnya tersisa 12−2 = 10. Ion Cl⁻ terbentuk dari atom Cl (Z=17) yang menerima 1 elektron, sehingga elektronnya menjadi 17+1 = 18.",
+      limitation:"Besar muatan ion suatu unsur tidak selalu sama dengan nomor golongannya di tabel periodik — terutama pada logam transisi, yang dapat membentuk lebih dari satu jenis ion dengan muatan berbeda (misalnya Fe²⁺ dan Fe³⁺)."
+    },
+    {
+      id:"jenis-nuklida", title:"4. Jenis-Jenis Nuklida: Isotop, Isobar, dan Isoton",
+      body:[
+        "Karena satu unsur dapat memiliki beberapa nuklida dengan jumlah neutron berbeda, para ahli kimia mengelompokkan hubungan antarnuklida ke dalam tiga istilah berdasarkan kesamaan Z, A, atau jumlah neutronnya.",
+        "Isotop adalah nuklida-nuklida dari unsur yang sama (nomor atom/Z sama) tetapi memiliki nomor massa (A) berbeda — akibat jumlah neutron yang berbeda. Karena Z sama, seluruh isotop suatu unsur memiliki sifat kimia yang mirip.",
+        "Isobar adalah nuklida-nuklida dari unsur yang berbeda (Z berbeda) namun memiliki nomor massa (A) yang sama. Karena Z berbeda, isobar memiliki sifat kimia yang berbeda meskipun massanya kebetulan sama.",
+        "Isoton adalah nuklida-nuklida dari unsur yang berbeda (Z dan A berbeda) namun memiliki jumlah neutron yang sama."
+      ],
+      list:[
+        "Isotop → Z sama, A berbeda (unsur sama)",
+        "Isobar → A sama, Z berbeda (unsur berbeda)",
+        "Isoton → jumlah neutron (A−Z) sama, Z dan A berbeda (unsur berbeda)"
+      ],
+      example:"Karbon-12, Karbon-13, dan Karbon-14 merupakan isotop (Z=6 untuk ketiganya). Karbon-14 (Z=6, A=14) dan Nitrogen-14 (Z=7, A=14) merupakan isobar (sama-sama A=14). Karbon-14 (neutron=8) dan Nitrogen-15 (neutron=8) merupakan isoton.",
+      limitation:"Kemiripan sifat kimia hanya berlaku pada hubungan isotop (karena elektron valensinya sama). Isobar dan isoton adalah unsur yang sama sekali berbeda, sehingga sifat kimianya juga berbeda — kesamaan A atau jumlah neutron hanyalah kebetulan numerik."
+    },
+    {
+      id:"massa-atom-relatif", title:"5. Massa Atom Relatif (Ar) dan Pemanfaatan Radioisotop",
+      body:[
+        "Karena kebanyakan unsur di alam merupakan campuran beberapa isotop dengan kelimpahan berbeda-beda, massa atom suatu unsur yang tertera pada tabel periodik (disebut massa atom relatif atau Ar) bukanlah nomor massa satu nuklida saja, melainkan rata-rata tertimbang dari seluruh isotop alaminya.",
+        "Sebagai contoh, klorin di alam terdiri dari sekitar 75,77% Cl-35 dan 24,23% Cl-37. Rata-rata tertimbangnya adalah (0,7577×35) + (0,2423×37) ≈ 35,45 — inilah nilai Ar klorin yang tertulis di tabel periodik, bukan 35 atau 37 secara tunggal.",
+        "Beberapa isotop bersifat radioaktif (radioisotop) dan telah dimanfaatkan secara luas: Karbon-14 untuk penentuan usia fosil/artefak (penanggalan karbon), Iodin-131 untuk diagnosis dan terapi gangguan tiroid, serta Kobalt-60 untuk terapi radiasi pada pengobatan kanker."
+      ],
+      example:"Massa atom relatif klorin (≈35,45) menjelaskan mengapa nilainya tidak berupa bilangan bulat seperti nomor massa nuklida tunggal — karena merupakan hasil pembobotan dua isotop alami klorin.",
+      limitation:"Ar adalah nilai rata-rata untuk keperluan perhitungan kimia (misalnya stoikiometri), bukan nomor massa nuklida tertentu yang benar-benar ada. Tidak ada atom klorin tunggal yang bermassa 35,45."
+    }
+  ],
+
+  referenceParticles:[
+    {particle:"Proton", symbol:"p⁺", relCharge:"+1", location:"Inti atom"},
+    {particle:"Neutron", symbol:"n⁰", relCharge:"0", location:"Inti atom"},
+    {particle:"Elektron", symbol:"e⁻", relCharge:"−1", location:"Mengelilingi inti"}
+  ],
+
+  nuclideTypeTable:[
+    {jenis:"Isotop", definisi:"Z sama, A berbeda", contoh:"C-12, C-13, C-14"},
+    {jenis:"Isobar", definisi:"A sama, Z berbeda", contoh:"C-14 dan N-14"},
+    {jenis:"Isoton", definisi:"Jumlah neutron sama, Z &amp; A berbeda", contoh:"C-14 dan N-15 (neutron = 8)"}
+  ],
+
+  terms:[
+    {t:"Nomor atom (Z)", d:"Jumlah proton dalam inti atom; identitas unik suatu unsur."},
+    {t:"Nomor massa (A)", d:"Jumlah total proton dan neutron dalam inti atom (nukleon)."},
+    {t:"Nuklida", d:"Jenis atom spesifik yang dicirikan oleh jumlah proton dan neutron tertentu."},
+    {t:"Isotop", d:"Nuklida dari unsur yang sama (Z sama) dengan jumlah neutron (A) berbeda."},
+    {t:"Isobar", d:"Nuklida dari unsur berbeda dengan nomor massa (A) yang sama."},
+    {t:"Isoton", d:"Nuklida dari unsur berbeda dengan jumlah neutron yang sama."},
+    {t:"Ion", d:"Atom atau gugus atom bermuatan listrik akibat kelebihan/kekurangan elektron."},
+    {t:"Kation", d:"Ion bermuatan positif, terbentuk karena pelepasan elektron."},
+    {t:"Anion", d:"Ion bermuatan negatif, terbentuk karena penerimaan elektron."},
+    {t:"Massa atom relatif (Ar)", d:"Rata-rata tertimbang massa seluruh isotop alami suatu unsur."}
+  ],
+
+  misconceptions:[
+    {wrong:"Nomor massa (A) sama dengan massa atom relatif (Ar) yang tertulis pada tabel periodik.", right:"Ar adalah rata-rata tertimbang seluruh isotop alami suatu unsur, sedangkan nomor massa (A) adalah bilangan bulat milik satu nuklida spesifik."},
+    {wrong:"Ion terbentuk karena atom mengubah jumlah proton di intinya.", right:"Jumlah proton tidak pernah berubah pada proses pembentukan ion biasa; yang berubah hanyalah jumlah elektron."},
+    {wrong:"Isotop adalah unsur yang berbeda satu sama lain.", right:"Isotop tetap merupakan unsur yang sama, karena nomor atom (Z) atau jumlah protonnya identik — hanya jumlah neutronnya yang berbeda."},
+    {wrong:"Setiap isotop suatu unsur memiliki kelimpahan yang sama banyak di alam.", right:"Kelimpahan tiap isotop di alam berbeda-beda (misalnya Cl-35 jauh lebih melimpah daripada Cl-37), dan perbedaan inilah yang memengaruhi nilai Ar."}
+  ],
+
+  summary:"Notasi atom (A dan Z) adalah kunci untuk membongkar susunan partikel dasar sebuah atom, baik dalam keadaan netral maupun ion. Dengan memahami bahwa proton bersifat tetap sementara elektron dapat berubah saat ion terbentuk, serta membedakan tiga jenis hubungan antarnuklida (isotop, isobar, isoton), kita dapat menjelaskan mengapa massa atom relatif suatu unsur umumnya bukan bilangan bulat, dan bagaimana berbagai isotop dimanfaatkan dalam kehidupan sehari-hari.",
+
+  procedures:{
+    builder:{
+      label:"Atom/Ion Builder",
+      steps:[
+        {title:"Tentukan nomor atom (jumlah proton)", instruction:"Gunakan kendali proton untuk memilih unsur yang ingin dibangun.", tools:"Kendali stepper proton (Z)", initial:"Z = 11 (Natrium)", action:"Ubah nilai Z menggunakan tombol +/− pada simulasi.", observe:"Lambang unsur pada notasi berubah mengikuti nilai Z yang dipilih."},
+        {title:"Tambahkan neutron sesuai isotop", instruction:"Ubah jumlah neutron untuk membentuk isotop tertentu dari unsur yang sama.", tools:"Kendali stepper neutron (N)", initial:"Unsur telah dipilih pada langkah 1", action:"Ubah nilai N menggunakan tombol +/−.", observe:"Nomor massa (A = Z+N) pada notasi berubah, tetapi lambang unsur tetap sama."},
+        {title:"Ubah jumlah elektron membentuk ion", instruction:"Kurangi atau tambah jumlah elektron untuk membentuk kation atau anion.", tools:"Kendali stepper elektron (E)", initial:"E = Z (atom netral)", action:"Ubah nilai E menggunakan tombol +/−.", observe:"Muatan pada notasi muncul, dan label jenis (Netral/Kation/Anion) berubah sesuai selisih Z dan E."},
+        {title:"Simpulkan hubungan proton–elektron–muatan", instruction:"Bandingkan beberapa kombinasi Z, N, dan E yang telah dicoba.", tools:"Data hasil pengamatan", initial:"Beberapa notasi telah dibangun", action:"Catat kesimpulanmu pada LKPD.", observe:"Muatan ion = Z − E; proton tidak pernah berubah, hanya elektron yang berubah."}
+      ]
+    },
+    classifier:{
+      label:"Pengklasifikasi Nuklida",
+      steps:[
+        {title:"Pilih nuklida pertama", instruction:"Pilih salah satu nuklida dari daftar pada dropdown pertama.", tools:"Basis data 18 nuklida", initial:"Belum ada nuklida dipilih", action:"Pilih nuklida pada dropdown \"Nuklida 1\".", observe:"Notasi, Z, A, dan jumlah neutron nuklida pertama tampil pada panel kiri."},
+        {title:"Pilih nuklida kedua", instruction:"Pilih nuklida pembanding dari dropdown kedua.", tools:"Basis data 18 nuklida", initial:"Nuklida pertama telah dipilih", action:"Pilih nuklida pada dropdown \"Nuklida 2\".", observe:"Notasi, Z, A, dan jumlah neutron nuklida kedua tampil pada panel kanan."},
+        {title:"Bandingkan Z, A, dan jumlah neutron", instruction:"Amati persamaan/perbedaan Z, A, dan jumlah neutron kedua nuklida.", tools:"Panel pembacaan instrumen", initial:"Kedua nuklida telah dipilih", action:"Baca panel pembacaan instrumen di sisi kiri layar.", observe:"Sistem otomatis menampilkan status \"sama\" atau \"berbeda\" untuk Z, A, dan jumlah neutron."},
+        {title:"Tentukan hubungan nuklida", instruction:"Simpulkan apakah kedua nuklida berhubungan isotop, isobar, isoton, atau tidak berelasi khusus.", tools:"Panel vonis (verdict)", initial:"Perbandingan telah dilakukan", action:"Baca panel vonis di bawah kanvas simulasi.", observe:"Label hubungan (Isotop/Isobar/Isoton/Tidak Berelasi) tampil otomatis beserta penjelasannya."}
+      ]
+    }
+  },
+
+  simulationNotes:{
+    builder:"Pengisian kulit elektron pada visualisasi ini disederhanakan dengan aturan 2–8–8–8 untuk keperluan ilustrasi, dan tidak memperhitungkan sub-kulit s/p/d secara penuh seperti pada konfigurasi elektron tingkat lanjut.",
+    classifier:"Basis data nuklida pada simulasi ini dibatasi pada 18 nuklida umum (Z 1–20) untuk mempermudah eksplorasi konsep isotop, isobar, dan isoton."
+  },
+
+  evaluation:[
+    {type:"mc", level:"lots", stem:"Nomor atom (Z) suatu unsur menyatakan jumlah … dalam atom netral.", options:["Neutron","Proton","Nomor massa","Elektron dan neutron"], answer:1, explain:"Nomor atom (Z) menyatakan jumlah proton di dalam inti atom, yang juga menjadi identitas unik suatu unsur."},
+    {type:"mc", level:"lots", stem:"Nomor massa (A) suatu nuklida dihitung dari …", options:["Jumlah proton saja","Jumlah proton + neutron","Jumlah neutron saja","Jumlah proton + elektron"], answer:1, explain:"Nomor massa (A) adalah jumlah total proton dan neutron (nukleon) dalam inti atom."},
+    {type:"mc", level:"lots", stem:"Sebuah nuklida memiliki notasi dengan nomor massa 23 dan nomor atom 11. Jumlah proton nuklida tersebut adalah …", options:["11","12","23","34"], answer:0, explain:"Jumlah proton sama dengan nomor atom (Z), yaitu 11."},
+    {type:"mc", level:"lots", stem:"Menggunakan nuklida pada soal sebelumnya (A=23, Z=11), jumlah neutronnya adalah …", options:["11","12","23","34"], answer:1, explain:"Jumlah neutron = A − Z = 23 − 11 = 12."},
+    {type:"mc", level:"lots", stem:"Ion yang terbentuk karena atom melepaskan elektron disebut …", options:["Anion","Kation","Isotop","Isobar"], answer:1, explain:"Pelepasan elektron membuat atom kekurangan elektron dibanding proton, sehingga bermuatan positif dan disebut kation."},
+    {type:"mc", level:"lots", stem:"Ion yang terbentuk karena atom menerima tambahan elektron disebut …", options:["Anion","Kation","Isoton","Nuklida"], answer:0, explain:"Penerimaan elektron membuat atom kelebihan elektron dibanding proton, sehingga bermuatan negatif dan disebut anion."},
+    {type:"mc", level:"mots", stem:"Ion Mg²⁺ terbentuk dari atom magnesium (Z=12) yang melepaskan 2 elektron. Jumlah elektron pada ion tersebut adalah …", options:["10","12","14","2"], answer:0, explain:"Jumlah elektron = Z − muatan = 12 − 2 = 10."},
+    {type:"mc", level:"mots", stem:"Ion Cl⁻ terbentuk dari atom klorin (Z=17) yang menerima 1 elektron tambahan. Jumlah elektron pada ion tersebut adalah …", options:["16","17","18","19"], answer:2, explain:"Jumlah elektron = Z + muatan = 17 + 1 = 18."},
+    {type:"mc", level:"mots", stem:"Karbon-12, Karbon-13, dan Karbon-14 memiliki nomor atom yang sama namun nomor massa berbeda. Ketiganya disebut sebagai …", options:["Isobar","Isoton","Isotop","Isomer"], answer:2, explain:"Nuklida-nuklida dari unsur yang sama (Z sama) dengan A berbeda disebut isotop."},
+    {type:"mc", level:"mots", stem:"Karbon-14 (Z=6, A=14) dan Nitrogen-14 (Z=7, A=14) memiliki nomor massa yang sama tetapi nomor atom berbeda. Keduanya disebut sebagai …", options:["Isotop","Isobar","Isoton","Isomer"], answer:1, explain:"Nuklida dari unsur berbeda (Z berbeda) dengan A yang sama disebut isobar."},
+    {type:"mc", level:"mots", stem:"Karbon-14 (Z=6, A=14) memiliki 8 neutron, dan Nitrogen-15 (Z=7, A=15) juga memiliki 8 neutron. Hubungan keduanya disebut …", options:["Isotop","Isobar","Isoton","Tidak berelasi"], answer:2, explain:"Nuklida dari unsur berbeda dengan jumlah neutron yang sama disebut isoton (8 = 14−6 = 15−7)."},
+    {type:"mc", level:"hots", stem:"Sebuah ion Y²⁺ diketahui memiliki 18 elektron. Nomor atom (Z) unsur Y tersebut adalah …", options:["16","18","20","22"], answer:2, explain:"Karena kation kehilangan elektron, Z = jumlah elektron + muatan = 18 + 2 = 20."},
+    {type:"mc", level:"hots", stem:"Klorin di alam terdiri dari campuran isotop Cl-35 (≈75,77%) dan Cl-37 (≈24,23%). Perkiraan massa atom relatif (Ar) klorin paling mendekati …", options:["35,0","35,45","36,0","37,0"], answer:1, explain:"Ar ≈ (0,7577×35) + (0,2423×37) ≈ 35,45 — mendekati nilai Ar klorin pada tabel periodik."},
+    {type:"checkbox", level:"mots", stem:"Manakah pernyataan berikut yang BENAR mengenai ion? (Pilih semua yang sesuai)", options:["Kation memiliki jumlah elektron lebih sedikit daripada proton","Anion memiliki jumlah elektron lebih banyak daripada proton","Pembentukan ion mengubah jumlah proton dalam inti atom","Muatan ion sama dengan selisih jumlah proton dan elektron"], answerSet:[0,1,3], explain:"Kation kekurangan elektron, anion kelebihan elektron, dan muatan ion = proton − elektron. Jumlah proton tidak berubah saat ion terbentuk."},
+    {type:"checkbox", level:"mots", stem:"Manakah pasangan berikut yang merupakan ISOTOP? (Pilih semua yang sesuai)", options:["Oksigen-16 dan Oksigen-18 (Z=8 untuk keduanya)","Klorin-35 dan Klorin-37 (Z=17 untuk keduanya)","Karbon-14 dan Nitrogen-14 (Z berbeda)","Kalium-39 dan Kalsium-40 (Z berbeda)"], answerSet:[0,1], explain:"Isotop memiliki nomor atom (Z) yang sama. Oksigen-16/18 dan Klorin-35/37 sama-sama memiliki Z identik pada tiap pasangannya; dua opsi lain memiliki Z berbeda sehingga bukan isotop."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Ion yang bermuatan negatif akibat menerima tambahan elektron disebut ____________.", accepted:["anion"], explain:"Jawaban yang tepat adalah anion."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Nuklida dari unsur berbeda yang memiliki jumlah neutron sama disebut ____________.", accepted:["isoton"], explain:"Jawaban yang tepat adalah isoton."},
+    {type:"essay", level:"hots", stem:"Argon-40 (Z=18, A=40), Kalium-40 (Z=19, A=40), dan Kalsium-40 (Z=20, A=40) sekilas terlihat mirip. Jelaskan hubungan ketiganya dan mengapa ketiganya tetap merupakan tiga unsur yang berbeda meski nomor massanya sama. (Jawaban akan direkam untuk penilaian guru)", explain:"Kunci jawaban: ketiganya merupakan isobar karena memiliki nomor massa (A=40) yang sama, namun nomor atom (Z) berbeda (18, 19, 20). Karena Z menentukan identitas unsur, ketiganya tetap tiga unsur berbeda (Argon, Kalium, Kalsium) dengan sifat kimia yang juga berbeda, meskipun massanya kebetulan sama."},
+    {type:"essay", level:"hots", stem:"Seorang siswa berpendapat bahwa \"karena isotop suatu unsur memiliki sifat kimia yang mirip, maka semua isotop tersebut pasti sama jumlahnya di alam.\" Tanggapi pernyataan tersebut dan kaitkan dengan konsep massa atom relatif (Ar). (Jawaban akan direkam untuk penilaian guru)", explain:"Kunci jawaban: pernyataan tersebut keliru. Kemiripan sifat kimia disebabkan oleh jumlah proton/elektron valensi yang sama (Z sama), namun kelimpahan tiap isotop di alam tidak harus sama — bahkan pada umumnya berbeda signifikan (misalnya Cl-35 jauh lebih melimpah daripada Cl-37). Perbedaan kelimpahan inilah yang menjadi dasar perhitungan rata-rata tertimbang untuk memperoleh nilai Ar."}
+  ]
+};
+
+/* =========================================================================
+   2. STATE
+   ========================================================================= */
+const STORAGE_KEY = "vlab_notasi_atom_ion_nuklida_v1";
+const State = {
+  identity:{ nama:"", kelas:"", id:"" },
+  soundOn:true, reduceMotion:false,
+  activeView:"teori", unlockedViews:["teori"],
+  procedure:{ active:"builder", done:{ builder:[], classifier:[] } },
+  simulation:{ active:"builder", mode:"submikroskopik" },
+  lkpd:{}, quiz:{ answers:{}, submitted:false }
+};
+function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) Object.assign(State, JSON.parse(raw)); }catch(e){} }
+function persistState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(State)); }catch(e){} }
+
+/* =========================================================================
+   3. AUDIO
+   ========================================================================= */
+const AudioFX = (() => {
+  let ctx = null;
+  function ensureCtx(){ if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx=null; } } return ctx; }
+  function tone(freq,dur,type,gainVal){
+    if(!State.soundOn) return;
+    const c = ensureCtx(); if(!c) return;
+    try{
+      const osc=c.createOscillator(), gain=c.createGain();
+      osc.type=type||"sine"; osc.frequency.value=freq; gain.gain.value=gainVal||0.05;
+      osc.connect(gain); gain.connect(c.destination);
+      const now=c.currentTime;
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+      osc.start(now); osc.stop(now+dur);
+    }catch(e){}
+  }
+  return {
+    click:()=>tone(720,0.06,"square",0.035),
+    success:()=>{ tone(520,0.12,"sine",0.06); setTimeout(()=>tone(780,0.16,"sine",0.06),90); },
+    error:()=>tone(160,0.22,"sawtooth",0.05),
+    reset:()=>tone(300,0.18,"triangle",0.045),
+    complete:()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.18,"sine",0.05), i*110)); },
+    ping:()=>tone(1400,0.05,"sine",0.03)
+  };
+})();
+
+/* =========================================================================
+   4. TOAST
+   ========================================================================= */
+function showToast(msg,kind){
+  const region=document.getElementById("toast-region");
+  const el=document.createElement("div");
+  el.className="toast"+(kind?" "+kind:"");
+  el.textContent=msg;
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(),320); },2600);
+}
+
+/* =========================================================================
+   5. SPLASH & IDENTITY
+   ========================================================================= */
+function initSplash(){
+  document.getElementById("btn-start").addEventListener("click", ()=>{
+    AudioFX.click();
+    if(State.identity.nama && State.identity.kelas) enterApp();
+    else{ document.getElementById("modal-identity").hidden=false; document.getElementById("inp-nama").focus(); }
+  });
+  document.getElementById("form-identity").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nama=document.getElementById("inp-nama").value.trim();
+    const kelas=document.getElementById("inp-kelas").value.trim();
+    const id=document.getElementById("inp-id").value.trim();
+    const err=document.getElementById("identity-error");
+    if(!nama||!kelas){ err.style.display="block"; AudioFX.error(); return; }
+    err.style.display="none";
+    State.identity={nama,kelas,id}; persistState();
+    document.getElementById("modal-identity").hidden=true;
+    AudioFX.success(); enterApp();
+  });
+}
+function enterApp(){
+  document.getElementById("splash").classList.add("is-hidden");
+  document.getElementById("app").hidden=false;
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  showToast(`Selamat datang, ${State.identity.nama||"Praktikan"}!`,"success");
+}
+
+/* =========================================================================
+   6. NAVIGATION
+   ========================================================================= */
+const VIEWS=[
+  {id:"teori",label:"Teori"},{id:"prosedur",label:"Prosedur"},{id:"simulasi",label:"Simulasi"},
+  {id:"lkpd",label:"LKPD"},{id:"evaluasi",label:"Evaluasi"},{id:"profil",label:"Profil Pengembang"}
+];
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  VIEWS.forEach((v,i)=>{
+    const btn=document.createElement("button");
+    btn.className="tab-btn"; btn.setAttribute("role","tab"); btn.id="tab-"+v.id;
+    btn.setAttribute("aria-controls","view-"+v.id);
+    btn.innerHTML=`<span class="tab-num">${i+1}</span><span>${v.label}</span>`;
+    btn.addEventListener("click", ()=>{ if(btn.disabled) return; AudioFX.click(); goToView(v.id); });
+    nav.appendChild(btn);
+  });
+  refreshTabsState();
+}
+function refreshTabsState(){
+  VIEWS.forEach(v=>{
+    const btn=document.getElementById("tab-"+v.id);
+    btn.disabled=!State.unlockedViews.includes(v.id);
+    btn.setAttribute("aria-selected", String(State.activeView===v.id));
+  });
+  const idx=VIEWS.findIndex(v=>v.id===State.activeView);
+  const pct=((State.unlockedViews.length-1)/(VIEWS.length-1))*100;
+  document.getElementById("global-progress").style.width=Math.max(pct,(idx/(VIEWS.length-1))*100)+"%";
+}
+function unlockView(id){ if(!State.unlockedViews.includes(id)){ State.unlockedViews.push(id); persistState(); refreshTabsState(); } }
+function goToView(id){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("is-active"));
+  const target=document.getElementById("view-"+id); if(target) target.classList.add("is-active");
+  State.activeView=id; persistState(); refreshTabsState();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+
+/* =========================================================================
+   7. THEORY RENDER
+   ========================================================================= */
+function notationBadgeHTML(mass,atomic,symbol,charge,lg){
+  return `<span class="notation-badge${lg?" lg":""}">
+    <span class="notation-stack"><span class="notation-mass">${mass}</span><span class="notation-atomic">${atomic}</span></span>
+    <span class="notation-symbol">${symbol}</span>
+    ${charge?`<span class="notation-charge">${charge}</span>`:""}
+  </span>`;
+}
+
+function renderTheory(){
+  document.getElementById("tp-list").innerHTML = LAB_DATA.objectives.map(o=>`<li>${o}</li>`).join("");
+
+  const toc=document.getElementById("theory-toc");
+  toc.innerHTML = LAB_DATA.theorySections.map(s=>`<button class="toc-pill" data-target="${s.id}">${s.title.replace(/^[0-9]+\.\s*/,"")}</button>`).join("")
+    + `<button class="toc-pill" data-target="referensi">Tabel Referensi</button><button class="toc-pill" data-target="istilah">Istilah</button><button class="toc-pill" data-target="miskonsepsi">Miskonsepsi</button>`;
+  toc.querySelectorAll(".toc-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const el=document.getElementById("sec-"+btn.dataset.target);
+      if(el) el.scrollIntoView({behavior:State.reduceMotion?"auto":"smooth", block:"start"});
+    });
+  });
+
+  const container=document.getElementById("theory-sections");
+  container.innerHTML = LAB_DATA.theorySections.map(s=>`
+    <div class="theory-section" id="sec-${s.id}">
+      <h3>${s.title}</h3>
+      ${s.body.map(p=>`<p>${p}</p>`).join("")}
+      ${s.list?`<ul style="padding-left:20px;color:var(--paper-300);font-size:14px;line-height:1.8;">${s.list.map(li=>`<li>${li}</li>`).join("")}</ul>`:""}
+      <div class="card" style="background:var(--ink-900);margin:14px 0;">
+        <strong style="color:var(--phosphor-500);font-size:12.5px;">CONTOH PENERAPAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.example}</p>
+      </div>
+      <div class="card" style="background:rgba(224,114,90,.06);border-color:rgba(224,114,90,.3);">
+        <strong style="color:var(--ember-300);font-size:12.5px;">CATATAN / KETERBATASAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.limitation}</p>
+      </div>
+    </div>`).join("") + `
+    <div class="theory-section" id="sec-referensi">
+      <h3>Tabel Referensi</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Partikel</th><th>Simbol</th><th>Muatan Relatif</th><th>Lokasi</th></tr></thead>
+          <tbody>${LAB_DATA.referenceParticles.map(p=>`<tr><td>${p.particle}</td><td>${p.symbol}</td><td>${p.relCharge}</td><td>${p.location}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+      <div class="table-wrap" style="margin-top:18px;">
+        <table class="data-table">
+          <thead><tr><th>Jenis Nuklida</th><th>Definisi</th><th>Contoh</th></tr></thead>
+          <tbody>${LAB_DATA.nuclideTypeTable.map(n=>`<tr><td>${n.jenis}</td><td>${n.definisi}</td><td>${n.contoh}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="theory-section" id="sec-istilah">
+      <h3>Istilah Penting</h3>
+      <dl class="term-list">${LAB_DATA.terms.map(t=>`<dt>${t.t}</dt><dd>${t.d}</dd>`).join("")}</dl>
+    </div>
+    <div class="theory-section" id="sec-miskonsepsi">
+      <h3>Miskonsepsi Umum</h3>
+      ${LAB_DATA.misconceptions.map(m=>`<div class="misconception"><div><b>✗ Anggapan keliru:</b> ${m.wrong}</div><div style="margin-top:4px;"><b style="color:var(--leaf-500);">✓ Yang benar:</b> ${m.right}</div></div>`).join("")}
+    </div>
+    <div class="theory-section" id="sec-ringkasan">
+      <h3>Ringkasan</h3>
+      <p>${LAB_DATA.summary}</p>
+      <button class="btn btn--primary" id="theory-continue">Lanjut ke Prosedur →</button>
+    </div>`;
+  document.getElementById("theory-continue").addEventListener("click", ()=>{ AudioFX.success(); unlockView("prosedur"); goToView("prosedur"); });
+}
+
+/* =========================================================================
+   8. PROCEDURE
+   ========================================================================= */
+function renderProcedureTabs(){
+  const wrap=document.getElementById("proc-tabs"); wrap.innerHTML="";
+  Object.keys(LAB_DATA.procedures).forEach(key=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(State.procedure.active===key));
+    btn.textContent=LAB_DATA.procedures[key].label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); State.procedure.active=key; persistState(); renderProcedureTabs(); renderProcedureSteps(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderProcedureSteps(){
+  const key=State.procedure.active;
+  const proc=LAB_DATA.procedures[key];
+  const doneArr=State.procedure.done[key];
+  const unlockedIndex=doneArr.length;
+  const list=document.getElementById("proc-steps");
+  list.innerHTML=proc.steps.map((s,i)=>{
+    const isDone=doneArr.includes(i);
+    const isUnlocked=i<=unlockedIndex;
+    return `<div class="step ${isUnlocked?"is-unlocked":""} ${isDone?"is-done":""}" data-i="${i}">
+      <div class="step__num">${isDone?"✓":(i+1)}</div>
+      <div>
+        <h4>${s.title}</h4>
+        <p style="margin:0 0 6px;font-size:13.5px;">${s.instruction}</p>
+        <div class="step__meta"><span><b>Alat/Bahan:</b> ${s.tools}</span><span><b>Kondisi Awal:</b> ${s.initial}</span></div>
+        <div class="step__meta"><span><b>Tindakan:</b> ${s.action}</span></div>
+        <div class="step__meta"><span><b>Hasil Diamati:</b> ${s.observe}</span></div>
+        ${isUnlocked&&!isDone?`<div class="step-actions"><button class="btn btn--primary btn--sm" data-mark="${i}">Tandai Selesai</button></div>`:""}
+      </div></div>`;
+  }).join("");
+  list.querySelectorAll("[data-mark]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i=Number(btn.dataset.mark);
+      if(!doneArr.includes(i)) doneArr.push(i);
+      AudioFX.success(); persistState(); renderProcedureSteps(); updateProcProgress();
+      const totalDone=State.procedure.done.builder.length+State.procedure.done.classifier.length;
+      if(totalDone>=4) unlockView("simulasi");
+    });
+  });
+  updateProcProgress();
+}
+function updateProcProgress(){
+  const key=State.procedure.active;
+  const total=LAB_DATA.procedures[key].steps.length;
+  const done=State.procedure.done[key].length;
+  document.getElementById("proc-progress").style.width=(done/total*100)+"%";
+}
+
+/* =========================================================================
+   9. SIMULATION
+   ========================================================================= */
+const Sim = {
+  key:"builder", mode:"submikroskopik",
+  builder:{ Z:11, N:12, E:11 },
+  classifier:{ idx1:3, idx2:5 }, // default Karbon-12 vs Karbon-14
+  canvas:null, ctx:null, dpr:1
+};
+function setupCanvas(){
+  Sim.canvas=document.getElementById("sim-canvas"); Sim.ctx=Sim.canvas.getContext("2d");
+  resizeCanvas(); window.addEventListener("resize", resizeCanvas);
+}
+function resizeCanvas(){
+  const stage=document.getElementById("sim-stage"); const rect=stage.getBoundingClientRect();
+  Sim.dpr=Math.min(window.devicePixelRatio||1,2);
+  Sim.canvas.width=Math.max(320,rect.width)*Sim.dpr;
+  Sim.canvas.height=Math.max(420,rect.height)*Sim.dpr;
+  Sim.canvas.style.width="100%"; Sim.canvas.style.height=rect.height+"px";
+  drawCurrentSim();
+}
+function renderSimTabs(){
+  const wrap=document.getElementById("sim-tabs"); wrap.innerHTML="";
+  [{key:"builder",label:"Atom/Ion Builder"},{key:"classifier",label:"Pengklasifikasi Nuklida"}].forEach(it=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab"); btn.setAttribute("aria-selected", String(Sim.key===it.key));
+    btn.textContent=it.label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); Sim.key=it.key; renderSimTabs(); renderSimControls(); renderSimLegend(); drawCurrentSim(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderSimControls(){
+  const modeSwitch=document.getElementById("sim-mode-switch");
+  modeSwitch.innerHTML=["makroskopik","submikroskopik","simbolik"].map(m=>`<button data-mode="${m}" aria-pressed="${Sim.mode===m}">${m[0].toUpperCase()+m.slice(1)}</button>`).join("");
+  modeSwitch.querySelectorAll("button").forEach(b=>b.addEventListener("click", ()=>{ Sim.mode=b.dataset.mode; renderSimControls(); drawCurrentSim(); }));
+
+  document.getElementById("sim-note").textContent = Sim.key==="builder" ? LAB_DATA.simulationNotes.builder : LAB_DATA.simulationNotes.classifier;
+  const controls=document.getElementById("sim-controls");
+
+  if(Sim.key==="builder"){
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Atom/Ion Builder</h4>
+      <div class="stepper-field"><label>Proton (Z)</label>
+        <div class="stepper-row"><button class="stepper-btn" data-adj="Z" data-dir="-1">−</button><div class="stepper-val" id="val-Z">${Sim.builder.Z}</div><button class="stepper-btn" data-adj="Z" data-dir="1">+</button></div></div>
+      <div class="stepper-field"><label>Neutron (N)</label>
+        <div class="stepper-row"><button class="stepper-btn" data-adj="N" data-dir="-1">−</button><div class="stepper-val" id="val-N">${Sim.builder.N}</div><button class="stepper-btn" data-adj="N" data-dir="1">+</button></div></div>
+      <div class="stepper-field"><label>Elektron (E)</label>
+        <div class="stepper-row"><button class="stepper-btn" data-adj="E" data-dir="-1">−</button><div class="stepper-val" id="val-E">${Sim.builder.E}</div><button class="stepper-btn" data-adj="E" data-dir="1">+</button></div></div>
+      <p class="hint">Z: 1–20 · N: 0–26 · E: 0 hingga Z+3</p>`;
+    controls.querySelectorAll("[data-adj]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const key=btn.dataset.adj, dir=Number(btn.dataset.dir);
+        adjustBuilder(key,dir);
+      });
+    });
+  } else {
+    const opts = NUCLIDES.map((n,i)=>`<option value="${i}">${n.name} (Z=${n.Z}, A=${n.A})</option>`).join("");
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Pengklasifikasi Nuklida</h4>
+      <div class="field"><label for="ctrl-n1">Nuklida 1</label><select id="ctrl-n1">${opts}</select></div>
+      <div class="field"><label for="ctrl-n2">Nuklida 2</label><select id="ctrl-n2">${opts}</select></div>`;
+    const s1=document.getElementById("ctrl-n1"), s2=document.getElementById("ctrl-n2");
+    s1.value=Sim.classifier.idx1; s2.value=Sim.classifier.idx2;
+    s1.addEventListener("change", ()=>{ Sim.classifier.idx1=Number(s1.value); AudioFX.ping(); drawCurrentSim(); renderReadout(); });
+    s2.addEventListener("change", ()=>{ Sim.classifier.idx2=Number(s2.value); AudioFX.ping(); drawCurrentSim(); renderReadout(); });
+  }
+  renderReadout();
+}
+function adjustBuilder(key,dir){
+  const b=Sim.builder;
+  if(key==="Z"){ b.Z=Math.min(20,Math.max(1,b.Z+dir)); if(b.E>b.Z+3) b.E=b.Z+3; if(b.E<0) b.E=0; }
+  if(key==="N"){ b.N=Math.min(26,Math.max(0,b.N+dir)); }
+  if(key==="E"){ b.E=Math.min(b.Z+3,Math.max(0,b.E+dir)); }
+  AudioFX.ping();
+  document.getElementById("val-Z").textContent=b.Z;
+  document.getElementById("val-N").textContent=b.N;
+  document.getElementById("val-E").textContent=b.E;
+  drawCurrentSim(); renderReadout(); unlockView("lkpd");
+}
+function renderSimLegend(){
+  const legend=document.getElementById("sim-legend");
+  if(Sim.key==="builder"){
+    legend.innerHTML=`<span><i style="background:var(--brass-500);"></i> Proton</span><span><i style="background:var(--phosphor-500);"></i> Neutron</span><span><i style="background:var(--paper-300);"></i> Elektron</span>`;
+  } else {
+    legend.innerHTML=`<span><i style="background:var(--brass-500);"></i> Proton</span><span><i style="background:var(--phosphor-500);"></i> Neutron</span><span><i style="background:var(--leaf-500);"></i> Hubungan ditemukan</span>`;
+  }
+}
+function renderReadout(){
+  const readout=document.getElementById("sim-readout");
+  if(Sim.key==="builder"){
+    const b=Sim.builder;
+    const A=b.Z+b.N; const charge=b.Z-b.E;
+    const el=ELEMENTS[b.Z-1];
+    const jenis = charge===0?"Netral":(charge>0?"Kation":"Anion");
+    readout.innerHTML=`
+      <div><b>Unsur</b><span>${el.name} (${el.sym})</span></div>
+      <div><b>Notasi</b><span>${el.sym}, A=${A}, Z=${b.Z}</span></div>
+      <div><b>Muatan</b><span>${charge>0?"+"+charge:charge}</span></div>
+      <div><b>Jenis</b><span>${jenis}</span></div>`;
+  } else {
+    const n1=NUCLIDES[Sim.classifier.idx1], n2=NUCLIDES[Sim.classifier.idx2];
+    const neu1=n1.A-n1.Z, neu2=n2.A-n2.Z;
+    readout.innerHTML=`
+      <div><b>Nuklida 1</b><span>${n1.name}</span></div>
+      <div><b>Nuklida 2</b><span>${n2.name}</span></div>
+      <div><b>Z1 / Z2</b><span>${n1.Z} / ${n2.Z}</span></div>
+      <div><b>A1 / A2</b><span>${n1.A} / ${n2.A}</span></div>
+      <div><b>Neutron 1</b><span>${neu1}</span></div>
+      <div><b>Neutron 2</b><span>${neu2}</span></div>`;
+  }
+}
+
+function drawCurrentSim(){
+  if(!Sim.ctx) return;
+  const ctx=Sim.ctx, w=Sim.canvas.width, h=Sim.canvas.height;
+  ctx.clearRect(0,0,w,h);
+  if(Sim.key==="builder") drawBuilder(ctx,w,h); else drawClassifier(ctx,w,h);
+}
+
+function drawNucleusCluster(ctx,cx,cy,r,protons,neutrons){
+  const total=protons+neutrons;
+  const cap=Math.min(total,60);
+  for(let i=0;i<cap;i++){
+    const isProton = i<Math.round(protons/total*cap);
+    const ang = (i*137.5)*(Math.PI/180);
+    const rad = r*Math.sqrt(i/cap)*0.92;
+    const x = cx + Math.cos(ang)*rad, y = cy + Math.sin(ang)*rad;
+    ctx.beginPath();
+    ctx.fillStyle = isProton ? "#C4934E" : "#5FD9C4";
+    ctx.arc(x,y, r*0.11, 0, 7);
+    ctx.fill();
+  }
+}
+
+function drawBuilder(ctx,w,h){
+  const b=Sim.builder;
+  const cx=w*0.5, cy=h*0.52;
+  const nucleusR = Math.min(w,h)*0.11;
+
+  // Nukleus
+  drawNucleusCluster(ctx,cx,cy,nucleusR,b.Z,b.N);
+
+  // Label notasi di atas
+  const el = ELEMENTS[b.Z-1];
+  const A = b.Z+b.N, charge = b.Z-b.E;
+  ctx.fillStyle="#F3EFE4";
+  ctx.font = `700 ${28*Sim.dpr}px Georgia, serif`;
+  ctx.textAlign="center";
+  ctx.fillText(el.sym, cx, cy - Math.min(w,h)*0.32);
+  ctx.font = `${13*Sim.dpr}px monospace`;
+  ctx.fillStyle="#5FD9C4";
+  ctx.textAlign="left";
+  ctx.fillText("A="+A, cx-40*Sim.dpr, cy - Math.min(w,h)*0.32 - 18*Sim.dpr);
+  ctx.fillStyle="#D9AC6E";
+  ctx.fillText("Z="+b.Z, cx-40*Sim.dpr, cy - Math.min(w,h)*0.32 + 22*Sim.dpr);
+  if(charge!==0){
+    ctx.fillStyle="#F0A38F";
+    ctx.fillText((charge>0?"+":"")+charge, cx+34*Sim.dpr, cy - Math.min(w,h)*0.32 - 4*Sim.dpr);
+  }
+
+  // Kulit elektron (2-8-8-8)
+  if(Sim.mode !== "simbolik"){
+    const shellCaps=[2,8,8,8];
+    let remaining=b.E;
+    let shellIdx=0;
+    const baseR = nucleusR*1.9;
+    while(remaining>0 && shellIdx<shellCaps.length){
+      const cap=shellCaps[shellIdx];
+      const inShell=Math.min(cap, remaining);
+      const shellR = baseR + shellIdx*(Math.min(w,h)*0.085);
+      ctx.strokeStyle="rgba(217,211,194,.25)";
+      ctx.lineWidth=1.4*Sim.dpr;
+      ctx.beginPath(); ctx.arc(cx,cy,shellR,0,Math.PI*2); ctx.stroke();
+      for(let i=0;i<inShell;i++){
+        const ang = (i/inShell)*Math.PI*2 + shellIdx*0.4;
+        const x=cx+Math.cos(ang)*shellR, y=cy+Math.sin(ang)*shellR;
+        ctx.beginPath();
+        ctx.fillStyle="#F3EFE4";
+        ctx.shadowColor="#F3EFE4"; ctx.shadowBlur=6*Sim.dpr;
+        ctx.arc(x,y,4.2*Sim.dpr,0,7); ctx.fill();
+        ctx.shadowBlur=0;
+      }
+      remaining -= inShell; shellIdx++;
+    }
+  }
+
+  if(Sim.mode==="makroskopik"){
+    ctx.fillStyle="rgba(196,147,78,.85)";
+    ctx.font=`600 ${15*Sim.dpr}px sans-serif`;
+    ctx.textAlign="center";
+    const jenis = charge===0?"Larutan/padatan netral":(charge>0?"Larutan elektrolit (kation)":"Larutan elektrolit (anion)");
+    ctx.fillText(jenis, cx, h*0.88);
+  }
+}
+
+const RELATION_INFO = {
+  identik:{title:"Nuklida Identik", desc:"Kedua pilihan merupakan nuklida yang sama persis (Z dan A sama).", related:true},
+  isotop:{title:"Isotop", desc:"Nomor atom (Z) sama, nomor massa (A) berbeda — unsur yang sama dengan jumlah neutron berbeda.", related:true},
+  isobar:{title:"Isobar", desc:"Nomor massa (A) sama, nomor atom (Z) berbeda — unsur berbeda dengan nukleon total yang kebetulan sama.", related:true},
+  isoton:{title:"Isoton", desc:"Jumlah neutron sama, namun Z dan A berbeda — unsur berbeda dengan neutron yang kebetulan sama.", related:true},
+  none:{title:"Tidak Berelasi Khusus", desc:"Z, A, maupun jumlah neutron kedua nuklida ini semuanya berbeda.", related:false}
+};
+function classifyNuclides(n1,n2){
+  if(n1.Z===n2.Z && n1.A===n2.A) return "identik";
+  if(n1.Z===n2.Z) return "isotop";
+  if(n1.A===n2.A) return "isobar";
+  if((n1.A-n1.Z)===(n2.A-n2.Z)) return "isoton";
+  return "none";
+}
+
+function drawClassifier(ctx,w,h){
+  const n1=NUCLIDES[Sim.classifier.idx1], n2=NUCLIDES[Sim.classifier.idx2];
+  const cy=h*0.4, r=Math.min(w,h)*0.1;
+  const cx1=w*0.28, cx2=w*0.72;
+
+  drawNucleusCluster(ctx,cx1,cy,r,n1.Z,n1.A-n1.Z);
+  drawNucleusCluster(ctx,cx2,cy,r,n2.Z,n2.A-n2.Z);
+
+  ctx.textAlign="center"; ctx.fillStyle="#F3EFE4";
+  ctx.font=`700 ${22*Sim.dpr}px Georgia, serif`;
+  ctx.fillText(n1.sym, cx1, cy - r*1.7);
+  ctx.fillText(n2.sym, cx2, cy - r*1.7);
+  ctx.font=`${12*Sim.dpr}px monospace`;
+  ctx.fillStyle="#A9A290";
+  ctx.fillText(`Z=${n1.Z}  A=${n1.A}  n=${n1.A-n1.Z}`, cx1, cy + r*1.9);
+  ctx.fillText(`Z=${n2.Z}  A=${n2.A}  n=${n2.A-n2.Z}`, cx2, cy + r*1.9);
+
+  // garis penghubung
+  ctx.strokeStyle="rgba(196,147,78,.35)";
+  ctx.setLineDash([6*Sim.dpr,6*Sim.dpr]);
+  ctx.beginPath(); ctx.moveTo(cx1+r*1.1,cy); ctx.lineTo(cx2-r*1.1,cy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // verdict panel drawn via DOM, not canvas
+  renderVerdict(n1,n2);
+}
+
+function renderVerdict(n1,n2){
+  let panel = document.getElementById("sim-verdict");
+  if(!panel){
+    panel = document.createElement("div");
+    panel.id="sim-verdict";
+    panel.className="verdict";
+    document.getElementById("sim-stage").appendChild(panel);
+    panel.style.position="absolute"; panel.style.left="50%"; panel.style.bottom="16px";
+    panel.style.transform="translateX(-50%)"; panel.style.width="min(360px, 90%)";
+  }
+  const key = classifyNuclides(n1,n2);
+  const info = RELATION_INFO[key];
+  panel.classList.toggle("is-related", info.related);
+  panel.innerHTML = `<div class="verdict-title">${info.title}</div><div class="verdict-desc">${info.desc}</div>`;
+}
+
+function removeVerdictPanel(){
+  const panel=document.getElementById("sim-verdict");
+  if(panel) panel.remove();
+}
+
+function resetSim(){
+  AudioFX.reset();
+  if(confirm("Kembalikan simulasi ke kondisi awal? Data LKPD tidak akan terhapus.")){
+    Sim.builder={Z:11,N:12,E:11};
+    Sim.classifier={idx1:3, idx2:5};
+    renderSimControls(); drawCurrentSim();
+    showToast("Simulasi direset ke kondisi awal.");
+  }
+}
+
+function initSimulationView(){
+  setupCanvas();
+  renderSimTabs();
+  renderSimControls();
+  renderSimLegend();
+  drawCurrentSim();
+  document.getElementById("sim-reset").addEventListener("click", resetSim);
+}
+
+/* =========================================================================
+   10. LKPD
+   ========================================================================= */
+const LKPD_FIELDS=["prediksi","analisis1","analisis2","q1","q2","kesimpulan","refleksi"];
+let obsRowCount1=0, obsRowCount2=0;
+function addObsRow1(data){
+  const tbody=document.getElementById("obs-tbody-1"); const idx=obsRowCount1++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" data-o1="notasi-${idx}" placeholder="cth. Mg2+" value="${data&&data.notasi||""}"></td>
+    <td><input type="text" data-o1="z-${idx}" placeholder="Z" value="${data&&data.z||""}"></td>
+    <td><input type="text" data-o1="n-${idx}" placeholder="N" value="${data&&data.n||""}"></td>
+    <td><input type="text" data-o1="e-${idx}" placeholder="E" value="${data&&data.e||""}"></td>
+    <td><input type="text" data-o1="muatan-${idx}" placeholder="cth. 2+" value="${data&&data.muatan||""}"></td>
+    <td><input type="text" data-o1="jenis-${idx}" placeholder="Netral/Kation/Anion" value="${data&&data.jenis||""}"></td>`;
+  tbody.appendChild(row);
+}
+function addObsRow2(data){
+  const tbody=document.getElementById("obs-tbody-2"); const idx=obsRowCount2++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" data-o2="n1-${idx}" placeholder="cth. C-12" value="${data&&data.n1||""}"></td>
+    <td><input type="text" data-o2="n2-${idx}" placeholder="cth. C-14" value="${data&&data.n2||""}"></td>
+    <td><input type="text" data-o2="dz-${idx}" placeholder="ΔZ" value="${data&&data.dz||""}"></td>
+    <td><input type="text" data-o2="da-${idx}" placeholder="ΔA" value="${data&&data.da||""}"></td>
+    <td><input type="text" data-o2="hub-${idx}" placeholder="Isotop/Isobar/Isoton" value="${data&&data.hub||""}"></td>`;
+  tbody.appendChild(row);
+}
+function renderLKPD(){
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  const l=State.lkpd;
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el&&l[f]) el.value=l[f]; });
+  document.getElementById("obs-tbody-1").innerHTML=""; obsRowCount1=0;
+  (l.obs1&&l.obs1.length?l.obs1:[{},{}]).forEach(r=>addObsRow1(r));
+  document.getElementById("obs-tbody-2").innerHTML=""; obsRowCount2=0;
+  (l.obs2&&l.obs2.length?l.obs2:[{},{}]).forEach(r=>addObsRow2(r));
+}
+function collectLKPD(){
+  const l={};
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el) l[f]=el.value; });
+  l.obs1 = Array.from(document.querySelectorAll("#obs-tbody-1 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {notasi:i[0].value, z:i[1].value, n:i[2].value, e:i[3].value, muatan:i[4].value, jenis:i[5].value};
+  });
+  l.obs2 = Array.from(document.querySelectorAll("#obs-tbody-2 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {n1:i[0].value, n2:i[1].value, dz:i[2].value, da:i[3].value, hub:i[4].value};
+  });
+  return l;
+}
+function initLKPD(){
+  document.querySelectorAll("[data-add]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ AudioFX.click(); btn.dataset.add==="1"?addObsRow1():addObsRow2(); });
+  });
+  document.getElementById("lkpd-save").addEventListener("click", ()=>{
+    State.lkpd=collectLKPD(); persistState();
+    document.getElementById("lkpd-status").textContent="Tersimpan · "+new Date().toLocaleTimeString("id-ID");
+    AudioFX.success(); showToast("LKPD berhasil disimpan.","success");
+    unlockView("evaluasi");
+  });
+  document.getElementById("lkpd-print").addEventListener("click", ()=>window.print());
+  document.getElementById("btn-print").addEventListener("click", ()=>{ goToView("lkpd"); setTimeout(()=>window.print(),200); });
+  document.getElementById("lkpd-reset").addEventListener("click", ()=>{
+    if(confirm("Hapus seluruh isian LKPD? Tindakan ini tidak dapat dibatalkan.")){
+      State.lkpd={}; persistState(); renderLKPD(); AudioFX.reset(); showToast("LKPD telah direset.");
+    }
+  });
+}
+
+/* =========================================================================
+   11. EVALUATION
+   ========================================================================= */
+function renderQuiz(){
+  const container=document.getElementById("quiz-questions");
+  container.innerHTML=LAB_DATA.evaluation.map((q,i)=>{
+    let body="";
+    if(q.type==="mc") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="radio" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="checkbox") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="checkbox" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="short") body=`<input type="text" class="short-answer-input" id="q${i}-short" placeholder="Ketik jawabanmu…">`;
+    else if(q.type==="essay") body=`<textarea id="q${i}-essay" placeholder="Tuliskan jawaban analisismu…" style="min-height:90px;"></textarea>`;
+    return `<div class="card q-card" id="qcard-${i}">
+      <span class="q-tag ${q.level}">${q.level.toUpperCase()} · Soal ${i+1}</span>
+      <div class="q-stem">${q.stem}</div>${body}
+      <div class="q-explain" id="qexplain-${i}"><b>Pembahasan:</b> ${q.explain}</div>
+    </div>`;
+  }).join("");
+  container.addEventListener("change", onQuizAnswerChange);
+  container.querySelectorAll(".short-answer-input, textarea").forEach(el=>el.addEventListener("input", onQuizAnswerChange));
+  document.getElementById("quiz-begin").parentElement.hidden=true;
+  document.getElementById("quiz-body").hidden=false;
+  updateQuizProgress();
+}
+function onQuizAnswerChange(){
+  const answers={};
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    if(q.type==="mc"){ const sel=document.querySelector(`input[name="q${i}"]:checked`); if(sel) answers[i]=Number(sel.value); }
+    else if(q.type==="checkbox"){ const sels=document.querySelectorAll(`input[name="q${i}"]:checked`); if(sels.length) answers[i]=Array.from(sels).map(s=>Number(s.value)); }
+    else if(q.type==="short"){ const val=document.getElementById(`q${i}-short`).value.trim(); if(val) answers[i]=val; }
+    else if(q.type==="essay"){ const val=document.getElementById(`q${i}-essay`).value.trim(); if(val) answers[i]=val; }
+  });
+  State.quiz.answers=answers; persistState(); updateQuizProgress();
+}
+function updateQuizProgress(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  document.getElementById("quiz-progress-fill").style.width=(answered/total*100)+"%";
+  document.getElementById("quiz-progress-label").textContent=`${answered} / ${total} dijawab`;
+}
+function normalizeText(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+function gradeQuiz(){
+  let scoreItems=0, gradable=0;
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const ans=State.quiz.answers[i];
+    if(q.type==="essay") return;
+    gradable++;
+    if(q.type==="mc"){ if(ans===q.answer) scoreItems++; }
+    else if(q.type==="checkbox"){ if(Array.isArray(ans)){ const a=[...ans].sort().join(","), b=[...q.answerSet].sort().join(","); if(a===b) scoreItems++; } }
+    else if(q.type==="short"){ if(ans && q.accepted.includes(normalizeText(ans))) scoreItems++; }
+  });
+  return { scoreItems, gradable, pct: gradable?Math.round((scoreItems/gradable)*100):0 };
+}
+function revealAnswers(){
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    document.getElementById(`qexplain-${i}`).classList.add("is-visible");
+    if(q.type==="mc"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(oi===q.answer) optEl.classList.add("is-correct"); else if(oi===sel) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="checkbox"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i]||[];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(q.answerSet.includes(oi)) optEl.classList.add("is-correct"); else if(sel.includes(oi)) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="short"){ document.getElementById(`q${i}-short`).disabled=true; }
+    else if(q.type==="essay"){ document.getElementById(`q${i}-essay`).disabled=true; }
+  });
+}
+function submitQuiz(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  if(answered<total){ if(!confirm(`Kamu baru menjawab ${answered} dari ${total} soal. Tetap kumpulkan sekarang?`)) return; }
+  const result=gradeQuiz();
+  State.quiz.submitted=true; State.quiz.lastResult=result; persistState();
+  revealAnswers(); unlockView("profil");
+  document.getElementById("quiz-submit").hidden=true;
+  document.getElementById("quiz-result").hidden=false;
+  document.getElementById("result-score").textContent=result.pct;
+  let desc="";
+  if(result.pct>=85) desc="Istimewa! Pemahamanmu tentang notasi atom, ion, dan jenis nuklida sangat kuat.";
+  else if(result.pct>=70) desc="Bagus! Sebagian besar konsep sudah kamu kuasai — tinjau kembali bagian yang masih keliru.";
+  else if(result.pct>=50) desc="Cukup baik. Baca ulang bagian Teori, khususnya notasi ion dan jenis nuklida, lalu coba lagi.";
+  else desc="Perlu belajar lebih dalam. Cobalah ulangi bagian Teori dan Simulasi sebelum mengulang evaluasi.";
+  document.getElementById("result-desc").textContent=desc;
+  const badges=[
+    {icon:"🎓",label:"Skor ≥ 85",earned:result.pct>=85},
+    {icon:"🧪",label:"Semua Soal Dijawab",earned:answered>=total},
+    {icon:"⚛",label:"Skor ≥ 70",earned:result.pct>=70}
+  ];
+  document.getElementById("badge-row").innerHTML=badges.map(b=>`<div class="badge ${b.earned?"is-earned":""}"><i>${b.icon}</i><span>${b.label}</span></div>`).join("");
+  if(result.pct>=70) AudioFX.complete(); else AudioFX.error();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+function initQuiz(){
+  document.getElementById("quiz-begin").addEventListener("click", ()=>{ AudioFX.click(); renderQuiz(); });
+  document.getElementById("quiz-submit").addEventListener("click", submitQuiz);
+  document.getElementById("quiz-review").addEventListener("click", ()=>{
+    document.getElementById("quiz-result").hidden=true;
+    document.getElementById("quiz-body").hidden=false;
+    window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+  });
+  document.getElementById("quiz-retry").addEventListener("click", ()=>{
+    if(confirm("Ulangi evaluasi dari awal? Jawaban sebelumnya akan dihapus.")){
+      State.quiz={answers:{},submitted:false}; persistState();
+      document.getElementById("quiz-result").hidden=true;
+      document.getElementById("quiz-intro").hidden=false;
+      document.getElementById("quiz-body").hidden=true;
+      document.getElementById("quiz-submit").hidden=false;
+      AudioFX.reset();
+    }
+  });
+}
+
+/* =========================================================================
+   12. DEVELOPER PROFILE
+   ========================================================================= */
+function renderDevProfile(){
+  document.getElementById("dev-photo").innerHTML=`
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder foto pengembang">
+      <rect width="180" height="180" fill="#1F2C48"/>
+      <circle cx="90" cy="70" r="34" fill="#2C3A5C"/>
+      <path d="M30 168c8-40 40-58 60-58s52 18 60 58z" fill="#2C3A5C"/>
+      <circle cx="90" cy="90" r="88" fill="none" stroke="#C4934E" stroke-width="1.5" opacity="0.4"/>
+    </svg>`;
+}
+
+/* =========================================================================
+   13. ASSISTANT
+   ========================================================================= */
+const ASSISTANT_RULES=[
+  {keys:["mulai","cara mulai"], reply:"Klik \"Mulai Praktikum\", isi identitasmu, lalu ikuti tab navigasi dari Teori → Prosedur → Simulasi → LKPD → Evaluasi secara berurutan."},
+  {keys:["nomor atom","z "], reply:"Nomor atom (Z) menyatakan jumlah proton dalam inti atom, sekaligus jadi identitas unik suatu unsur."},
+  {keys:["nomor massa"], reply:"Nomor massa (A) adalah jumlah total proton dan neutron (nukleon) dalam inti atom."},
+  {keys:["ion","kation","anion"], reply:"Ion terbentuk saat atom melepas elektron (jadi kation, bermuatan +) atau menerima elektron (jadi anion, bermuatan −). Jumlah proton tidak pernah berubah."},
+  {keys:["isotop"], reply:"Isotop adalah nuklida dari unsur yang sama (Z sama) dengan nomor massa (A) berbeda, akibat jumlah neutron yang berbeda."},
+  {keys:["isobar"], reply:"Isobar adalah nuklida dari unsur berbeda (Z berbeda) yang kebetulan memiliki nomor massa (A) sama."},
+  {keys:["isoton"], reply:"Isoton adalah nuklida dari unsur berbeda dengan jumlah neutron yang sama."},
+  {keys:["ar","massa atom relatif"], reply:"Massa atom relatif (Ar) adalah rata-rata tertimbang massa seluruh isotop alami suatu unsur, bukan nomor massa satu nuklida saja."},
+  {keys:["lkpd"], reply:"LKPD dapat diisi setelah kamu mencoba simulasi. Klik \"Simpan\" secara berkala, dan gunakan \"Cetak / Simpan PDF\" bila perlu dokumen cetak."},
+  {keys:["nilai","skor","evaluasi"], reply:"Evaluasi berisi 18 soal (LOTS-HOTS). Skor otomatis dihitung dari soal pilihan ganda, checkbox, dan isian singkat. Soal esai direkam untuk dinilai gurumu."},
+  {keys:["error","macet","bug"], reply:"Coba muat ulang halaman. Data LKPD dan jawabanmu tersimpan otomatis di perangkat ini."}
+];
+function assistantReply(text){
+  const q=normalizeText(text);
+  const rule=ASSISTANT_RULES.find(r=>r.keys.some(k=>q.includes(k)));
+  return rule?rule.reply:"Aku asisten berbasis aturan (bukan AI generatif), jadi jawabanku terbatas pada topik virtual lab ini. Coba tanyakan tentang: nomor atom, nomor massa, ion, isotop, isobar, isoton, atau Ar.";
+}
+function initAssistant(){
+  const fab=document.getElementById("assistant-fab"), panel=document.getElementById("assistant-panel"), body=document.getElementById("assistant-body"), chips=document.getElementById("assistant-chips");
+  function addMsg(text,who){ const div=document.createElement("div"); div.className="assistant-msg"+(who==="user"?" user":""); div.textContent=text; body.appendChild(div); body.scrollTop=body.scrollHeight; }
+  addMsg("Halo! Aku asisten berbasis aturan untuk membantumu memahami notasi atom, ion, dan jenis nuklida. Silakan bertanya.","bot");
+  ["Apa itu isotop?","Bedanya kation & anion?","Cara hitung neutron?"].forEach(q=>{
+    const chip=document.createElement("button"); chip.className="assistant-chip"; chip.textContent=q;
+    chip.addEventListener("click", ()=>{ addMsg(q,"user"); setTimeout(()=>addMsg(assistantReply(q),"bot"),220); });
+    chips.appendChild(chip);
+  });
+  fab.addEventListener("click", ()=>{ const hidden=panel.hidden; panel.hidden=!hidden; fab.setAttribute("aria-expanded", String(hidden)); AudioFX.click(); });
+  document.getElementById("assistant-close").addEventListener("click", ()=>{ panel.hidden=true; fab.setAttribute("aria-expanded","false"); });
+}
+
+/* =========================================================================
+   14. TOP CONTROLS
+   ========================================================================= */
+function initTopControls(){
+  const soundBtn=document.getElementById("btn-sound");
+  soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+  soundBtn.textContent=State.soundOn?"🔊":"🔇";
+  soundBtn.addEventListener("click", ()=>{
+    State.soundOn=!State.soundOn;
+    soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+    soundBtn.textContent=State.soundOn?"🔊":"🔇";
+    persistState(); if(State.soundOn) AudioFX.click();
+  });
+  const rmBtn=document.getElementById("btn-reduce-motion");
+  rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+  document.body.classList.toggle("reduce-motion", State.reduceMotion);
+  rmBtn.addEventListener("click", ()=>{
+    State.reduceMotion=!State.reduceMotion;
+    rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+    document.body.classList.toggle("reduce-motion", State.reduceMotion);
+    persistState();
+  });
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    State.reduceMotion=true; document.body.classList.add("reduce-motion"); rmBtn.setAttribute("aria-pressed","true");
+  }
+}
+
+window.addEventListener("error",(e)=>{ console.error("Terjadi kesalahan tak terduga:", e.message); });
+
+/* =========================================================================
+   15. BOOTSTRAP
+   ========================================================================= */
+function init(){
+  loadState();
+  initSplash();
+  initTopControls();
+  buildTabs();
+  renderTheory();
+  renderProcedureTabs();
+  renderProcedureSteps();
+  initLKPD();
+  renderLKPD();
+  initQuiz();
+  renderDevProfile();
+  initAssistant();
+  goToView(State.activeView||"teori");
+
+  let simInitialized=false;
+  document.getElementById("tab-simulasi").addEventListener("click", ()=>{ if(!simInitialized){ initSimulationView(); simInitialized=true; } });
+  if(State.activeView==="simulasi"){ initSimulationView(); simInitialized=true; }
+}
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
