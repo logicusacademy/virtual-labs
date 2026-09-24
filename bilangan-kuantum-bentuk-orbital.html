@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Virtual Lab Kimia — Bilangan Kuantum &amp; Bentuk Orbital</title>
+<meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: empat bilangan kuantum dan bentuk-bentuk orbital (s, p, d, f).">
+
+<link rel="stylesheet" href="bilangan-kuantum-bentuk-orbital.css">
+</head>
+<body>
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<div id="splash" role="dialog" aria-labelledby="splash-title">
+  <div>
+    <div class="splash__orbit" aria-hidden="true">
+      <div class="splash__ring"></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__nucleus"></div>
+    </div>
+    <div class="splash__eyebrow">Virtual Laboratory — Kimia SMA</div>
+    <h1 id="splash-title">Bilangan Kuantum &amp; Bentuk Orbital</h1>
+    <div class="splash__topic">Empat angka yang menjadi "alamat lengkap" setiap elektron</div>
+    <div class="splash__meta">
+      <span class="chip">Fase E · Kelas X</span>
+      <span class="chip">Struktur Atom</span>
+      <span class="chip">± 60 menit</span>
+    </div>
+    <button class="btn btn--primary" id="btn-start" style="font-size:16px;padding:15px 34px;">Mulai Praktikum</button>
+  </div>
+</div>
+
+<div class="modal-scrim" id="modal-identity" hidden>
+  <form class="modal" id="form-identity" novalidate>
+    <h2>Identitas Praktikan</h2>
+    <p style="font-size:13px;">Data ini digunakan pada LKPD, evaluasi, dan rekap hasil belajarmu.</p>
+    <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama" required autocomplete="name" placeholder="cth. Ahmad Zaki"></div>
+    <div class="field-row">
+      <div class="field"><label for="inp-kelas">Kelas</label><input type="text" id="inp-kelas" required placeholder="cth. X-4"></div>
+      <div class="field"><label for="inp-id">No. Absen / ID</label><input type="text" id="inp-id" placeholder="cth. 17"></div>
+    </div>
+    <p class="hint" id="identity-error" style="color:var(--ember-300); display:none;">Nama dan kelas wajib diisi sebelum memulai.</p>
+    <button type="submit" class="btn btn--primary btn--block">Simpan &amp; Masuk Laboratorium</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="appbar">
+    <div class="appbar__brand">
+      <div class="appbar__mark" aria-hidden="true"></div>
+      <div class="appbar__title">Virtual Lab Kimia<small>Bilangan Kuantum &amp; Bentuk Orbital</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Navigasi bagian praktikum" role="tablist"></nav>
+    <div class="appbar__actions">
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Suara ON/OFF" aria-label="Aktifkan atau matikan suara">🔊</button>
+      <button class="icon-btn" id="btn-reduce-motion" aria-pressed="false" title="Kurangi animasi" aria-label="Kurangi animasi">✧</button>
+      <button class="icon-btn" id="btn-print" title="Cetak LKPD" aria-label="Cetak LKPD">🖨</button>
+    </div>
+  </header>
+  <div class="progress-rail"><div class="progress-rail__fill" id="global-progress"></div></div>
+
+  <main id="main-content">
+
+    <!-- ============================= TEORI ============================= -->
+    <section class="view" id="view-teori" data-view="teori">
+      <div class="view-head">
+        <div class="eyebrow-plain">01 · Teori</div>
+        <h2>Alamat Lengkap Seorang Elektron</h2>
+        <p>Setiap elektron dalam atom bisa "dialamatkan" secara unik dengan empat angka istimewa — bilangan kuantum. Keempatnya sekaligus menentukan bentuk ruang tempat elektron itu paling mungkin ditemukan: orbital.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:26px;">
+        <h3 style="font-size:16px;margin-bottom:12px;">Tujuan Pembelajaran</h3>
+        <ul id="tp-list" style="margin:0; padding-left:20px; color:var(--paper-300); font-size:14px; line-height:1.8;"></ul>
+      </div>
+
+      <div class="theory-toc" id="theory-toc" aria-label="Lompat ke subtopik teori"></div>
+
+      <div class="anatomy-diagram">
+        <div class="qn-chip"><div class="qn-val">n</div><b>Kuantum Utama</b>Tingkat energi &amp; kulit</div>
+        <div class="qn-chip"><div class="qn-val">l</div><b>Kuantum Azimuth</b>Subkulit &amp; bentuk dasar</div>
+        <div class="qn-chip"><div class="qn-val">m</div><b>Kuantum Magnetik</b>Orientasi ruang orbital</div>
+        <div class="qn-chip"><div class="qn-val">s</div><b>Kuantum Spin</b>Arah putaran elektron</div>
+      </div>
+
+      <div id="theory-sections"></div>
+    </section>
+
+    <!-- ============================= PROSEDUR ============================= -->
+    <section class="view" id="view-prosedur" data-view="prosedur">
+      <div class="view-head">
+        <div class="eyebrow-plain">02 · Prosedur</div>
+        <h2>Langkah Kerja Praktikum</h2>
+        <p>Pilih salah satu aktivitas untuk melihat urutan langkah kerjanya. Selesaikan langkah secara berurutan sebelum melanjutkan ke simulasi.</p>
+      </div>
+      <div class="proc-tabs" id="proc-tabs" role="tablist" aria-label="Pilih aktivitas"></div>
+      <div class="progress-track"><div class="progress-track__fill" id="proc-progress"></div></div>
+      <div class="card"><div class="step-list" id="proc-steps"></div></div>
+    </section>
+
+    <!-- ============================= SIMULASI ============================= -->
+    <section class="view" id="view-simulasi" data-view="simulasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">03 · Simulasi</div>
+        <h2>Laboratorium Interaktif</h2>
+        <p>Temukan bilangan kuantum elektron terakhir suatu unsur, uji validitas kombinasi (n, l, m), atau jelajahi bentuk orbital s, p, d, dan f.</p>
+      </div>
+      <div class="proc-tabs" id="sim-tabs" role="tablist" aria-label="Pilih simulasi" style="margin-bottom:18px;"></div>
+
+      <div class="sim-shell">
+        <div class="sim-panel">
+          <div class="card" id="sim-controls"></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Pembacaan Instrumen</h4><div class="readout" id="sim-readout"></div></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Legenda</h4><div class="legend" id="sim-legend"></div></div>
+        </div>
+        <div>
+          <div class="sim-stage" id="sim-stage">
+            <canvas id="sim-canvas" role="img" aria-label="Kanvas simulasi laboratorium"></canvas>
+            <div class="dom-layer" id="dom-layer"></div>
+          </div>
+          <div class="sim-toolbar">
+            <div class="control-row"><button class="btn btn--danger btn--sm" id="sim-reset">↺ Reset</button></div>
+          </div>
+          <p class="sim-note" id="sim-note" style="margin-top:14px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= LKPD ============================= -->
+    <section class="view" id="view-lkpd" data-view="lkpd">
+      <div class="view-head">
+        <div class="eyebrow-plain">04 · LKPD Digital</div>
+        <h2>Lembar Kerja Peserta Didik</h2>
+        <p>Isi setiap bagian berdasarkan pengamatanmu pada simulasi. Data tersimpan otomatis di perangkatmu.</p>
+      </div>
+      <div class="card">
+        <form id="form-lkpd">
+          <div class="lkpd-section">
+            <h3>A. Identitas <em>identitas</em></h3>
+            <div class="field-row">
+              <div class="field"><label>Nama</label><input type="text" id="lkpd-nama" readonly></div>
+              <div class="field"><label>Kelas</label><input type="text" id="lkpd-kelas" readonly></div>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>B. Tujuan <em>tujuan</em></h3>
+            <p style="font-size:13.5px;">Menentukan keempat bilangan kuantum (n, l, m, s) suatu elektron, menguji validitas kombinasi bilangan kuantum, dan mengidentifikasi bentuk-bentuk orbital s, p, d, dan f.</p>
+          </div>
+          <div class="lkpd-section">
+            <h3>C. Prediksi <em>hipotesis</em></h3>
+            <div class="field">
+              <label for="lkpd-prediksi">Menurutmu, apakah kombinasi bilangan kuantum (n=2, l=2, m=0) mungkin dimiliki oleh sebuah elektron? Tuliskan prediksimu, lalu buktikan dengan simulator penguji validitas.</label>
+              <textarea id="lkpd-prediksi"></textarea>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>D. Alat &amp; Bahan <em>otomatis</em></h3>
+            <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px;">
+              <li>Simulator Penemu Bilangan Kuantum (dari unsur &amp; eksplorasi bebas)</li>
+              <li>Simulator Visualisasi Bentuk Orbital (s, p, d, f)</li>
+              <li>Panel pembacaan instrumen (n, l, m, s, validitas, bentuk orbital)</li>
+            </ul>
+          </div>
+          <div class="lkpd-section">
+            <h3>E. Pengamatan — Bilangan Kuantum Elektron Terakhir <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-1">
+                <thead><tr><th>Unsur (Z)</th><th>n</th><th>l</th><th>m</th><th>s</th></tr></thead>
+                <tbody id="obs-tbody-1"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="1">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>E2. Pengamatan — Bentuk Orbital <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-2">
+                <thead><tr><th>Subkulit</th><th>Nilai l</th><th>Jumlah Orbital</th><th>Bentuk yang Diamati</th></tr></thead>
+                <tbody id="obs-tbody-2"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="2">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>F. Analisis <em>esai singkat</em></h3>
+            <div class="field"><label for="lkpd-analisis1">1. Mengapa nilai l tidak boleh sama dengan atau lebih besar dari n?</label><textarea id="lkpd-analisis1"></textarea></div>
+            <div class="field"><label for="lkpd-analisis2">2. Jelaskan mengapa orbital p memiliki 3 kemungkinan orientasi, sedangkan orbital s hanya 1.</label><textarea id="lkpd-analisis2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>G. Pertanyaan Pemandu <em>diskusi</em></h3>
+            <div class="field"><label for="lkpd-q1">Bagaimana hubungan antara bilangan kuantum magnetik (m) dengan jumlah orbital pada suatu subkulit?</label><textarea id="lkpd-q1"></textarea></div>
+            <div class="field"><label for="lkpd-q2">Apa perbedaan mendasar antara bentuk orbital s, p, dan d yang kamu amati pada simulator?</label><textarea id="lkpd-q2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>H. Kesimpulan <em>ringkasan</em></h3>
+            <div class="field"><label for="lkpd-kesimpulan">Tuliskan kesimpulan akhir praktikummu (kaitkan dengan tujuan pembelajaran).</label><textarea id="lkpd-kesimpulan" style="min-height:100px;"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>I. Refleksi <em>metakognisi</em></h3>
+            <div class="field"><label for="lkpd-refleksi">Bagian mana dari materi ini yang paling menantang bagimu, dan strategi apa yang kamu pakai untuk memahaminya?</label><textarea id="lkpd-refleksi"></textarea></div>
+          </div>
+          <div class="lkpd-toolbar">
+            <button type="button" class="btn btn--primary btn--sm" id="lkpd-save">💾 Simpan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="lkpd-print">🖨 Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn--danger btn--sm" id="lkpd-reset">↺ Reset LKPD</button>
+            <span class="save-status" id="lkpd-status">Belum disimpan</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= EVALUASI ============================= -->
+    <section class="view" id="view-evaluasi" data-view="evaluasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">05 · Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>18 soal (LOTS–HOTS) untuk mengukur pemahamanmu tentang bilangan kuantum dan bentuk orbital.</p>
+      </div>
+      <div id="quiz-intro" class="card">
+        <h3 style="font-size:17px;">Sebelum mulai</h3>
+        <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px; line-height:1.8;">
+          <li>18 soal: pilihan ganda, pilihan ganda kompleks (checkbox), isian singkat, dan analisis singkat.</li>
+          <li>Beberapa soal meminta kamu menentukan valid/tidaknya kombinasi bilangan kuantum.</li>
+          <li>Pembahasan setiap soal akan muncul setelah kamu menjawab.</li>
+        </ul>
+        <button class="btn btn--primary" id="quiz-begin" style="margin-top:8px;">Mulai Evaluasi</button>
+      </div>
+      <div id="quiz-body" hidden>
+        <div class="quiz-progress">
+          <div class="progress-track"><div class="progress-track__fill" id="quiz-progress-fill"></div></div>
+          <span class="quiz-meta" id="quiz-progress-label">0 / 18 dijawab</span>
+        </div>
+        <div id="quiz-questions"></div>
+        <button class="btn btn--primary btn--block" id="quiz-submit">Kumpulkan &amp; Lihat Skor</button>
+      </div>
+      <div id="quiz-result" hidden>
+        <div class="card result-hero">
+          <div style="font-size:13px; color:var(--paper-500); letter-spacing:.4px; text-transform:uppercase;">Skor Akhir</div>
+          <div class="result-score" id="result-score">0</div>
+          <p id="result-desc" style="max-width:440px;margin:10px auto 0;"></p>
+          <div class="badge-row" id="badge-row"></div>
+          <div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="quiz-review">Lihat Pembahasan</button>
+            <button class="btn btn--danger btn--sm" id="quiz-retry">Ulangi Evaluasi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= PROFIL PENGEMBANG ============================= -->
+    <section class="view" id="view-profil" data-view="profil">
+      <div class="view-head"><div class="eyebrow-plain">06 · Profil Pengembang</div><h2>Tentang Pengembang</h2></div>
+      <div class="card dev-card">
+        <div class="dev-photo" id="dev-photo"></div>
+        <div>
+          <h3 style="font-size:22px;">S.D. Sabirin, S.Si., Gr.</h3>
+          <p style="color:var(--brass-400); font-weight:600; margin-bottom:14px;">Guru Kimia &amp; Pengembang Media Pembelajaran Digital</p>
+          <p style="font-size:14px;">Mengajar Kimia di SMA Islam Al Azhar 5 Cirebon dan aktif membimbing siswa dalam kompetisi riset (LPIR, OSN, COSMII, OPSI, OSA). Saat ini menempuh studi Magister Kimia di Universitas Padjadjaran melalui program Beasiswa Guru SMUP. Virtual lab ini dikembangkan sebagai bagian dari upaya menghadirkan pembelajaran Kimia yang kontekstual, interaktif, dan berbasis bukti eksperimen.</p>
+          <div class="dev-competency">
+            <span class="chip">Pendidikan Kimia</span>
+            <span class="chip">Pengembangan Media Pembelajaran</span>
+            <span class="chip">Pembimbingan Riset Siswa</span>
+            <span class="chip">Deep Learning Pedagogy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="appfoot">Virtual Lab Kimia — Bilangan Kuantum &amp; Bentuk Orbital · Dikembangkan oleh S.D. Sabirin, S.Si., Gr. · Referensi: LibreTexts Chemistry &amp; IUPAC</footer>
+</div>
+
+<button class="assistant-fab" id="assistant-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="assistant-panel" aria-label="Buka asisten bantuan">?</button>
+<div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Asisten Bantuan" hidden>
+  <div class="assistant-head"><h4>Asisten Lab (berbasis aturan)</h4><button class="icon-btn" id="assistant-close" aria-label="Tutup asisten" style="width:28px;height:28px;">✕</button></div>
+  <div class="assistant-body" id="assistant-body"></div>
+  <div class="assistant-chips" id="assistant-chips"></div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script src="bilangan-kuantum-bentuk-orbital.js"></script>
+</body>
+</html>
