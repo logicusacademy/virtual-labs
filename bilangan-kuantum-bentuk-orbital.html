@@ -6,7 +6,281 @@
 <title>Virtual Lab Kimia — Bilangan Kuantum &amp; Bentuk Orbital</title>
 <meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: empat bilangan kuantum dan bentuk-bentuk orbital (s, p, d, f).">
 
-<link rel="stylesheet" href="bilangan-kuantum-bentuk-orbital.css">
+<style>
+:root{
+  --ink-950:#0B1220; --ink-900:#101A2E; --ink-800:#16213A; --ink-700:#1F2C48; --ink-600:#2C3A5C;
+  --brass-500:#C4934E; --brass-400:#D9AC6E; --brass-700:#93672F;
+  --phosphor-500:#5FD9C4; --phosphor-300:#9EEBDC;
+  --ember-500:#E0725A; --ember-300:#F0A38F;
+  --leaf-500:#7FBF7F;
+  --paper-100:#F3EFE4; --paper-300:#D9D3C2; --paper-500:#A9A290;
+  --serif:"Fraunces","Iowan Old Style",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --radius-s:6px; --radius-m:12px; --radius-l:20px;
+  --shadow-deep:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{ margin:0; font-family:var(--sans); background:radial-gradient(1200px 800px at 15% -10%, #16223d 0%, var(--ink-950) 55%); color:var(--paper-100); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+h1,h2,h3,h4{ font-family:var(--serif); font-weight:600; margin:0 0 .4em; letter-spacing:.2px; }
+p{ margin:0 0 1em; line-height:1.65; color:var(--paper-300); }
+a{ color:var(--phosphor-500); }
+button{ font-family:inherit; }
+::selection{ background:var(--brass-500); color:var(--ink-950); }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+body.reduce-motion *{ animation:none !important; transition:none !important; }
+:focus-visible{ outline:2px solid var(--phosphor-500); outline-offset:3px; border-radius:4px; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--ink-600); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--brass-700); }
+.visually-hidden{ position:absolute !important; width:1px;height:1px; padding:0;margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.skip-link{ position:absolute; left:12px; top:-60px; background:var(--brass-500); color:var(--ink-950); padding:10px 16px; border-radius:var(--radius-s); z-index:999; font-weight:600; transition:top .2s var(--ease); }
+.skip-link:focus{ top:12px; }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+.appbar{ display:flex; align-items:center; gap:16px; padding:10px 22px; background:linear-gradient(180deg, rgba(16,26,46,.96), rgba(16,26,46,.88)); border-bottom:1px solid var(--ink-600); position:sticky; top:0; z-index:60; backdrop-filter:blur(6px); }
+.appbar__brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+.appbar__mark{ width:34px;height:34px; border-radius:50%; background:radial-gradient(circle at 32% 28%, var(--phosphor-300), var(--phosphor-500) 45%, #1a6f60 100%); box-shadow:0 0 16px -2px var(--phosphor-500); flex:none; }
+.appbar__title{ font-family:var(--serif); font-size:15px; line-height:1.1; }
+.appbar__title small{ display:block; font-family:var(--sans); font-size:11px; color:var(--paper-500); font-weight:500; }
+.tabs{ display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab-btn{ border:1px solid transparent; background:transparent; color:var(--paper-500); padding:9px 14px; border-radius:999px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease); }
+.tab-btn .tab-num{ width:18px;height:18px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); font-size:10px; display:grid; place-items:center; font-family:var(--mono); flex:none; }
+.tab-btn:hover{ color:var(--paper-100); background:var(--ink-800); }
+.tab-btn[aria-selected="true"]{ color:var(--ink-950); background:var(--brass-500); }
+.tab-btn[aria-selected="true"] .tab-num{ background:rgba(11,18,32,.25); color:var(--ink-950); }
+.tab-btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.tab-btn[disabled]:hover{ background:transparent; color:var(--paper-500); }
+.appbar__actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ width:36px;height:36px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); display:grid; place-items:center; cursor:pointer; font-size:15px; transition:border-color .18s var(--ease), color .18s var(--ease), transform .12s var(--ease); }
+.icon-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.icon-btn:active{ transform:scale(.94); }
+.icon-btn[aria-pressed="false"]{ opacity:.5; }
+.progress-rail{ height:3px; background:var(--ink-700); position:relative; }
+.progress-rail__fill{ height:100%; background:linear-gradient(90deg, var(--brass-700), var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+main{ flex:1; position:relative; }
+.view{ display:none; padding:28px clamp(16px,4vw,56px) 64px; max-width:1240px; margin:0 auto; animation:viewIn .35s var(--ease); }
+.view.is-active{ display:block; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+.view-head{ margin-bottom:26px; }
+.eyebrow-plain{ font-size:12.5px; color:var(--phosphor-500); font-weight:600; margin-bottom:6px; }
+.view-head h2{ font-size:clamp(24px,3.4vw,34px); }
+.view-head p{ max-width:640px; }
+.card{ background:linear-gradient(180deg, var(--ink-800), var(--ink-900)); border:1px solid var(--ink-600); border-radius:var(--radius-l); padding:22px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:900px){ .grid-2{ grid-template-columns:1fr; } }
+
+.btn{ display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:12px 22px; border-radius:999px; border:1px solid transparent; cursor:pointer; font-weight:600; font-size:14.5px; transition:transform .14s var(--ease), box-shadow .2s var(--ease), background .18s; }
+.btn:active{ transform:scale(.97); }
+.btn--primary{ background:linear-gradient(180deg, var(--brass-400), var(--brass-500)); color:#1B1305; box-shadow:0 10px 24px -10px rgba(196,147,78,.55); }
+.btn--primary:hover{ box-shadow:0 14px 30px -10px rgba(196,147,78,.7); }
+.btn--ghost{ background:transparent; border-color:var(--ink-600); color:var(--paper-100); }
+.btn--ghost:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.btn--danger{ background:transparent; border-color:var(--ember-500); color:var(--ember-300); }
+.btn--danger:hover{ background:rgba(224,114,90,.12); }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+.btn--sm{ padding:8px 16px; font-size:13px; }
+.btn--block{ width:100%; }
+
+label{ display:block; font-size:13px; font-weight:600; color:var(--paper-300); margin-bottom:6px; }
+input[type="text"], input[type="number"], select, textarea{ width:100%; background:var(--ink-950); border:1px solid var(--ink-600); color:var(--paper-100); padding:11px 13px; border-radius:var(--radius-s); font-size:14.5px; font-family:inherit; }
+textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+input:focus, select:focus, textarea:focus{ border-color:var(--phosphor-500); }
+.field{ margin-bottom:16px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+.hint{ font-size:12px; color:var(--paper-500); margin-top:5px; }
+
+#splash{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:radial-gradient(900px 500px at 80% 10%, rgba(95,217,196,.10), transparent 60%), radial-gradient(700px 500px at 10% 90%, rgba(196,147,78,.14), transparent 60%), var(--ink-950); padding:24px; text-align:center; transition:opacity .5s var(--ease), visibility .5s; }
+#splash.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.splash__orbit{ position:relative; width:150px;height:150px; margin:0 auto 26px; }
+.splash__nucleus{ position:absolute; inset:0; margin:auto; width:26px;height:26px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); box-shadow:0 0 30px 4px rgba(196,147,78,.55); }
+.splash__ring{ position:absolute; inset:0; border:1px solid rgba(95,217,196,.35); border-radius:50%; }
+.splash__ring:nth-child(2){ inset:14px; animation:spin 6s linear infinite; }
+.splash__ring:nth-child(3){ inset:0; transform:rotate(60deg); animation:spin 9s linear infinite reverse; }
+.splash__ring:nth-child(4){ inset:0; transform:rotate(-60deg); animation:spin 12s linear infinite; }
+.splash__electron{ position:absolute; width:8px;height:8px;border-radius:50%; background:var(--phosphor-500); box-shadow:0 0 10px 2px var(--phosphor-500); top:-4px; left:50%; margin-left:-4px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+body.reduce-motion .splash__ring{ animation:none; }
+.splash__eyebrow{ letter-spacing:.4px; color:var(--phosphor-500); font-weight:700; font-size:13px; margin-bottom:10px; }
+.splash h1{ font-size:clamp(26px,4.6vw,42px); max-width:800px; margin:0 auto 10px; }
+.splash__topic{ color:var(--brass-400); font-weight:600; font-size:clamp(15px,2vw,19px); margin-bottom:26px; }
+.splash__meta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+.chip{ border:1px solid var(--ink-600); border-radius:999px; padding:6px 14px; font-size:12.5px; color:var(--paper-300); background:var(--ink-800); }
+
+.modal-scrim{ position:fixed; inset:0; background:rgba(6,9,16,.72); z-index:210; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-scrim[hidden]{ display:none; }
+.modal{ background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); max-width:460px; width:100%; padding:28px; box-shadow:var(--shadow-deep); }
+.modal h2{ font-size:22px; }
+
+.theory-toc{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.toc-pill{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:7px 13px; border-radius:999px; font-size:12.5px; cursor:pointer; font-weight:600; }
+.toc-pill:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.theory-section{ margin-bottom:30px; scroll-margin-top:90px; }
+.theory-section h3{ font-size:20px; border-bottom:1px solid var(--ink-600); padding-bottom:10px; margin-bottom:14px; }
+.term-list{ display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+.term-list dt{ font-weight:700; color:var(--paper-100); font-size:13.5px; }
+.term-list dd{ margin:0 0 12px; color:var(--paper-500); font-size:13.2px; }
+@media (max-width:700px){ .term-list{ grid-template-columns:1fr; } }
+.misconception{ border-left:3px solid var(--ember-500); background:rgba(224,114,90,.08); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:12px 16px; margin-bottom:10px; }
+.misconception b{ color:var(--ember-300); }
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+table.data-table th{ text-align:left; font-family:var(--serif); font-weight:600; color:var(--brass-400); padding:10px 12px; border-bottom:2px solid var(--ink-600); }
+table.data-table td{ padding:10px 12px; border-bottom:1px solid var(--ink-700); color:var(--paper-300); }
+table.data-table tr:last-child td{ border-bottom:none; }
+.table-wrap{ overflow-x:auto; }
+
+.anatomy-diagram{ display:flex; align-items:center; justify-content:center; gap:22px; flex-wrap:wrap; padding:26px; background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); margin:16px 0; }
+.qn-chip{ display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11.5px; color:var(--paper-500); text-align:center; width:130px; }
+.qn-chip .qn-val{ font-family:var(--mono); font-size:26px; color:var(--phosphor-500); background:var(--ink-900); border:1px solid var(--ink-700); width:64px; height:64px; border-radius:50%; display:grid; place-items:center; }
+.qn-chip b{ color:var(--paper-100); font-size:12.5px; }
+
+.proc-tabs{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.proc-tab{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:10px 16px; border-radius:var(--radius-m); cursor:pointer; font-weight:600; font-size:13.5px; text-align:left; }
+.proc-tab[aria-selected="true"]{ border-color:var(--brass-500); color:var(--brass-400); background:rgba(196,147,78,.09); }
+.step-list{ counter-reset:step; }
+.step{ display:grid; grid-template-columns:40px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--ink-700); opacity:.5; }
+.step.is-unlocked{ opacity:1; }
+.step:last-child{ border-bottom:none; }
+.step__num{ width:34px;height:34px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; }
+.step.is-unlocked .step__num{ background:var(--brass-500); color:#1B1305; }
+.step.is-done .step__num{ background:var(--leaf-500); color:#0c2410; }
+.step h4{ font-size:15.5px; margin-bottom:6px; }
+.step__meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--paper-500); margin:8px 0; }
+.step__meta span{ display:flex; gap:5px; align-items:center; }
+.step__meta b{ color:var(--paper-300); font-weight:600; }
+.step-actions{ margin-top:10px; }
+.progress-track{ height:8px; background:var(--ink-700); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+.progress-track__fill{ height:100%; background:linear-gradient(90deg, var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+
+.sim-shell{ display:grid; grid-template-columns:300px 1fr; gap:20px; }
+@media (max-width:980px){ .sim-shell{ grid-template-columns:1fr; } }
+.sim-panel{ display:flex; flex-direction:column; gap:16px; }
+.sim-stage{ position:relative; border-radius:var(--radius-l); border:1px solid var(--ink-600); background:radial-gradient(ellipse at 50% 30%, #0e1a30 0%, #060a14 72%); overflow:hidden; min-height:460px; }
+.sim-stage canvas{ display:block; width:100%; height:100%; }
+.sim-toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--ink-600); background:rgba(11,18,32,.7); }
+.mode-switch{ display:flex; gap:6px; background:var(--ink-800); border:1px solid var(--ink-600); border-radius:999px; padding:4px; }
+.mode-switch button{ border:none; background:transparent; color:var(--paper-500); padding:6px 12px; border-radius:999px; font-size:12px; font-weight:700; cursor:pointer; }
+.mode-switch button[aria-pressed="true"]{ background:var(--phosphor-500); color:#04211c; }
+.readout{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:var(--mono); font-size:12.5px; }
+.readout div{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:8px 10px; }
+.readout b{ display:block; color:var(--phosphor-500); font-size:10.5px; letter-spacing:.4px; margin-bottom:2px; font-family:var(--sans); }
+.readout span{ color:var(--paper-100); font-size:13.5px; word-break:break-word; }
+.control-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-500); }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.legend i{ width:10px;height:10px;border-radius:50%; display:inline-block; }
+.sim-note{ font-size:12.5px; background:rgba(95,217,196,.08); border:1px solid rgba(95,217,196,.25); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+.stepper-field{ margin-bottom:16px; }
+.stepper-row{ display:flex; align-items:center; gap:10px; }
+.stepper-btn{ width:34px;height:34px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-100); font-size:17px; font-weight:700; cursor:pointer; display:grid; place-items:center; flex:none; }
+.stepper-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.stepper-btn:active{ transform:scale(.92); }
+.stepper-val{ flex:1; text-align:center; font-family:var(--mono); font-size:18px; color:var(--paper-100); background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:7px 0; }
+.spin-toggle{ display:flex; gap:8px; }
+.spin-toggle button{ flex:1; padding:10px; border-radius:var(--radius-s); border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); font-family:var(--mono); font-weight:700; cursor:pointer; }
+.spin-toggle button[aria-pressed="true"]{ border-color:var(--phosphor-500); color:var(--phosphor-500); background:rgba(95,217,196,.1); }
+
+/* DOM layer (shared by Sim1: quantum number finder / validator) */
+.dom-layer{ position:absolute; inset:0; overflow-y:auto; padding:22px; display:none; }
+.dom-layer.is-active{ display:block; }
+.qn-result-hero{ text-align:center; margin-bottom:20px; }
+.qn-big-notation{ font-family:var(--mono); font-size:clamp(16px,2.6vw,22px); color:var(--paper-100); letter-spacing:.5px; }
+.qn-cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0; }
+@media (max-width:560px){ .qn-cards{ grid-template-columns:1fr 1fr; } }
+.qn-card{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); padding:14px 8px; text-align:center; }
+.qn-card b{ display:block; font-size:10.5px; color:var(--phosphor-500); letter-spacing:.3px; margin-bottom:6px; }
+.qn-card span{ font-family:var(--mono); font-size:22px; color:var(--paper-100); }
+.qn-steps{ font-size:13px; color:var(--paper-300); background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); padding:14px 16px; line-height:1.8; }
+.qn-steps ol{ margin:0; padding-left:20px; }
+.validity-banner{ text-align:center; padding:16px; border-radius:var(--radius-m); border:1px solid var(--ink-600); margin-bottom:18px; font-family:var(--serif); font-size:19px; }
+.validity-banner.is-valid{ border-color:var(--leaf-500); background:rgba(127,191,127,.08); color:var(--leaf-500); }
+.validity-banner.is-invalid{ border-color:var(--ember-500); background:rgba(224,114,90,.08); color:var(--ember-300); }
+.validity-reason{ font-size:13px; color:var(--paper-300); text-align:center; margin-bottom:18px; font-family:var(--sans); }
+
+.lkpd-section{ margin-bottom:24px; }
+.lkpd-section h3{ font-size:16px; display:flex; align-items:center; gap:8px; }
+.lkpd-section h3 em{ font-style:normal; font-family:var(--mono); font-size:11px; color:var(--paper-500); background:var(--ink-700); padding:3px 8px; border-radius:5px; }
+.obs-table td, .obs-table th{ padding:8px; }
+.obs-table input{ padding:7px 9px; font-size:13px; }
+.add-row-btn{ margin-top:8px; }
+.lkpd-toolbar{ display:flex; gap:10px; flex-wrap:wrap; position:sticky; bottom:14px; z-index:5; background:var(--ink-900); border:1px solid var(--ink-600); padding:12px; border-radius:var(--radius-m); box-shadow:var(--shadow-deep); }
+.save-status{ font-size:12px; color:var(--paper-500); align-self:center; margin-left:auto; }
+
+.quiz-progress{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+.quiz-progress .progress-track{ flex:1; margin:0; }
+.quiz-meta{ font-family:var(--mono); font-size:12.5px; color:var(--paper-500); white-space:nowrap; }
+.q-card{ margin-bottom:18px; }
+.q-tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:3px 9px; border-radius:999px; margin-bottom:12px; }
+.q-tag.lots{ background:rgba(127,191,127,.16); color:var(--leaf-500); }
+.q-tag.mots{ background:rgba(196,147,78,.18); color:var(--brass-400); }
+.q-tag.hots{ background:rgba(224,114,90,.18); color:var(--ember-300); }
+.q-stem{ font-size:15.5px; color:var(--paper-100); margin-bottom:14px; font-weight:500; line-height:1.55; }
+.opt{ display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border:1px solid var(--ink-600); border-radius:var(--radius-m); margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s; }
+.opt:hover{ border-color:var(--brass-500); }
+.opt input{ margin-top:3px; accent-color:var(--brass-500); flex:none; }
+.opt span{ font-size:14px; color:var(--paper-300); }
+.opt.is-correct{ border-color:var(--leaf-500); background:rgba(127,191,127,.09); }
+.opt.is-wrong{ border-color:var(--ember-500); background:rgba(224,114,90,.09); }
+.q-explain{ display:none; margin-top:12px; padding:12px 14px; border-radius:var(--radius-s); background:var(--ink-950); border:1px solid var(--ink-700); font-size:13px; color:var(--paper-300); }
+.q-explain.is-visible{ display:block; }
+.q-explain b{ color:var(--phosphor-500); }
+.short-answer-input{ margin-top:6px; }
+.result-hero{ text-align:center; padding:38px 22px; }
+.result-score{ font-family:var(--serif); font-size:56px; color:var(--brass-400); }
+.badge-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.badge{ display:flex; flex-direction:column; align-items:center; gap:6px; width:96px; opacity:.3; }
+.badge.is-earned{ opacity:1; }
+.badge i{ width:44px;height:44px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); display:grid; place-items:center; font-style:normal; font-size:18px; }
+.badge span{ font-size:10.5px; text-align:center; color:var(--paper-500); font-weight:600; }
+
+.dev-card{ display:grid; grid-template-columns:180px 1fr; gap:26px; align-items:start; }
+@media (max-width:640px){ .dev-card{ grid-template-columns:1fr; } }
+.dev-photo{ width:180px;height:180px; border-radius:var(--radius-l); overflow:hidden; border:1px solid var(--ink-600); background:var(--ink-700); }
+.dev-photo svg{ width:100%; height:100%; display:block; }
+.dev-competency{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+.assistant-fab{ position:fixed; right:20px; bottom:20px; z-index:150; width:56px;height:56px; border-radius:50%; background:linear-gradient(160deg, var(--phosphor-300), var(--phosphor-500)); border:none; cursor:pointer; box-shadow:0 14px 30px -10px rgba(95,217,196,.6); font-size:22px; display:grid; place-items:center; color:#052c25; }
+.assistant-panel{ position:fixed; right:20px; bottom:88px; width:min(340px, calc(100vw - 40px)); max-height:60vh; z-index:150; background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); box-shadow:var(--shadow-deep); display:flex; flex-direction:column; overflow:hidden; }
+.assistant-panel[hidden]{ display:none; }
+.assistant-head{ padding:14px 16px; border-bottom:1px solid var(--ink-600); display:flex; justify-content:space-between; align-items:center; }
+.assistant-head h4{ margin:0; font-size:14.5px; }
+.assistant-body{ padding:14px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.assistant-msg{ background:var(--ink-800); border-radius:var(--radius-s); padding:9px 11px; color:var(--paper-300); align-self:flex-start; max-width:88%; }
+.assistant-msg.user{ background:var(--brass-700); color:#fff; align-self:flex-end; }
+.assistant-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; }
+.assistant-chip{ font-size:11.5px; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:6px 10px; border-radius:999px; cursor:pointer; }
+
+#toast-region{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.toast{ background:var(--ink-800); border:1px solid var(--ink-600); color:var(--paper-100); padding:10px 18px; border-radius:999px; font-size:13px; box-shadow:var(--shadow-deep); animation:toastIn .25s var(--ease); }
+.toast.success{ border-color:var(--leaf-500); }
+.toast.error{ border-color:var(--ember-500); }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} }
+footer.appfoot{ text-align:center; padding:20px; font-size:11.5px; color:var(--paper-500); border-top:1px solid var(--ink-600); }
+
+@media (max-width:760px){
+  .appbar{ flex-wrap:wrap; padding:10px 14px; row-gap:8px; }
+  .appbar__brand{ margin-right:0; }
+  .appbar__title small{ display:none; }
+  .tabs{ order:3; width:100%; padding-top:2px; }
+  .appbar__actions{ margin-left:auto; }
+  .assistant-panel{ right:12px; left:12px; width:auto; bottom:80px; }
+  .assistant-fab{ right:14px; bottom:14px; }
+}
+@media print{
+  .appbar,.assistant-fab,.assistant-panel,footer.appfoot,.lkpd-toolbar,#splash,.modal-scrim,.progress-rail{ display:none !important; }
+  body{ background:#fff; color:#111; }
+  .view{ display:block !important; }
+  main .view:not(#view-lkpd){ display:none !important; }
+  .card{ border:1px solid #ccc; background:#fff; }
+}
+
+</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Lompat ke konten utama</a>
@@ -280,6 +554,1099 @@
 
 <div id="toast-region" aria-live="polite"></div>
 
-<script src="bilangan-kuantum-bentuk-orbital.js"></script>
+<script>
+/* =========================================================================
+   1. LAB_DATA
+   ========================================================================= */
+const ELEMENTS = [
+  {z:1,sym:"H",name:"Hidrogen"},{z:2,sym:"He",name:"Helium"},{z:3,sym:"Li",name:"Litium"},
+  {z:4,sym:"Be",name:"Berilium"},{z:5,sym:"B",name:"Boron"},{z:6,sym:"C",name:"Karbon"},
+  {z:7,sym:"N",name:"Nitrogen"},{z:8,sym:"O",name:"Oksigen"},{z:9,sym:"F",name:"Fluor"},
+  {z:10,sym:"Ne",name:"Neon"},{z:11,sym:"Na",name:"Natrium"},{z:12,sym:"Mg",name:"Magnesium"},
+  {z:13,sym:"Al",name:"Aluminium"},{z:14,sym:"Si",name:"Silikon"},{z:15,sym:"P",name:"Fosforus"},
+  {z:16,sym:"S",name:"Belerang"},{z:17,sym:"Cl",name:"Klorin"},{z:18,sym:"Ar",name:"Argon"},
+  {z:19,sym:"K",name:"Kalium"},{z:20,sym:"Ca",name:"Kalsium"}
+];
+
+const LAB_DATA = {
+  objectives:[
+    "Menjelaskan makna dan aturan nilai keempat bilangan kuantum: utama (n), azimuth (l), magnetik (m), dan spin (s).",
+    "Menentukan keempat bilangan kuantum elektron terakhir suatu unsur berdasarkan konfigurasi elektronnya.",
+    "Menguji validitas suatu kombinasi bilangan kuantum berdasarkan aturan yang berlaku.",
+    "Mengidentifikasi dan membedakan bentuk-bentuk orbital s, p, d, dan f."
+  ],
+
+  theorySections:[
+    {
+      id:"empat-bilangan-kuantum", title:"1. Mengenal Empat Bilangan Kuantum",
+      body:[
+        "Setiap elektron dalam atom dapat dicirikan secara unik oleh sekumpulan empat bilangan yang disebut bilangan kuantum. Keempat bilangan ini merupakan hasil dari penyelesaian matematis persamaan gelombang Schrödinger untuk atom.",
+        "Secara bersama-sama, keempat bilangan kuantum menggambarkan \"alamat lengkap\" sebuah elektron: tingkat energi utamanya, bentuk dasar orbitalnya, orientasi orbital tersebut dalam ruang, dan arah spin elektronnya."
+      ],
+      list:[
+        "n — Bilangan kuantum utama (tingkat energi/kulit)",
+        "l — Bilangan kuantum azimuth (subkulit/bentuk dasar orbital)",
+        "m — Bilangan kuantum magnetik (orientasi ruang orbital)",
+        "s — Bilangan kuantum spin (arah putaran elektron)"
+      ],
+      example:"Bayangkan keempat bilangan kuantum seperti alamat rumah lengkap: n adalah kota, l adalah kecamatan, m adalah nama jalan, dan s adalah nomor rumah — kombinasi keempatnya menunjuk pada satu lokasi (elektron) yang unik.",
+      limitation:"Bilangan kuantum secara ketat hanya eksak untuk atom hidrogen (satu elektron); untuk atom berelektron banyak, bilangan kuantum tetap digunakan sebagai pendekatan yang sangat baik dan bermanfaat secara pedagogis."
+    },
+    {
+      id:"bilangan-utama", title:"2. Bilangan Kuantum Utama (n)",
+      body:[
+        "Bilangan kuantum utama (n) menyatakan tingkat energi utama sekaligus ukuran orbital suatu elektron. Semakin besar nilai n, semakin tinggi tingkat energi dan semakin jauh jarak rata-rata elektron dari inti.",
+        "Nilai n selalu berupa bilangan bulat positif: 1, 2, 3, 4, dan seterusnya — berkaitan langsung dengan kulit K, L, M, N pada model atom Bohr yang telah kamu pelajari sebelumnya."
+      ],
+      example:"Elektron pada kulit ketiga (M) memiliki bilangan kuantum utama n=3.",
+      limitation:"Nilai n saja belum cukup untuk menggambarkan bentuk orbital secara spesifik — diperlukan bilangan kuantum berikutnya, yaitu bilangan kuantum azimuth (l)."
+    },
+    {
+      id:"bilangan-azimuth", title:"3. Bilangan Kuantum Azimuth / Momentum Sudut (l)",
+      body:[
+        "Bilangan kuantum azimuth (l) menyatakan subkulit sekaligus bentuk dasar orbital suatu elektron. Nilai l bergantung pada nilai n, yaitu berkisar dari 0 hingga (n−1).",
+        "Setiap nilai l memiliki lambang huruf tersendiri: l=0 disebut subkulit s, l=1 disebut p, l=2 disebut d, dan l=3 disebut f."
+      ],
+      list:[
+        "Aturan nilai l: 0 ≤ l ≤ (n−1)",
+        "Jumlah subkulit yang dimiliki kulit ke-n = n buah"
+      ],
+      example:"Untuk n=3, nilai l yang mungkin adalah 0, 1, dan 2 — menghasilkan tiga subkulit: 3s, 3p, dan 3d.",
+      limitation:"Nilai l tidak pernah boleh sama dengan atau melebihi n. Kombinasi seperti n=2 dengan l=2 tidak mungkin terjadi."
+    },
+    {
+      id:"bilangan-magnetik", title:"4. Bilangan Kuantum Magnetik (m)",
+      body:[
+        "Bilangan kuantum magnetik (m) menyatakan orientasi ruang suatu orbital. Nilai m berkisar dari −l hingga +l (termasuk nol), sehingga banyaknya nilai m yang mungkin adalah (2l+1) — angka inilah yang menyatakan jumlah orbital pada subkulit tersebut.",
+        "Semakin besar nilai l, semakin banyak pula kemungkinan orientasi orbital yang dimiliki subkulit tersebut."
+      ],
+      example:"Pada subkulit p (l=1), nilai m yang mungkin adalah −1, 0, dan +1 — menghasilkan tiga orbital berbeda orientasi, yang secara konvensional sering disebut p_x, p_y, dan p_z.",
+      limitation:"Pemetaan langsung setiap nilai m tertentu ke sumbu x, y, atau z tertentu adalah penyederhanaan konvensi pengajaran; secara matematis, orbital riil (p_x, p_y, p_z) sesungguhnya merupakan kombinasi dari solusi kompleks bilangan kuantum m."
+    },
+    {
+      id:"bilangan-spin", title:"5. Bilangan Kuantum Spin (s)",
+      body:[
+        "Bilangan kuantum spin (s) menyatakan arah \"putaran\" elektron pada porosnya — istilah spin di sini adalah istilah historis/analogi, bukan rotasi fisik yang benar-benar terjadi seperti bola berputar.",
+        "Hanya ada dua kemungkinan nilai spin: +½ (digambarkan sebagai panah ke atas ↑) atau −½ (panah ke bawah ↓)."
+      ],
+      example:"Dua elektron yang menempati orbital yang sama harus memiliki spin yang berlawanan (+½ dan −½), sesuai dengan larangan Pauli yang telah kamu pelajari pada subtopik konfigurasi elektron.",
+      limitation:"Membayangkan spin sebagai elektron yang benar-benar berputar pada porosnya seperti bola dapat menyesatkan — spin adalah sifat kuantum intrinsik tanpa analog yang sepenuhnya tepat dalam fisika klasik."
+    },
+    {
+      id:"menentukan-bilangan-kuantum", title:"6. Menentukan Keempat Bilangan Kuantum Suatu Elektron",
+      body:[
+        "Keempat bilangan kuantum suatu elektron (biasanya elektron terakhir yang mengisi konfigurasi) dapat ditentukan secara berurutan dari konfigurasi elektron subkulitnya."
+      ],
+      list:[
+        "Langkah 1 — Tentukan subkulit tempat elektron terakhir berada dari notasi konfigurasi (misalnya 2p⁴).",
+        "Langkah 2 — Baca nilai n dari angka di depan huruf subkulit.",
+        "Langkah 3 — Tentukan nilai l dari huruf subkulit (s=0, p=1, d=2, f=3).",
+        "Langkah 4 — Tentukan nilai m berdasarkan posisi orbital yang ditempati elektron tersebut, mengikuti urutan pengisian sesuai aturan Hund.",
+        "Langkah 5 — Tentukan nilai s: +½ jika elektron tersebut adalah elektron pertama yang mengisi orbital itu, atau −½ jika ia adalah elektron kedua (pasangannya)."
+      ],
+      example:"Elektron terakhir pada atom Oksigen (O, Z=8, konfigurasi 1s² 2s² 2p⁴) berada pada subkulit 2p⁴. Maka n=2 dan l=1. Menurut aturan Hund, tiga orbital 2p diisi satu-satu terlebih dahulu (m=−1, 0, +1), baru elektron keempat mulai berpasangan pada orbital pertama (m=−1) — sehingga elektron terakhir ini memiliki n=2, l=1, m=−1, dan s=−½.",
+      limitation:"Penentuan nilai m dan s bergantung pada konvensi urutan pengisian orbital (umumnya dari m=−l menuju m=+l); konvensi ini dapat sedikit berbeda antar buku teks, namun hasil akhirnya tetap konsisten dengan aturan Hund dan larangan Pauli."
+    },
+    {
+      id:"bentuk-orbital", title:"7. Bentuk-Bentuk Orbital",
+      body:[
+        "Bentuk orbital berbeda-beda menurut nilai bilangan kuantum azimuth (l). Semakin besar nilai l, semakin kompleks pula bentuknya."
+      ],
+      list:[
+        "Orbital s (l=0): berbentuk bola (sferis), simetris ke segala arah dari inti. Ukurannya membesar seiring bertambahnya n, dan mulai muncul \"node\" (daerah berpeluang nol menemukan elektron) di dalamnya untuk 2s, 3s, dan seterusnya.",
+        "Orbital p (l=1): berbentuk seperti dua balon yang terikat pada inti (\"dumbbell\"), dengan 3 kemungkinan orientasi ruang sesuai 3 nilai m yang mungkin.",
+        "Orbital d (l=2): memiliki 5 kemungkinan orientasi; empat di antaranya berbentuk \"empat kelopak\" (cloverleaf), sedangkan satu orbital (dz²) berbentuk unik — dua lobus utama di sepanjang sumbu z ditambah cincin (torus) mengelilingi bagian tengahnya.",
+        "Orbital f (l=3): memiliki 7 kemungkinan orientasi dengan bentuk yang sangat kompleks, umumnya tidak dibahas secara rinci di tingkat SMA."
+      ],
+      example:"Ketiga orbital 2p (2p_x, 2p_y, 2p_z) memiliki bentuk dasar yang identik (dumbbell) — hanya arah orientasinya yang berbeda, saling tegak lurus satu sama lain.",
+      limitation:"Gambar dua dimensi hanyalah penampang/proyeksi sederhana dari bentuk orbital yang sesungguhnya berada dalam ruang tiga dimensi; visualisasi pada simulator ini disederhanakan untuk tujuan pembelajaran."
+    }
+  ],
+
+  azimuthTable:[
+    {l:0,huruf:"s",orbital:1,kapasitas:2},
+    {l:1,huruf:"p",orbital:3,kapasitas:6},
+    {l:2,huruf:"d",orbital:5,kapasitas:10},
+    {l:3,huruf:"f",orbital:7,kapasitas:14}
+  ],
+  shellSubshellTable:[
+    {n:1,subkulit:"1s",jumlah:1},
+    {n:2,subkulit:"2s, 2p",jumlah:2},
+    {n:3,subkulit:"3s, 3p, 3d",jumlah:3},
+    {n:4,subkulit:"4s, 4p, 4d, 4f",jumlah:4}
+  ],
+
+  terms:[
+    {t:"Bilangan kuantum utama (n)", d:"Menyatakan tingkat energi utama dan ukuran orbital; nilai bulat positif 1,2,3,..."},
+    {t:"Bilangan kuantum azimuth (l)", d:"Menyatakan subkulit dan bentuk dasar orbital; nilai 0 hingga (n−1)."},
+    {t:"Bilangan kuantum magnetik (m)", d:"Menyatakan orientasi ruang orbital; nilai −l hingga +l."},
+    {t:"Bilangan kuantum spin (s)", d:"Menyatakan arah putaran elektron; bernilai +½ atau −½."},
+    {t:"Orbital", d:"Daerah ruang tempat elektron paling mungkin ditemukan, dicirikan oleh nilai n, l, dan m tertentu."},
+    {t:"Lobus", d:"\"Gelembung\" ruang pada orbital p, d, atau f tempat kebolehjadian elektron relatif tinggi."},
+    {t:"Node (simpul)", d:"Daerah dalam orbital dengan peluang menemukan elektron sama dengan nol."},
+    {t:"Subkulit", d:"Pembagian kulit berdasarkan bentuk orbital, dilambangkan s, p, d, f."}
+  ],
+
+  misconceptions:[
+    {wrong:"Bilangan kuantum azimuth (l) bisa bernilai sama dengan atau lebih besar dari n.", right:"Nilai l selalu dibatasi 0 hingga (n−1); l tidak pernah boleh sama dengan atau melebihi n."},
+    {wrong:"Orbital p hanya memiliki 1 bentuk/orientasi.", right:"Orbital p memiliki 3 orientasi berbeda (sering disebut p_x, p_y, p_z), sesuai 3 nilai m yang mungkin untuk l=1."},
+    {wrong:"Bentuk orbital s berubah drastis seiring bertambahnya bilangan kuantum utama (n).", right:"Orbital s tetap berbentuk bola (sferis) pada semua nilai n; yang berubah hanyalah ukurannya (membesar) dan munculnya node di dalamnya."},
+    {wrong:"Spin elektron berarti elektron benar-benar berputar seperti bola pada porosnya.", right:"Istilah \"spin\" adalah analogi historis; spin merupakan sifat kuantum intrinsik elektron tanpa analog fisik klasik yang sepenuhnya tepat."}
+  ],
+
+  summary:"Empat bilangan kuantum — n, l, m, dan s — bersama-sama menjelaskan \"alamat\" lengkap tiap elektron dalam atom: tingkat energi, bentuk dasar orbital, orientasi ruang, dan arah spinnya. Aturan-aturan pembatas pada tiap bilangan kuantum (0≤l≤n−1, −l≤m≤+l, s=±½) menjelaskan mengapa jumlah orbital pada tiap subkulit terbatas, dan mengapa larangan Pauli membuat tak mungkin ada dua elektron dengan keempat bilangan kuantum yang identik. Bentuk-bentuk orbital s, p, d, dan f pun merupakan konsekuensi visual langsung dari nilai bilangan kuantum azimuthnya.",
+
+  procedures:{
+    finder:{
+      label:"Penemu Bilangan Kuantum",
+      steps:[
+        {title:"Pilih unsur yang ingin dianalisis", instruction:"Gunakan kendali proton (Z) untuk memilih unsur pada mode \"Dari Unsur\".", tools:"Kendali stepper Z (1–20)", initial:"Z = 11 (Natrium)", action:"Ubah nilai Z menggunakan tombol +/−.", observe:"Konfigurasi elektron dan subkulit terakhir yang terisi berubah mengikuti unsur yang dipilih."},
+        {title:"Amati penentuan n dan l", instruction:"Perhatikan bagaimana subkulit terakhir diterjemahkan menjadi nilai n dan l.", tools:"Panel langkah penentuan", initial:"Unsur telah dipilih pada langkah 1", action:"Baca kartu bilangan kuantum n dan l pada panel hasil.", observe:"Nilai n diambil dari angka subkulit, nilai l dari huruf subkulit (s=0, p=1, d=2)."},
+        {title:"Amati penentuan m dan s", instruction:"Perhatikan bagaimana posisi elektron terakhir dalam diagram orbital menentukan nilai m dan s.", tools:"Panel langkah penentuan", initial:"Nilai n dan l telah teramati", action:"Baca kartu bilangan kuantum m dan s pada panel hasil.", observe:"Nilai m ditentukan dari posisi orbital (mengikuti aturan Hund); nilai s bernilai +½ jika elektron pertama pada orbital itu, atau −½ jika berpasangan."},
+        {title:"Uji validitas kombinasi bebas", instruction:"Beralih ke mode \"Eksplorasi Bebas\" dan coba masukkan kombinasi (n, l, m) yang melanggar aturan, misalnya n=2, l=2.", tools:"Kendali stepper n, l, m, dan spin", initial:"Mode eksplorasi bebas aktif", action:"Ubah nilai l menjadi sama dengan n menggunakan stepper.", observe:"Sistem menampilkan status \"TIDAK VALID\" beserta alasannya, membuktikan aturan 0 ≤ l ≤ (n−1)."}
+      ]
+    },
+    shapes:{
+      label:"Visualisasi Bentuk Orbital",
+      steps:[
+        {title:"Amati bentuk orbital s", instruction:"Pilih subkulit s dan amati bentuknya.", tools:"Kendali pilihan subkulit", initial:"Belum ada subkulit dipilih", action:"Klik tombol subkulit \"s\" pada panel kendali.", observe:"Orbital s tervisualisasi sebagai bentuk bola (sferis) simetris di kanvas."},
+        {title:"Amati bentuk orbital p pada tiap orientasi", instruction:"Pilih subkulit p, lalu coba ketiga orientasinya (x, y, z).", tools:"Kendali pilihan orientasi", initial:"Orbital s telah teramati", action:"Klik tombol subkulit \"p\", lalu coba orientasi px, py, dan pz secara bergantian.", observe:"Orbital p tervisualisasikan sebagai dua lobus (dumbbell) yang arah orientasinya berubah sesuai pilihan."},
+        {title:"Amati bentuk orbital d pada tiap orientasi", instruction:"Pilih subkulit d, lalu coba seluruh orientasinya, termasuk dz².", tools:"Kendali pilihan orientasi", initial:"Orbital p telah teramati", action:"Klik tombol subkulit \"d\", lalu coba seluruh 5 orientasi yang tersedia.", observe:"Empat orientasi menunjukkan bentuk \"empat kelopak\", sedangkan dz² menunjukkan bentuk unik dua lobus dengan cincin di tengahnya."},
+        {title:"Amati bentuk orbital f", instruction:"Pilih subkulit f dan amati tingkat kompleksitasnya.", tools:"Kendali pilihan subkulit", initial:"Orbital d telah teramati", action:"Klik tombol subkulit \"f\".", observe:"Orbital f tervisualisasikan sebagai bentuk multi-lobus yang jauh lebih kompleks dibanding s, p, dan d."}
+      ]
+    }
+  },
+
+  simulationNotes:{
+    finder:"Mode \"Dari Unsur\" dibatasi pada Z=1–20 (golongan utama) agar urutan pengisian elektron tidak ambigu. Mode \"Eksplorasi Bebas\" memungkinkanmu menguji kombinasi (n, l, m) apa pun, termasuk yang melanggar aturan, untuk tujuan pembelajaran.",
+    shapes:"Visualisasi bentuk orbital pada simulator ini adalah proyeksi 2 dimensi yang disederhanakan dari bentuk 3 dimensi sesungguhnya, dengan warna berbeda merepresentasikan fase (+/−) fungsi gelombang pada tiap lobus."
+  },
+
+  evaluation:[
+    {type:"mc", level:"lots", stem:"Bilangan kuantum yang menyatakan tingkat energi utama sekaligus ukuran orbital adalah …", options:["Bilangan kuantum spin (s)","Bilangan kuantum utama (n)","Bilangan kuantum magnetik (m)","Bilangan kuantum azimuth (l)"], answer:1, explain:"Bilangan kuantum utama (n) menyatakan tingkat energi utama dan ukuran orbital."},
+    {type:"mc", level:"lots", stem:"Bilangan kuantum azimuth dilambangkan dengan huruf …", options:["n","l","m","s"], answer:1, explain:"Bilangan kuantum azimuth dilambangkan dengan huruf l."},
+    {type:"mc", level:"lots", stem:"Nilai bilangan kuantum spin yang mungkin dimiliki suatu elektron adalah …", options:["0 dan 1","+1 dan −1","+½ dan −½","1 dan 2"], answer:2, explain:"Bilangan kuantum spin hanya memiliki dua kemungkinan nilai: +½ dan −½."},
+    {type:"mc", level:"lots", stem:"Subkulit dengan bilangan kuantum azimuth l=2 disebut subkulit …", options:["s","p","d","f"], answer:2, explain:"l=2 melambangkan subkulit d (s=0, p=1, d=2, f=3)."},
+    {type:"mc", level:"lots", stem:"Bentuk dasar orbital s adalah …", options:["Dumbbell (dua lobus)","Bola (sferis)","Empat kelopak (cloverleaf)","Cincin (torus)"], answer:1, explain:"Orbital s berbentuk bola (sferis), simetris ke segala arah."},
+    {type:"mc", level:"mots", stem:"Untuk kulit dengan n=3, nilai bilangan kuantum azimuth (l) yang mungkin adalah …", options:["0, 1, 2","1, 2, 3","0, 1, 2, 3","0, 3"], answer:0, explain:"Nilai l berkisar dari 0 hingga (n−1); untuk n=3, nilai l yang mungkin adalah 0, 1, dan 2."},
+    {type:"mc", level:"mots", stem:"Untuk subkulit p (l=1), nilai bilangan kuantum magnetik (m) yang mungkin adalah …", options:["0 saja","−1, 0, +1","−2, −1, 0, +1, +2","+1 saja"], answer:1, explain:"Nilai m berkisar dari −l hingga +l; untuk l=1, nilai m yang mungkin adalah −1, 0, dan +1."},
+    {type:"mc", level:"mots", stem:"Jumlah orbital pada subkulit d (l=2) adalah …", options:["3","5","7","10"], answer:1, explain:"Jumlah orbital = 2l+1 = 2(2)+1 = 5."},
+    {type:"mc", level:"mots", stem:"Elektron terakhir suatu unsur mengisi subkulit 3p. Nilai bilangan kuantum n dan l elektron tersebut adalah …", options:["n=3, l=0","n=3, l=1","n=1, l=3","n=3, l=3"], answer:1, explain:"Angka di depan huruf subkulit adalah n=3, dan huruf p melambangkan l=1."},
+    {type:"mc", level:"mots", stem:"Manakah kombinasi bilangan kuantum (n, l, m) berikut yang VALID?", options:["n=2, l=1, m=+2","n=3, l=0, m=0","n=1, l=1, m=0","n=2, l=2, m=−1"], answer:1, explain:"n=3, l=0, m=0 valid karena 0≤l≤(n−1)=2 terpenuhi (l=0) dan −l≤m≤+l terpenuhi (m=0). Opsi lain melanggar salah satu aturan."},
+    {type:"mc", level:"mots", stem:"Kombinasi (n=2, l=2, m=0) TIDAK VALID karena …", options:["Nilai m seharusnya tidak boleh 0","Nilai l melebihi batas maksimum (l harus ≤ n−1 = 1)","Nilai n seharusnya lebih besar dari 2","Kombinasi ini sebenarnya valid"], answer:1, explain:"Untuk n=2, nilai l maksimum yang diizinkan adalah (n−1)=1, sehingga l=2 melanggar aturan."},
+    {type:"mc", level:"hots", stem:"Mengapa kombinasi (n=1, l=0, m=1) tidak mungkin dimiliki oleh elektron mana pun?", options:["Karena nilai m harus berada pada rentang −l hingga +l; untuk l=0, satu-satunya nilai m yang diizinkan adalah 0","Karena n=1 tidak boleh memiliki subkulit s","Karena bilangan kuantum spin elektron tersebut belum ditentukan","Karena l=0 seharusnya bernilai negatif"], answer:0, explain:"Untuk l=0, rentang m adalah −0 hingga +0, yaitu hanya m=0 yang diizinkan; m=1 melanggar aturan ini."},
+    {type:"mc", level:"hots", stem:"Dua elektron menempati orbital yang identik (nilai n, l, dan m sama persis). Menurut larangan Pauli, apa yang WAJIB membedakan keduanya?", options:["Bilangan kuantum utama (n) keduanya harus berbeda","Bilangan kuantum spin (s) keduanya harus berlawanan (+½ dan −½)","Kedua elektron sebenarnya tidak boleh berada di orbital yang sama","Bilangan kuantum azimuth (l) keduanya harus berbeda"], answer:1, explain:"Larangan Pauli mengizinkan dua elektron menempati orbital (n,l,m) yang sama, asalkan bilangan kuantum spinnya berlawanan (+½ dan −½)."},
+    {type:"mc", level:"hots", stem:"Mengapa orbital dz² memiliki bentuk yang berbeda dari keempat orbital d lainnya?", options:["Karena bentuknya terdiri dari dua lobus di sepanjang sumbu z ditambah cincin (torus) di sekitar pusatnya, berbeda dari bentuk empat kelopak orbital d lainnya","Karena dz² sebenarnya bukan termasuk subkulit d","Karena dz² memiliki kapasitas elektron yang berbeda dari orbital d lainnya","Karena dz² hanya dimiliki oleh unsur golongan transisi"], answer:0, explain:"Solusi matematis untuk orbital dz² menghasilkan bentuk unik: dua lobus utama di sepanjang sumbu z, ditambah cincin (torus) di bidang tengahnya — berbeda dari bentuk empat kelopak keempat orbital d lainnya."},
+    {type:"checkbox", level:"mots", stem:"Manakah pernyataan berikut yang BENAR tentang bilangan kuantum? (Pilih semua yang sesuai)", options:["Bilangan kuantum utama (n) menentukan ukuran dan tingkat energi orbital","Bilangan kuantum azimuth (l) dapat bernilai sama dengan n","Bilangan kuantum magnetik (m) menentukan orientasi orbital dalam ruang","Nilai m berkisar dari −l hingga +l"], answerSet:[0,2,3], explain:"Pernyataan pertama, ketiga, dan keempat benar. Pernyataan kedua keliru karena l harus lebih kecil dari n (maksimal n−1)."},
+    {type:"checkbox", level:"mots", stem:"Manakah kombinasi bilangan kuantum (n, l, m) berikut yang VALID? (Pilih semua yang sesuai)", options:["n=2, l=1, m=0","n=3, l=2, m=−2","n=1, l=0, m=1","n=4, l=3, m=+4"], answerSet:[0,1], explain:"Opsi 1 valid (l=1≤n−1=1, m=0 dalam rentang −1..1). Opsi 2 valid (l=2≤n−1=2, m=−2 dalam rentang −2..2). Opsi 3 tidak valid karena l=0 hanya mengizinkan m=0. Opsi 4 tidak valid karena l=3 hanya mengizinkan m dari −3 hingga +3, sedangkan m=+4 di luar rentang."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Bilangan kuantum yang menentukan orientasi orbital dalam ruang disebut bilangan kuantum ____________.", accepted:["magnetik"], explain:"Jawaban yang tepat adalah bilangan kuantum magnetik (m)."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Daerah dalam orbital dengan peluang menemukan elektron sama dengan nol disebut ____________.", accepted:["node","simpul","node (simpul)"], explain:"Jawaban yang tepat adalah node atau simpul."},
+    {type:"essay", level:"hots", stem:"Jelaskan mengapa mustahil ada dua elektron dalam satu atom yang memiliki keempat bilangan kuantum sama persis, dan kaitkan jawabanmu dengan diagram orbital (kotak-panah) yang telah kamu pelajari pada subtopik konfigurasi elektron. (Jawaban akan direkam untuk penilaian guru)", explain:"Kunci jawaban: hal ini dinyatakan oleh larangan Pauli. Jika n, l, dan m sama (berarti kedua elektron berada di orbital yang sama persis), maka bilangan kuantum spin (s) keduanya wajib berbeda (+½ dan −½) agar keduanya tetap dapat dibedakan. Inilah sebabnya pada diagram orbital, setiap kotak (orbital) maksimal digambar dengan 2 panah yang arahnya berlawanan (↑↓), tidak pernah searah atau lebih dari dua."}
+  ]
+};
+
+/* =========================================================================
+   2. STATE
+   ========================================================================= */
+const STORAGE_KEY = "vlab_bilangan_kuantum_v1";
+const State = {
+  identity:{ nama:"", kelas:"", id:"" },
+  soundOn:true, reduceMotion:false,
+  activeView:"teori", unlockedViews:["teori"],
+  procedure:{ active:"finder", done:{ finder:[], shapes:[] } },
+  simulation:{ active:"finder" },
+  lkpd:{}, quiz:{ answers:{}, submitted:false }
+};
+function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) Object.assign(State, JSON.parse(raw)); }catch(e){} }
+function persistState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(State)); }catch(e){} }
+
+/* =========================================================================
+   3. AUDIO
+   ========================================================================= */
+const AudioFX = (() => {
+  let ctx = null;
+  function ensureCtx(){ if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx=null; } } return ctx; }
+  function tone(freq,dur,type,gainVal){
+    if(!State.soundOn) return;
+    const c = ensureCtx(); if(!c) return;
+    try{
+      const osc=c.createOscillator(), gain=c.createGain();
+      osc.type=type||"sine"; osc.frequency.value=freq; gain.gain.value=gainVal||0.05;
+      osc.connect(gain); gain.connect(c.destination);
+      const now=c.currentTime;
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+      osc.start(now); osc.stop(now+dur);
+    }catch(e){}
+  }
+  return {
+    click:()=>tone(720,0.06,"square",0.035),
+    success:()=>{ tone(520,0.12,"sine",0.06); setTimeout(()=>tone(780,0.16,"sine",0.06),90); },
+    error:()=>tone(160,0.22,"sawtooth",0.05),
+    reset:()=>tone(300,0.18,"triangle",0.045),
+    complete:()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.18,"sine",0.05), i*110)); },
+    ping:()=>tone(1400,0.05,"sine",0.03)
+  };
+})();
+
+/* =========================================================================
+   4. TOAST
+   ========================================================================= */
+function showToast(msg,kind){
+  const region=document.getElementById("toast-region");
+  const el=document.createElement("div");
+  el.className="toast"+(kind?" "+kind:"");
+  el.textContent=msg;
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(),320); },2600);
+}
+
+/* =========================================================================
+   5. SPLASH & IDENTITY
+   ========================================================================= */
+function initSplash(){
+  document.getElementById("btn-start").addEventListener("click", ()=>{
+    AudioFX.click();
+    if(State.identity.nama && State.identity.kelas) enterApp();
+    else{ document.getElementById("modal-identity").hidden=false; document.getElementById("inp-nama").focus(); }
+  });
+  document.getElementById("form-identity").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nama=document.getElementById("inp-nama").value.trim();
+    const kelas=document.getElementById("inp-kelas").value.trim();
+    const id=document.getElementById("inp-id").value.trim();
+    const err=document.getElementById("identity-error");
+    if(!nama||!kelas){ err.style.display="block"; AudioFX.error(); return; }
+    err.style.display="none";
+    State.identity={nama,kelas,id}; persistState();
+    document.getElementById("modal-identity").hidden=true;
+    AudioFX.success(); enterApp();
+  });
+}
+function enterApp(){
+  document.getElementById("splash").classList.add("is-hidden");
+  document.getElementById("app").hidden=false;
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  showToast(`Selamat datang, ${State.identity.nama||"Praktikan"}!`,"success");
+}
+
+/* =========================================================================
+   6. NAVIGATION
+   ========================================================================= */
+const VIEWS=[
+  {id:"teori",label:"Teori"},{id:"prosedur",label:"Prosedur"},{id:"simulasi",label:"Simulasi"},
+  {id:"lkpd",label:"LKPD"},{id:"evaluasi",label:"Evaluasi"},{id:"profil",label:"Profil Pengembang"}
+];
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  VIEWS.forEach((v,i)=>{
+    const btn=document.createElement("button");
+    btn.className="tab-btn"; btn.setAttribute("role","tab"); btn.id="tab-"+v.id;
+    btn.setAttribute("aria-controls","view-"+v.id);
+    btn.innerHTML=`<span class="tab-num">${i+1}</span><span>${v.label}</span>`;
+    btn.addEventListener("click", ()=>{ if(btn.disabled) return; AudioFX.click(); goToView(v.id); });
+    nav.appendChild(btn);
+  });
+  refreshTabsState();
+}
+function refreshTabsState(){
+  VIEWS.forEach(v=>{
+    const btn=document.getElementById("tab-"+v.id);
+    btn.disabled=!State.unlockedViews.includes(v.id);
+    btn.setAttribute("aria-selected", String(State.activeView===v.id));
+  });
+  const idx=VIEWS.findIndex(v=>v.id===State.activeView);
+  const pct=((State.unlockedViews.length-1)/(VIEWS.length-1))*100;
+  document.getElementById("global-progress").style.width=Math.max(pct,(idx/(VIEWS.length-1))*100)+"%";
+}
+function unlockView(id){ if(!State.unlockedViews.includes(id)){ State.unlockedViews.push(id); persistState(); refreshTabsState(); } }
+function goToView(id){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("is-active"));
+  const target=document.getElementById("view-"+id); if(target) target.classList.add("is-active");
+  State.activeView=id; persistState(); refreshTabsState();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+
+/* =========================================================================
+   7. THEORY RENDER
+   ========================================================================= */
+function renderTheory(){
+  document.getElementById("tp-list").innerHTML = LAB_DATA.objectives.map(o=>`<li>${o}</li>`).join("");
+
+  const toc=document.getElementById("theory-toc");
+  toc.innerHTML = LAB_DATA.theorySections.map(s=>`<button class="toc-pill" data-target="${s.id}">${s.title.replace(/^[0-9]+\.\s*/,"")}</button>`).join("")
+    + `<button class="toc-pill" data-target="referensi">Tabel Referensi</button><button class="toc-pill" data-target="istilah">Istilah</button><button class="toc-pill" data-target="miskonsepsi">Miskonsepsi</button>`;
+  toc.querySelectorAll(".toc-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const el=document.getElementById("sec-"+btn.dataset.target);
+      if(el) el.scrollIntoView({behavior:State.reduceMotion?"auto":"smooth", block:"start"});
+    });
+  });
+
+  const container=document.getElementById("theory-sections");
+  container.innerHTML = LAB_DATA.theorySections.map(s=>`
+    <div class="theory-section" id="sec-${s.id}">
+      <h3>${s.title}</h3>
+      ${s.body.map(p=>`<p>${p}</p>`).join("")}
+      ${s.list?`<ul style="padding-left:20px;color:var(--paper-300);font-size:14px;line-height:1.8;">${s.list.map(li=>`<li>${li}</li>`).join("")}</ul>`:""}
+      <div class="card" style="background:var(--ink-900);margin:14px 0;">
+        <strong style="color:var(--phosphor-500);font-size:12.5px;">CONTOH / ANALOGI</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.example}</p>
+      </div>
+      <div class="card" style="background:rgba(224,114,90,.06);border-color:rgba(224,114,90,.3);">
+        <strong style="color:var(--ember-300);font-size:12.5px;">CATATAN / KETERBATASAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.limitation}</p>
+      </div>
+    </div>`).join("") + `
+    <div class="theory-section" id="sec-referensi">
+      <h3>Tabel Referensi</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>l</th><th>Huruf Subkulit</th><th>Jumlah Orbital (2l+1)</th><th>Kapasitas Elektron</th></tr></thead>
+          <tbody>${LAB_DATA.azimuthTable.map(a=>`<tr><td>${a.l}</td><td>${a.huruf}</td><td>${a.orbital}</td><td>${a.kapasitas}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+      <div class="table-wrap" style="margin-top:18px;">
+        <table class="data-table">
+          <thead><tr><th>Kulit (n)</th><th>Subkulit yang Mungkin</th><th>Jumlah Subkulit</th></tr></thead>
+          <tbody>${LAB_DATA.shellSubshellTable.map(s=>`<tr><td>${s.n}</td><td>${s.subkulit}</td><td>${s.jumlah}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="theory-section" id="sec-istilah">
+      <h3>Istilah Penting</h3>
+      <dl class="term-list">${LAB_DATA.terms.map(t=>`<dt>${t.t}</dt><dd>${t.d}</dd>`).join("")}</dl>
+    </div>
+    <div class="theory-section" id="sec-miskonsepsi">
+      <h3>Miskonsepsi Umum</h3>
+      ${LAB_DATA.misconceptions.map(m=>`<div class="misconception"><div><b>✗ Anggapan keliru:</b> ${m.wrong}</div><div style="margin-top:4px;"><b style="color:var(--leaf-500);">✓ Yang benar:</b> ${m.right}</div></div>`).join("")}
+    </div>
+    <div class="theory-section" id="sec-ringkasan">
+      <h3>Ringkasan</h3>
+      <p>${LAB_DATA.summary}</p>
+      <button class="btn btn--primary" id="theory-continue">Lanjut ke Prosedur →</button>
+    </div>`;
+  document.getElementById("theory-continue").addEventListener("click", ()=>{ AudioFX.success(); unlockView("prosedur"); goToView("prosedur"); });
+}
+
+/* =========================================================================
+   8. PROCEDURE
+   ========================================================================= */
+function renderProcedureTabs(){
+  const wrap=document.getElementById("proc-tabs"); wrap.innerHTML="";
+  Object.keys(LAB_DATA.procedures).forEach(key=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(State.procedure.active===key));
+    btn.textContent=LAB_DATA.procedures[key].label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); State.procedure.active=key; persistState(); renderProcedureTabs(); renderProcedureSteps(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderProcedureSteps(){
+  const key=State.procedure.active;
+  const proc=LAB_DATA.procedures[key];
+  const doneArr=State.procedure.done[key];
+  const unlockedIndex=doneArr.length;
+  const list=document.getElementById("proc-steps");
+  list.innerHTML=proc.steps.map((s,i)=>{
+    const isDone=doneArr.includes(i);
+    const isUnlocked=i<=unlockedIndex;
+    return `<div class="step ${isUnlocked?"is-unlocked":""} ${isDone?"is-done":""}" data-i="${i}">
+      <div class="step__num">${isDone?"✓":(i+1)}</div>
+      <div>
+        <h4>${s.title}</h4>
+        <p style="margin:0 0 6px;font-size:13.5px;">${s.instruction}</p>
+        <div class="step__meta"><span><b>Alat/Bahan:</b> ${s.tools}</span><span><b>Kondisi Awal:</b> ${s.initial}</span></div>
+        <div class="step__meta"><span><b>Tindakan:</b> ${s.action}</span></div>
+        <div class="step__meta"><span><b>Hasil Diamati:</b> ${s.observe}</span></div>
+        ${isUnlocked&&!isDone?`<div class="step-actions"><button class="btn btn--primary btn--sm" data-mark="${i}">Tandai Selesai</button></div>`:""}
+      </div></div>`;
+  }).join("");
+  list.querySelectorAll("[data-mark]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i=Number(btn.dataset.mark);
+      if(!doneArr.includes(i)) doneArr.push(i);
+      AudioFX.success(); persistState(); renderProcedureSteps(); updateProcProgress();
+      const totalDone=State.procedure.done.finder.length+State.procedure.done.shapes.length;
+      if(totalDone>=4) unlockView("simulasi");
+    });
+  });
+  updateProcProgress();
+}
+function updateProcProgress(){
+  const key=State.procedure.active;
+  const total=LAB_DATA.procedures[key].steps.length;
+  const done=State.procedure.done[key].length;
+  document.getElementById("proc-progress").style.width=(done/total*100)+"%";
+}
+
+/* =========================================================================
+   9. SIMULATION — Penemu Bilangan Kuantum & Visualisasi Bentuk Orbital
+   ========================================================================= */
+const SUP_DIGITS={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function toSup(n){ return String(n).split('').map(d=>SUP_DIGITS[d]||d).join(''); }
+const LETTER_L={s:0,p:1,d:2,f:3};
+const L_LETTER=["s","p","d","f"];
+
+const AUFBAU_ORDER_20=[
+  {sub:"1s",l:"s",cap:2},{sub:"2s",l:"s",cap:2},{sub:"2p",l:"p",cap:6},
+  {sub:"3s",l:"s",cap:2},{sub:"3p",l:"p",cap:6},{sub:"4s",l:"s",cap:2}
+];
+function buildConfigUpTo20(Z){
+  let remaining=Z, entries=[];
+  for(const orb of AUFBAU_ORDER_20){
+    if(remaining<=0) break;
+    const fill=Math.min(orb.cap, remaining);
+    entries.push({sub:orb.sub, l:orb.l, cap:orb.cap, filled:fill});
+    remaining-=fill;
+  }
+  return entries.filter(e=>e.filled>0);
+}
+function configNotation(entries){ return entries.map(e=> e.sub+toSup(e.filled)).join(" "); }
+function lastElectronQN(Z){
+  const entries=buildConfigUpTo20(Z);
+  const last=entries[entries.length-1];
+  const l=LETTER_L[last.l];
+  const n=Number(last.sub[0]);
+  const orbCount=2*l+1;
+  const f=last.filled;
+  let idx,spin;
+  if(f<=orbCount){ idx=f-1; spin=0.5; }
+  else{ idx=f-orbCount-1; spin=-0.5; }
+  const m=-l+idx;
+  return {n,l,m,spin,sub:last.sub,entries,notation:configNotation(entries)};
+}
+function validateQN(n,l,m){
+  if(l<0 || l>n-1) return {valid:false, reason:`Nilai l harus berada di antara 0 dan (n−1)=${n-1}. Nilai l=${l} melanggar aturan ini.`};
+  if(m<-l || m>l) return {valid:false, reason:`Nilai m harus berada di antara −l dan +l, yaitu antara ${-l} dan ${l}. Nilai m=${m} melanggar aturan ini.`};
+  return {valid:true, reason:`Kombinasi ini memenuhi kedua aturan: 0 ≤ l ≤ (n−1) dan −l ≤ m ≤ +l.`};
+}
+
+const Sim = {
+  key:"finder",
+  finder:{ mode2:"unsur", Z:11, n:2, l:2, m:0, spin:0.5 },
+  shapes:{ type:"s", orientation:"x", n:2 },
+  canvas:null, ctx:null, dpr:1
+};
+function setupCanvas(){
+  Sim.canvas=document.getElementById("sim-canvas"); Sim.ctx=Sim.canvas.getContext("2d");
+  resizeCanvas(); window.addEventListener("resize", resizeCanvas);
+}
+function resizeCanvas(){
+  const stage=document.getElementById("sim-stage"); const rect=stage.getBoundingClientRect();
+  Sim.dpr=Math.min(window.devicePixelRatio||1,2);
+  Sim.canvas.width=Math.max(320,rect.width)*Sim.dpr;
+  Sim.canvas.height=Math.max(420,rect.height)*Sim.dpr;
+  Sim.canvas.style.width="100%"; Sim.canvas.style.height=rect.height+"px";
+  drawCurrentSim();
+}
+function renderSimTabs(){
+  const wrap=document.getElementById("sim-tabs"); wrap.innerHTML="";
+  [{key:"finder",label:"Penemu Bilangan Kuantum"},{key:"shapes",label:"Visualisasi Bentuk Orbital"}].forEach(it=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab"); btn.setAttribute("aria-selected", String(Sim.key===it.key));
+    btn.textContent=it.label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); Sim.key=it.key; renderSimTabs(); renderSimControls(); renderSimLegend(); toggleSimLayer(); drawCurrentSim(); });
+    wrap.appendChild(btn);
+  });
+}
+function toggleSimLayer(){
+  const layer=document.getElementById("dom-layer");
+  const canvas=document.getElementById("sim-canvas");
+  if(Sim.key==="finder"){ layer.classList.add("is-active"); canvas.style.display="none"; }
+  else{ layer.classList.remove("is-active"); canvas.style.display="block"; }
+}
+function renderSimControls(){
+  document.getElementById("sim-note").textContent = Sim.key==="finder" ? LAB_DATA.simulationNotes.finder : LAB_DATA.simulationNotes.shapes;
+  const controls=document.getElementById("sim-controls");
+
+  if(Sim.key==="finder"){
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Penemu Bilangan Kuantum</h4>
+      <div class="mode-switch" id="finder-mode-switch" role="group" aria-label="Mode pencarian" style="margin-bottom:16px;">
+        <button data-m2="unsur" aria-pressed="${Sim.finder.mode2==="unsur"}">Dari Unsur</button>
+        <button data-m2="bebas" aria-pressed="${Sim.finder.mode2==="bebas"}">Eksplorasi Bebas</button>
+      </div>
+      <div id="finder-subcontrols"></div>
+    `;
+    controls.querySelectorAll("[data-m2]").forEach(b=>{
+      b.addEventListener("click", ()=>{ Sim.finder.mode2=b.dataset.m2; renderSimControls(); drawCurrentSim(); });
+    });
+    renderFinderSubcontrols();
+  } else {
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Bentuk Orbital</h4>
+      <div class="field" style="margin-bottom:14px;"><label>Subkulit</label>
+        <div class="control-row" id="shape-type-buttons"></div>
+      </div>
+      <div id="shape-orientation-wrap"></div>
+    `;
+    const typeWrap=document.getElementById("shape-type-buttons");
+    ["s","p","d","f"].forEach(t=>{
+      const b=document.createElement("button");
+      b.className="btn btn--sm "+(Sim.shapes.type===t?"btn--primary":"btn--ghost");
+      b.textContent=t.toUpperCase();
+      b.addEventListener("click", ()=>{ Sim.shapes.type=t;
+        if(t==="p") Sim.shapes.orientation="x";
+        if(t==="d") Sim.shapes.orientation="xy";
+        renderSimControls(); drawCurrentSim(); renderReadout();
+      });
+      typeWrap.appendChild(b);
+    });
+    renderShapeOrientationControls();
+  }
+  renderReadout();
+}
+function renderFinderSubcontrols(){
+  const wrap=document.getElementById("finder-subcontrols");
+  if(Sim.finder.mode2==="unsur"){
+    wrap.innerHTML=`
+      <div class="stepper-field"><label>Nomor Atom (Z)</label>
+        <div class="stepper-row"><button class="stepper-btn" id="fz-dec">−</button><div class="stepper-val" id="val-fz">${Sim.finder.Z}</div><button class="stepper-btn" id="fz-inc">+</button></div></div>
+      <p class="hint">Rentang Z: 1–20 (golongan utama)</p>`;
+    document.getElementById("fz-dec").addEventListener("click", ()=>{ Sim.finder.Z=Math.max(1,Sim.finder.Z-1); AudioFX.ping(); document.getElementById("val-fz").textContent=Sim.finder.Z; drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    document.getElementById("fz-inc").addEventListener("click", ()=>{ Sim.finder.Z=Math.min(20,Sim.finder.Z+1); AudioFX.ping(); document.getElementById("val-fz").textContent=Sim.finder.Z; drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+  } else {
+    wrap.innerHTML=`
+      <div class="stepper-field"><label>n (utama)</label>
+        <div class="stepper-row"><button class="stepper-btn" id="fn-dec">−</button><div class="stepper-val" id="val-fn">${Sim.finder.n}</div><button class="stepper-btn" id="fn-inc">+</button></div></div>
+      <div class="stepper-field"><label>l (azimuth)</label>
+        <div class="stepper-row"><button class="stepper-btn" id="fl-dec">−</button><div class="stepper-val" id="val-fl">${Sim.finder.l}</div><button class="stepper-btn" id="fl-inc">+</button></div></div>
+      <div class="stepper-field"><label>m (magnetik)</label>
+        <div class="stepper-row"><button class="stepper-btn" id="fm-dec">−</button><div class="stepper-val" id="val-fm">${Sim.finder.m}</div><button class="stepper-btn" id="fm-inc">+</button></div></div>
+      <div class="stepper-field"><label>s (spin)</label>
+        <div class="spin-toggle"><button data-spin="0.5" aria-pressed="${Sim.finder.spin===0.5}">+½ ↑</button><button data-spin="-0.5" aria-pressed="${Sim.finder.spin===-0.5}">−½ ↓</button></div></div>
+      <p class="hint">Coba kombinasi tidak valid untuk melihat penjelasannya!</p>`;
+    document.getElementById("fn-dec").addEventListener("click", ()=>{ Sim.finder.n=Math.max(1,Sim.finder.n-1); syncFinderFree(); });
+    document.getElementById("fn-inc").addEventListener("click", ()=>{ Sim.finder.n=Math.min(4,Sim.finder.n+1); syncFinderFree(); });
+    document.getElementById("fl-dec").addEventListener("click", ()=>{ Sim.finder.l=Math.max(0,Sim.finder.l-1); syncFinderFree(); });
+    document.getElementById("fl-inc").addEventListener("click", ()=>{ Sim.finder.l=Math.min(3,Sim.finder.l+1); syncFinderFree(); });
+    document.getElementById("fm-dec").addEventListener("click", ()=>{ Sim.finder.m=Math.max(-3,Sim.finder.m-1); syncFinderFree(); });
+    document.getElementById("fm-inc").addEventListener("click", ()=>{ Sim.finder.m=Math.min(3,Sim.finder.m+1); syncFinderFree(); });
+    wrap.querySelectorAll("[data-spin]").forEach(b=>{
+      b.addEventListener("click", ()=>{ Sim.finder.spin=Number(b.dataset.spin); AudioFX.ping(); renderFinderSubcontrols(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    });
+  }
+}
+function syncFinderFree(){
+  AudioFX.ping();
+  document.getElementById("val-fn").textContent=Sim.finder.n;
+  document.getElementById("val-fl").textContent=Sim.finder.l;
+  document.getElementById("val-fm").textContent=Sim.finder.m;
+  drawCurrentSim(); renderReadout(); unlockView("lkpd");
+}
+function renderShapeOrientationControls(){
+  const wrap=document.getElementById("shape-orientation-wrap");
+  if(Sim.shapes.type==="p"){
+    wrap.innerHTML=`<div class="field"><label>Orientasi</label><div class="control-row" id="p-orient-buttons"></div></div>`;
+    const bw=document.getElementById("p-orient-buttons");
+    ["x","y","z"].forEach(ax=>{
+      const b=document.createElement("button");
+      b.className="btn btn--sm "+(Sim.shapes.orientation===ax?"btn--primary":"btn--ghost");
+      b.textContent="p"+ax;
+      b.addEventListener("click", ()=>{ Sim.shapes.orientation=ax; AudioFX.ping(); renderSimControls(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+      bw.appendChild(b);
+    });
+  } else if(Sim.shapes.type==="d"){
+    wrap.innerHTML=`<div class="field"><label>Orientasi</label><div class="control-row" id="d-orient-buttons" style="flex-wrap:wrap;"></div></div>`;
+    const bw=document.getElementById("d-orient-buttons");
+    [["xy","dxy"],["xz","dxz"],["yz","dyz"],["x2y2","dx²−y²"],["z2","dz²"]].forEach(([val,label])=>{
+      const b=document.createElement("button");
+      b.className="btn btn--sm "+(Sim.shapes.orientation===val?"btn--primary":"btn--ghost");
+      b.textContent=label;
+      b.addEventListener("click", ()=>{ Sim.shapes.orientation=val; AudioFX.ping(); renderSimControls(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+      bw.appendChild(b);
+    });
+  } else if(Sim.shapes.type==="s"){
+    wrap.innerHTML=`<div class="stepper-field"><label>n (memengaruhi ukuran &amp; jumlah node)</label>
+      <div class="stepper-row"><button class="stepper-btn" id="sn-dec">−</button><div class="stepper-val" id="val-sn">${Sim.shapes.n}</div><button class="stepper-btn" id="sn-inc">+</button></div></div>`;
+    document.getElementById("sn-dec").addEventListener("click", ()=>{ Sim.shapes.n=Math.max(1,Sim.shapes.n-1); AudioFX.ping(); document.getElementById("val-sn").textContent=Sim.shapes.n; drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    document.getElementById("sn-inc").addEventListener("click", ()=>{ Sim.shapes.n=Math.min(3,Sim.shapes.n+1); AudioFX.ping(); document.getElementById("val-sn").textContent=Sim.shapes.n; drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+  } else {
+    wrap.innerHTML="";
+  }
+}
+function renderSimLegend(){
+  const legend=document.getElementById("sim-legend");
+  if(Sim.key==="finder"){
+    legend.innerHTML=`<span><i style="background:var(--phosphor-500);"></i> Valid</span><span><i style="background:var(--ember-500);"></i> Tidak valid</span><span>↑ Spin +½ &nbsp; ↓ Spin −½</span>`;
+  } else {
+    legend.innerHTML=`<span><i style="background:var(--phosphor-500);"></i> Lobus fase positif (+)</span><span><i style="background:var(--brass-500);"></i> Lobus fase negatif (−)</span>`;
+  }
+}
+function renderReadout(){
+  const readout=document.getElementById("sim-readout");
+  if(Sim.key==="finder"){
+    if(Sim.finder.mode2==="unsur"){
+      const el=ELEMENTS[Sim.finder.Z-1];
+      const r=lastElectronQN(Sim.finder.Z);
+      readout.innerHTML=`
+        <div><b>Unsur</b><span>${el.name} (${el.sym})</span></div>
+        <div><b>Subkulit Terakhir</b><span>${r.sub}</span></div>
+        <div><b>n, l</b><span>n=${r.n}, l=${r.l} (${L_LETTER[r.l]})</span></div>
+        <div><b>m, s</b><span>m=${r.m}, s=${r.spin>0?"+½":"−½"}</span></div>`;
+    } else {
+      const v=validateQN(Sim.finder.n, Sim.finder.l, Sim.finder.m);
+      readout.innerHTML=`
+        <div><b>n, l, m</b><span>${Sim.finder.n}, ${Sim.finder.l}, ${Sim.finder.m}</span></div>
+        <div><b>Spin (s)</b><span>${Sim.finder.spin>0?"+½":"−½"}</span></div>
+        <div style="grid-column:1/-1;"><b>Status</b><span>${v.valid?"✓ VALID":"✗ TIDAK VALID"}</span></div>`;
+    }
+  } else {
+    const t=Sim.shapes.type;
+    const l=LETTER_L[t];
+    const orbCount=2*l+1;
+    readout.innerHTML=`
+      <div><b>Subkulit</b><span>${t}</span></div>
+      <div><b>Nilai l</b><span>${l}</span></div>
+      <div><b>Jumlah Orbital</b><span>${orbCount}</span></div>
+      <div><b>Orientasi</b><span>${t==="p"||t==="d" ? Sim.shapes.orientation : (t==="s"?("n="+Sim.shapes.n):"kompleks")}</span></div>`;
+  }
+}
+
+function drawCurrentSim(){
+  if(Sim.key==="finder"){ toggleSimLayer(); drawFinderLayer(); }
+  else{ toggleSimLayer(); if(!Sim.ctx) return; drawShapeCanvas(); }
+}
+
+function drawFinderLayer(){
+  const layer=document.getElementById("dom-layer");
+  if(Sim.finder.mode2==="unsur"){
+    const el=ELEMENTS[Sim.finder.Z-1];
+    const r=lastElectronQN(Sim.finder.Z);
+    layer.innerHTML=`
+      <div class="qn-result-hero">
+        <div class="qn-big-notation"><strong>${el.name} (${el.sym}, Z=${Sim.finder.Z})</strong><br>${r.notation}</div>
+      </div>
+      <div class="qn-cards">
+        <div class="qn-card"><b>n</b><span>${r.n}</span></div>
+        <div class="qn-card"><b>l</b><span>${r.l} (${L_LETTER[r.l]})</span></div>
+        <div class="qn-card"><b>m</b><span>${r.m}</span></div>
+        <div class="qn-card"><b>s</b><span>${r.spin>0?"+½":"−½"}</span></div>
+      </div>
+      <div class="qn-steps">
+        <ol>
+          <li>Elektron terakhir mengisi subkulit <b>${r.sub}</b>.</li>
+          <li>Angka di depan huruf subkulit memberi <b>n = ${r.n}</b>.</li>
+          <li>Huruf subkulit "${r.sub.slice(1)}" memberi <b>l = ${r.l}</b>.</li>
+          <li>Menurut posisi pengisian orbital (aturan Hund), elektron ini menempati orbital dengan <b>m = ${r.m}</b>.</li>
+          <li>Karena elektron ini ${r.spin>0?"adalah elektron pertama pada orbital tersebut":"berpasangan dengan elektron lain pada orbital tersebut"}, maka <b>s = ${r.spin>0?"+½":"−½"}</b>.</li>
+        </ol>
+      </div>`;
+  } else {
+    const v=validateQN(Sim.finder.n, Sim.finder.l, Sim.finder.m);
+    const subLetter = (Sim.finder.l>=0 && Sim.finder.l<=3) ? L_LETTER[Sim.finder.l] : "?";
+    layer.innerHTML=`
+      <div class="validity-banner ${v.valid?"is-valid":"is-invalid"}">${v.valid?"✓ KOMBINASI VALID":"✗ KOMBINASI TIDAK VALID"}</div>
+      <div class="validity-reason">${v.reason}</div>
+      <div class="qn-cards">
+        <div class="qn-card"><b>n</b><span>${Sim.finder.n}</span></div>
+        <div class="qn-card"><b>l</b><span>${Sim.finder.l}${v.valid?` (${subLetter})`:""}</span></div>
+        <div class="qn-card"><b>m</b><span>${Sim.finder.m}</span></div>
+        <div class="qn-card"><b>s</b><span>${Sim.finder.spin>0?"+½":"−½"}</span></div>
+      </div>
+      ${v.valid?`<div class="qn-steps">Kombinasi ini menyatakan sebuah elektron pada subkulit <b>${Sim.finder.n}${subLetter}</b>, salah satu dari ${2*Sim.finder.l+1} orbital yang mungkin pada subkulit tersebut, dengan spin ${Sim.finder.spin>0?"+½ (↑)":"−½ (↓)"}.</div>`:""}
+    `;
+  }
+}
+
+/* ---- Orbital shape drawing (canvas) ---- */
+function drawLobe(ctx,cx,cy,angle,length,width,color,alpha){
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.moveTo(0,0);
+  ctx.bezierCurveTo(width*0.55,length*0.22, width*0.55,length*0.78, 0,length);
+  ctx.bezierCurveTo(-width*0.55,length*0.78, -width*0.55,length*0.22, 0,0);
+  ctx.closePath();
+  ctx.globalAlpha=alpha||0.85;
+  ctx.fillStyle=color;
+  ctx.shadowColor=color; ctx.shadowBlur=10*Sim.dpr;
+  ctx.fill();
+  ctx.shadowBlur=0; ctx.globalAlpha=1;
+  ctx.restore();
+}
+function drawNucleusDot(ctx,cx,cy){
+  ctx.beginPath(); ctx.fillStyle="#C4934E";
+  ctx.arc(cx,cy,5*Sim.dpr,0,7);
+  ctx.shadowColor="#C4934E"; ctx.shadowBlur=10*Sim.dpr; ctx.fill(); ctx.shadowBlur=0;
+}
+function drawShapeCanvas(){
+  const ctx=Sim.ctx, w=Sim.canvas.width, h=Sim.canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const cx=w*0.5, cy=h*0.5;
+  const unit=Math.min(w,h)*0.11;
+
+  if(Sim.shapes.type==="s"){
+    const n=Sim.shapes.n;
+    const maxR=unit*(1.1+0.55*n);
+    for(let i=n;i>=1;i--){
+      const r=maxR*(i/n);
+      const grad=ctx.createRadialGradient(cx,cy,r*0.15,cx,cy,r);
+      grad.addColorStop(0,"rgba(95,217,196,.55)");
+      grad.addColorStop(1,"rgba(95,217,196,.05)");
+      ctx.beginPath(); ctx.fillStyle=grad; ctx.arc(cx,cy,r,0,7); ctx.fill();
+      if(i<n){
+        ctx.beginPath(); ctx.strokeStyle="rgba(11,18,32,.75)"; ctx.lineWidth=3*Sim.dpr;
+        ctx.arc(cx,cy,r,0,7); ctx.stroke();
+      }
+    }
+    drawNucleusDot(ctx,cx,cy);
+    ctx.fillStyle="#F3EFE4"; ctx.font=`600 ${14*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+    ctx.fillText(`Orbital ${n}s — bentuk sferis${n>1?`, ${n-1} node`:""}`, cx, cy+maxR+28*Sim.dpr);
+  }
+  else if(Sim.shapes.type==="p"){
+    const ax=Sim.shapes.orientation;
+    if(ax==="z"){
+      // top-down view: nested circles representing lobe along z (perpendicular to screen)
+      ctx.beginPath(); ctx.fillStyle="rgba(95,217,196,.55)";
+      ctx.arc(cx,cy,unit*1.1,0,7); ctx.shadowColor="#5FD9C4"; ctx.shadowBlur=14*Sim.dpr; ctx.fill(); ctx.shadowBlur=0;
+      ctx.beginPath(); ctx.strokeStyle="rgba(196,147,78,.8)"; ctx.setLineDash([6*Sim.dpr,6*Sim.dpr]); ctx.lineWidth=2*Sim.dpr;
+      ctx.arc(cx,cy,unit*1.9,0,7); ctx.stroke(); ctx.setLineDash([]);
+      drawNucleusDot(ctx,cx,cy);
+      ctx.fillStyle="#F3EFE4"; ctx.font=`600 ${14*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+      ctx.fillText("Orbital pz — sumbu z tegak lurus layar (dilihat dari atas)", cx, cy+unit*2.5);
+    } else {
+      const angle = ax==="x" ? 0 : -Math.PI/2;
+      drawLobe(ctx,cx,cy,angle,unit*2.3,unit*1.3,"#5FD9C4",0.85);
+      drawLobe(ctx,cx,cy,angle+Math.PI,unit*2.3,unit*1.3,"#C4934E",0.85);
+      drawNucleusDot(ctx,cx,cy);
+      ctx.fillStyle="#F3EFE4"; ctx.font=`600 ${14*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+      ctx.fillText(`Orbital p${ax} — bentuk dumbbell sepanjang sumbu ${ax}`, cx, cy+unit*2.9);
+    }
+  }
+  else if(Sim.shapes.type==="d"){
+    const orient=Sim.shapes.orientation;
+    if(orient==="z2"){
+      drawLobe(ctx,cx,cy,0,unit*2.0,unit*1.1,"#5FD9C4",0.85);
+      drawLobe(ctx,cx,cy,Math.PI,unit*2.0,unit*1.1,"#5FD9C4",0.85);
+      ctx.beginPath(); ctx.strokeStyle="#C4934E"; ctx.lineWidth=10*Sim.dpr; ctx.globalAlpha=.8;
+      ctx.ellipse(cx,cy,unit*1.7,unit*0.55,0,0,7); ctx.stroke(); ctx.globalAlpha=1;
+      drawNucleusDot(ctx,cx,cy);
+      ctx.fillStyle="#F3EFE4"; ctx.font=`600 ${14*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+      ctx.fillText("Orbital dz² — dua lobus + cincin (torus) di tengah", cx, cy+unit*2.6);
+    } else {
+      const offset = orient==="xy" ? Math.PI/4 : 0;
+      const planeLabel = {xy:"bidang xy", xz:"bidang xz", yz:"bidang yz", x2y2:"sepanjang sumbu x &amp; y"}[orient];
+      const colors=["#5FD9C4","#C4934E","#5FD9C4","#C4934E"];
+      for(let k=0;k<4;k++){
+        drawLobe(ctx,cx,cy, offset + k*(Math.PI/2), unit*1.7, unit*1.05, colors[k], 0.85);
+      }
+      drawNucleusDot(ctx,cx,cy);
+      ctx.fillStyle="#F3EFE4"; ctx.font=`600 ${13.5*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+      const label = orient==="x2y2" ? "dx²−y²" : "d"+orient;
+      ctx.fillText(`Orbital ${label} — empat kelopak pada ${planeLabel}`, cx, cy+unit*2.4);
+    }
+  }
+  else if(Sim.shapes.type==="f"){
+    const lobes=8;
+    for(let k=0;k<lobes;k++){
+      const ang=(k/lobes)*Math.PI*2;
+      drawLobe(ctx,cx,cy,ang,unit*1.35,unit*0.7, k%2===0?"#5FD9C4":"#C4934E", 0.6);
+    }
+    drawNucleusDot(ctx,cx,cy);
+    ctx.fillStyle="#F3EFE4"; ctx.font=`600 ${14*Sim.dpr}px sans-serif`; ctx.textAlign="center";
+    ctx.fillText("Orbital f — bentuk sangat kompleks (7 orientasi, disederhanakan)", cx, cy+unit*2.2);
+  }
+}
+
+function resetSim(){
+  AudioFX.reset();
+  if(confirm("Kembalikan simulasi ke kondisi awal? Data LKPD tidak akan terhapus.")){
+    Sim.finder={ mode2:"unsur", Z:11, n:2, l:2, m:0, spin:0.5 };
+    Sim.shapes={ type:"s", orientation:"x", n:2 };
+    renderSimControls(); drawCurrentSim();
+    showToast("Simulasi direset ke kondisi awal.");
+  }
+}
+function initSimulationView(){
+  setupCanvas();
+  renderSimTabs();
+  renderSimControls();
+  renderSimLegend();
+  toggleSimLayer();
+  drawCurrentSim();
+  document.getElementById("sim-reset").addEventListener("click", resetSim);
+}
+
+/* =========================================================================
+   10. LKPD
+   ========================================================================= */
+const LKPD_FIELDS=["prediksi","analisis1","analisis2","q1","q2","kesimpulan","refleksi"];
+let obsRowCount1=0, obsRowCount2=0;
+function addObsRow1(data){
+  const tbody=document.getElementById("obs-tbody-1"); const idx=obsRowCount1++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. O (Z=8)" value="${data&&data.unsur||""}"></td>
+    <td><input type="text" placeholder="cth. 2" value="${data&&data.n||""}"></td>
+    <td><input type="text" placeholder="cth. 1" value="${data&&data.l||""}"></td>
+    <td><input type="text" placeholder="cth. -1" value="${data&&data.m||""}"></td>
+    <td><input type="text" placeholder="cth. -1/2" value="${data&&data.s||""}"></td>`;
+  tbody.appendChild(row);
+}
+function addObsRow2(data){
+  const tbody=document.getElementById("obs-tbody-2"); const idx=obsRowCount2++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. p" value="${data&&data.sub||""}"></td>
+    <td><input type="text" placeholder="cth. 1" value="${data&&data.l||""}"></td>
+    <td><input type="text" placeholder="cth. 3" value="${data&&data.jumlah||""}"></td>
+    <td><input type="text" placeholder="cth. dumbbell" value="${data&&data.bentuk||""}"></td>`;
+  tbody.appendChild(row);
+}
+function renderLKPD(){
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  const l=State.lkpd;
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el&&l[f]) el.value=l[f]; });
+  document.getElementById("obs-tbody-1").innerHTML=""; obsRowCount1=0;
+  (l.obs1&&l.obs1.length?l.obs1:[{},{}]).forEach(r=>addObsRow1(r));
+  document.getElementById("obs-tbody-2").innerHTML=""; obsRowCount2=0;
+  (l.obs2&&l.obs2.length?l.obs2:[{},{}]).forEach(r=>addObsRow2(r));
+}
+function collectLKPD(){
+  const l={};
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el) l[f]=el.value; });
+  l.obs1 = Array.from(document.querySelectorAll("#obs-tbody-1 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {unsur:i[0].value, n:i[1].value, l:i[2].value, m:i[3].value, s:i[4].value};
+  });
+  l.obs2 = Array.from(document.querySelectorAll("#obs-tbody-2 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {sub:i[0].value, l:i[1].value, jumlah:i[2].value, bentuk:i[3].value};
+  });
+  return l;
+}
+function initLKPD(){
+  document.querySelectorAll("[data-add]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ AudioFX.click(); btn.dataset.add==="1"?addObsRow1():addObsRow2(); });
+  });
+  document.getElementById("lkpd-save").addEventListener("click", ()=>{
+    State.lkpd=collectLKPD(); persistState();
+    document.getElementById("lkpd-status").textContent="Tersimpan · "+new Date().toLocaleTimeString("id-ID");
+    AudioFX.success(); showToast("LKPD berhasil disimpan.","success");
+    unlockView("evaluasi");
+  });
+  document.getElementById("lkpd-print").addEventListener("click", ()=>window.print());
+  document.getElementById("btn-print").addEventListener("click", ()=>{ goToView("lkpd"); setTimeout(()=>window.print(),200); });
+  document.getElementById("lkpd-reset").addEventListener("click", ()=>{
+    if(confirm("Hapus seluruh isian LKPD? Tindakan ini tidak dapat dibatalkan.")){
+      State.lkpd={}; persistState(); renderLKPD(); AudioFX.reset(); showToast("LKPD telah direset.");
+    }
+  });
+}
+
+/* =========================================================================
+   11. EVALUATION
+   ========================================================================= */
+function renderQuiz(){
+  const container=document.getElementById("quiz-questions");
+  container.innerHTML=LAB_DATA.evaluation.map((q,i)=>{
+    let body="";
+    if(q.type==="mc") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="radio" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="checkbox") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="checkbox" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="short") body=`<input type="text" class="short-answer-input" id="q${i}-short" placeholder="Ketik jawabanmu…">`;
+    else if(q.type==="essay") body=`<textarea id="q${i}-essay" placeholder="Tuliskan jawaban analisismu…" style="min-height:90px;"></textarea>`;
+    return `<div class="card q-card" id="qcard-${i}">
+      <span class="q-tag ${q.level}">${q.level.toUpperCase()} · Soal ${i+1}</span>
+      <div class="q-stem">${q.stem}</div>${body}
+      <div class="q-explain" id="qexplain-${i}"><b>Pembahasan:</b> ${q.explain}</div>
+    </div>`;
+  }).join("");
+  container.addEventListener("change", onQuizAnswerChange);
+  container.querySelectorAll(".short-answer-input, textarea").forEach(el=>el.addEventListener("input", onQuizAnswerChange));
+  document.getElementById("quiz-begin").parentElement.hidden=true;
+  document.getElementById("quiz-body").hidden=false;
+  updateQuizProgress();
+}
+function onQuizAnswerChange(){
+  const answers={};
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    if(q.type==="mc"){ const sel=document.querySelector(`input[name="q${i}"]:checked`); if(sel) answers[i]=Number(sel.value); }
+    else if(q.type==="checkbox"){ const sels=document.querySelectorAll(`input[name="q${i}"]:checked`); if(sels.length) answers[i]=Array.from(sels).map(s=>Number(s.value)); }
+    else if(q.type==="short"){ const val=document.getElementById(`q${i}-short`).value.trim(); if(val) answers[i]=val; }
+    else if(q.type==="essay"){ const val=document.getElementById(`q${i}-essay`).value.trim(); if(val) answers[i]=val; }
+  });
+  State.quiz.answers=answers; persistState(); updateQuizProgress();
+}
+function updateQuizProgress(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  document.getElementById("quiz-progress-fill").style.width=(answered/total*100)+"%";
+  document.getElementById("quiz-progress-label").textContent=`${answered} / ${total} dijawab`;
+}
+function normalizeText(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+function gradeQuiz(){
+  let scoreItems=0, gradable=0;
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const ans=State.quiz.answers[i];
+    if(q.type==="essay") return;
+    gradable++;
+    if(q.type==="mc"){ if(ans===q.answer) scoreItems++; }
+    else if(q.type==="checkbox"){ if(Array.isArray(ans)){ const a=[...ans].sort().join(","), b=[...q.answerSet].sort().join(","); if(a===b) scoreItems++; } }
+    else if(q.type==="short"){ if(ans && q.accepted.includes(normalizeText(ans))) scoreItems++; }
+  });
+  return { scoreItems, gradable, pct: gradable?Math.round((scoreItems/gradable)*100):0 };
+}
+function revealAnswers(){
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    document.getElementById(`qexplain-${i}`).classList.add("is-visible");
+    if(q.type==="mc"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(oi===q.answer) optEl.classList.add("is-correct"); else if(oi===sel) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="checkbox"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i]||[];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(q.answerSet.includes(oi)) optEl.classList.add("is-correct"); else if(sel.includes(oi)) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="short"){ document.getElementById(`q${i}-short`).disabled=true; }
+    else if(q.type==="essay"){ document.getElementById(`q${i}-essay`).disabled=true; }
+  });
+}
+function submitQuiz(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  if(answered<total){ if(!confirm(`Kamu baru menjawab ${answered} dari ${total} soal. Tetap kumpulkan sekarang?`)) return; }
+  const result=gradeQuiz();
+  State.quiz.submitted=true; State.quiz.lastResult=result; persistState();
+  revealAnswers(); unlockView("profil");
+  document.getElementById("quiz-submit").hidden=true;
+  document.getElementById("quiz-result").hidden=false;
+  document.getElementById("result-score").textContent=result.pct;
+  let desc="";
+  if(result.pct>=85) desc="Istimewa! Pemahamanmu tentang bilangan kuantum dan bentuk orbital sangat kuat.";
+  else if(result.pct>=70) desc="Bagus! Sebagian besar konsep sudah kamu kuasai — tinjau kembali bagian yang masih keliru.";
+  else if(result.pct>=50) desc="Cukup baik. Baca ulang bagian Teori, khususnya aturan nilai l dan m, lalu coba lagi.";
+  else desc="Perlu belajar lebih dalam. Cobalah ulangi bagian Teori dan Simulasi sebelum mengulang evaluasi.";
+  document.getElementById("result-desc").textContent=desc;
+  const badges=[
+    {icon:"🎓",label:"Skor ≥ 85",earned:result.pct>=85},
+    {icon:"🧭",label:"Semua Soal Dijawab",earned:answered>=total},
+    {icon:"🔬",label:"Skor ≥ 70",earned:result.pct>=70}
+  ];
+  document.getElementById("badge-row").innerHTML=badges.map(b=>`<div class="badge ${b.earned?"is-earned":""}"><i>${b.icon}</i><span>${b.label}</span></div>`).join("");
+  if(result.pct>=70) AudioFX.complete(); else AudioFX.error();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+function initQuiz(){
+  document.getElementById("quiz-begin").addEventListener("click", ()=>{ AudioFX.click(); renderQuiz(); });
+  document.getElementById("quiz-submit").addEventListener("click", submitQuiz);
+  document.getElementById("quiz-review").addEventListener("click", ()=>{
+    document.getElementById("quiz-result").hidden=true;
+    document.getElementById("quiz-body").hidden=false;
+    window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+  });
+  document.getElementById("quiz-retry").addEventListener("click", ()=>{
+    if(confirm("Ulangi evaluasi dari awal? Jawaban sebelumnya akan dihapus.")){
+      State.quiz={answers:{},submitted:false}; persistState();
+      document.getElementById("quiz-result").hidden=true;
+      document.getElementById("quiz-intro").hidden=false;
+      document.getElementById("quiz-body").hidden=true;
+      document.getElementById("quiz-submit").hidden=false;
+      AudioFX.reset();
+    }
+  });
+}
+
+/* =========================================================================
+   12. DEVELOPER PROFILE
+   ========================================================================= */
+function renderDevProfile(){
+  document.getElementById("dev-photo").innerHTML=`
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder foto pengembang">
+      <rect width="180" height="180" fill="#1F2C48"/>
+      <circle cx="90" cy="70" r="34" fill="#2C3A5C"/>
+      <path d="M30 168c8-40 40-58 60-58s52 18 60 58z" fill="#2C3A5C"/>
+      <circle cx="90" cy="90" r="88" fill="none" stroke="#C4934E" stroke-width="1.5" opacity="0.4"/>
+    </svg>`;
+}
+
+/* =========================================================================
+   13. ASSISTANT
+   ========================================================================= */
+const ASSISTANT_RULES=[
+  {keys:["mulai","cara mulai"], reply:"Klik \"Mulai Praktikum\", isi identitasmu, lalu ikuti tab navigasi dari Teori → Prosedur → Simulasi → LKPD → Evaluasi secara berurutan."},
+  {keys:["bilangan kuantum utama","n "], reply:"Bilangan kuantum utama (n) menyatakan tingkat energi utama dan ukuran orbital; nilainya bilangan bulat positif 1,2,3,..."},
+  {keys:["azimuth","subkulit"], reply:"Bilangan kuantum azimuth (l) menyatakan subkulit dan bentuk dasar orbital; nilainya 0 hingga (n-1). l=0(s), l=1(p), l=2(d), l=3(f)."},
+  {keys:["magnetik"], reply:"Bilangan kuantum magnetik (m) menyatakan orientasi ruang orbital; nilainya -l hingga +l, sehingga jumlah orbital = 2l+1."},
+  {keys:["spin"], reply:"Bilangan kuantum spin (s) menyatakan arah putaran elektron; hanya ada 2 nilai: +1/2 (↑) atau -1/2 (↓)."},
+  {keys:["valid","aturan"], reply:"Aturan validitas: 0≤l≤(n-1) dan -l≤m≤+l. Coba mode Eksplorasi Bebas di simulator untuk menguji kombinasi apa pun!"},
+  {keys:["bentuk","orbital s","orbital p","orbital d","orbital f"], reply:"Orbital s berbentuk bola, p berbentuk dumbbell (3 orientasi), d berbentuk 4 kelopak/torus (5 orientasi), f sangat kompleks (7 orientasi). Coba simulator Visualisasi Bentuk Orbital!"},
+  {keys:["lkpd"], reply:"LKPD dapat diisi setelah kamu mencoba simulasi. Klik \"Simpan\" secara berkala, dan gunakan \"Cetak / Simpan PDF\" bila perlu dokumen cetak."},
+  {keys:["nilai","skor","evaluasi"], reply:"Evaluasi berisi 18 soal (LOTS-HOTS). Skor otomatis dihitung dari soal pilihan ganda, checkbox, dan isian singkat. Soal esai direkam untuk dinilai gurumu."},
+  {keys:["error","macet","bug"], reply:"Coba muat ulang halaman. Data LKPD dan jawabanmu tersimpan otomatis di perangkat ini."}
+];
+function assistantReply(text){
+  const q=normalizeText(text);
+  const rule=ASSISTANT_RULES.find(r=>r.keys.some(k=>q.includes(k)));
+  return rule?rule.reply:"Aku asisten berbasis aturan (bukan AI generatif), jadi jawabanku terbatas pada topik virtual lab ini. Coba tanyakan tentang: bilangan kuantum utama, azimuth, magnetik, spin, validitas, atau bentuk orbital.";
+}
+function initAssistant(){
+  const fab=document.getElementById("assistant-fab"), panel=document.getElementById("assistant-panel"), body=document.getElementById("assistant-body"), chips=document.getElementById("assistant-chips");
+  function addMsg(text,who){ const div=document.createElement("div"); div.className="assistant-msg"+(who==="user"?" user":""); div.textContent=text; body.appendChild(div); body.scrollTop=body.scrollHeight; }
+  addMsg("Halo! Aku asisten berbasis aturan untuk membantumu memahami bilangan kuantum dan bentuk orbital. Silakan bertanya.","bot");
+  ["Apa itu bilangan kuantum azimuth?","Kapan kombinasi tidak valid?","Bagaimana bentuk orbital d?"].forEach(q=>{
+    const chip=document.createElement("button"); chip.className="assistant-chip"; chip.textContent=q;
+    chip.addEventListener("click", ()=>{ addMsg(q,"user"); setTimeout(()=>addMsg(assistantReply(q),"bot"),220); });
+    chips.appendChild(chip);
+  });
+  fab.addEventListener("click", ()=>{ const hidden=panel.hidden; panel.hidden=!hidden; fab.setAttribute("aria-expanded", String(hidden)); AudioFX.click(); });
+  document.getElementById("assistant-close").addEventListener("click", ()=>{ panel.hidden=true; fab.setAttribute("aria-expanded","false"); });
+}
+
+/* =========================================================================
+   14. TOP CONTROLS
+   ========================================================================= */
+function initTopControls(){
+  const soundBtn=document.getElementById("btn-sound");
+  soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+  soundBtn.textContent=State.soundOn?"🔊":"🔇";
+  soundBtn.addEventListener("click", ()=>{
+    State.soundOn=!State.soundOn;
+    soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+    soundBtn.textContent=State.soundOn?"🔊":"🔇";
+    persistState(); if(State.soundOn) AudioFX.click();
+  });
+  const rmBtn=document.getElementById("btn-reduce-motion");
+  rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+  document.body.classList.toggle("reduce-motion", State.reduceMotion);
+  rmBtn.addEventListener("click", ()=>{
+    State.reduceMotion=!State.reduceMotion;
+    rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+    document.body.classList.toggle("reduce-motion", State.reduceMotion);
+    persistState();
+  });
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    State.reduceMotion=true; document.body.classList.add("reduce-motion"); rmBtn.setAttribute("aria-pressed","true");
+  }
+}
+
+window.addEventListener("error",(e)=>{ console.error("Terjadi kesalahan tak terduga:", e.message); });
+
+/* =========================================================================
+   15. BOOTSTRAP
+   ========================================================================= */
+function init(){
+  loadState();
+  initSplash();
+  initTopControls();
+  buildTabs();
+  renderTheory();
+  renderProcedureTabs();
+  renderProcedureSteps();
+  initLKPD();
+  renderLKPD();
+  initQuiz();
+  renderDevProfile();
+  initAssistant();
+  goToView(State.activeView||"teori");
+
+  let simInitialized=false;
+  document.getElementById("tab-simulasi").addEventListener("click", ()=>{ if(!simInitialized){ initSimulationView(); simInitialized=true; } });
+  if(State.activeView==="simulasi"){ initSimulationView(); simInitialized=true; }
+}
+document.addEventListener("DOMContentLoaded", init);
+
+</script>
 </body>
 </html>
