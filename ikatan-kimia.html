@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Virtual Lab Kimia — Ikatan Kimia</title>
+<meta name="description" content="Laboratorium virtual interaktif Kimia SMA Kelas X: kestabilan unsur, ikatan ion, ikatan kovalen, dan ikatan logam.">
+
+<style>
+:root{
+  --ink-950:#0B1220; --ink-900:#101A2E; --ink-800:#16213A; --ink-700:#1F2C48; --ink-600:#2C3A5C;
+  --brass-500:#C4934E; --brass-400:#D9AC6E; --brass-700:#93672F;
+  --phosphor-500:#5FD9C4; --phosphor-300:#9EEBDC;
+  --ember-500:#E0725A; --ember-300:#F0A38F;
+  --leaf-500:#7FBF7F;
+  --paper-100:#F3EFE4; --paper-300:#D9D3C2; --paper-500:#A9A290;
+  --serif:"Fraunces","Iowan Old Style",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --radius-s:6px; --radius-m:12px; --radius-l:20px;
+  --shadow-deep:0 20px 50px -20px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{ margin:0; font-family:var(--sans); background:radial-gradient(1200px 800px at 15% -10%, #16223d 0%, var(--ink-950) 55%); color:var(--paper-100); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+h1,h2,h3,h4{ font-family:var(--serif); font-weight:600; margin:0 0 .4em; letter-spacing:.2px; }
+p{ margin:0 0 1em; line-height:1.65; color:var(--paper-300); }
+a{ color:var(--phosphor-500); }
+button{ font-family:inherit; }
+::selection{ background:var(--brass-500); color:var(--ink-950); }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+body.reduce-motion *{ animation:none !important; transition:none !important; }
+:focus-visible{ outline:2px solid var(--phosphor-500); outline-offset:3px; border-radius:4px; }
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--ink-600); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--brass-700); }
+.visually-hidden{ position:absolute !important; width:1px;height:1px; padding:0;margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.skip-link{ position:absolute; left:12px; top:-60px; background:var(--brass-500); color:var(--ink-950); padding:10px 16px; border-radius:var(--radius-s); z-index:999; font-weight:600; transition:top .2s var(--ease); }
+.skip-link:focus{ top:12px; }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+.appbar{ display:flex; align-items:center; gap:16px; padding:10px 22px; background:linear-gradient(180deg, rgba(16,26,46,.96), rgba(16,26,46,.88)); border-bottom:1px solid var(--ink-600); position:sticky; top:0; z-index:60; backdrop-filter:blur(6px); }
+.appbar__brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+.appbar__mark{ width:34px;height:34px; border-radius:50%; background:radial-gradient(circle at 32% 28%, var(--phosphor-300), var(--phosphor-500) 45%, #1a6f60 100%); box-shadow:0 0 16px -2px var(--phosphor-500); flex:none; }
+.appbar__title{ font-family:var(--serif); font-size:15px; line-height:1.1; }
+.appbar__title small{ display:block; font-family:var(--sans); font-size:11px; color:var(--paper-500); font-weight:500; }
+.tabs{ display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab-btn{ border:1px solid transparent; background:transparent; color:var(--paper-500); padding:9px 14px; border-radius:999px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease); }
+.tab-btn .tab-num{ width:18px;height:18px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); font-size:10px; display:grid; place-items:center; font-family:var(--mono); flex:none; }
+.tab-btn:hover{ color:var(--paper-100); background:var(--ink-800); }
+.tab-btn[aria-selected="true"]{ color:var(--ink-950); background:var(--brass-500); }
+.tab-btn[aria-selected="true"] .tab-num{ background:rgba(11,18,32,.25); color:var(--ink-950); }
+.tab-btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.tab-btn[disabled]:hover{ background:transparent; color:var(--paper-500); }
+.appbar__actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{ width:36px;height:36px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); display:grid; place-items:center; cursor:pointer; font-size:15px; transition:border-color .18s var(--ease), color .18s var(--ease), transform .12s var(--ease); }
+.icon-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.icon-btn:active{ transform:scale(.94); }
+.icon-btn[aria-pressed="false"]{ opacity:.5; }
+.progress-rail{ height:3px; background:var(--ink-700); position:relative; }
+.progress-rail__fill{ height:100%; background:linear-gradient(90deg, var(--brass-700), var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+main{ flex:1; position:relative; }
+.view{ display:none; padding:28px clamp(16px,4vw,56px) 64px; max-width:1240px; margin:0 auto; animation:viewIn .35s var(--ease); }
+.view.is-active{ display:block; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+.view-head{ margin-bottom:26px; }
+.eyebrow-plain{ font-size:12.5px; color:var(--phosphor-500); font-weight:600; margin-bottom:6px; }
+.view-head h2{ font-size:clamp(24px,3.4vw,34px); }
+.view-head p{ max-width:640px; }
+.card{ background:linear-gradient(180deg, var(--ink-800), var(--ink-900)); border:1px solid var(--ink-600); border-radius:var(--radius-l); padding:22px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:900px){ .grid-2{ grid-template-columns:1fr; } }
+
+.btn{ display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:12px 22px; border-radius:999px; border:1px solid transparent; cursor:pointer; font-weight:600; font-size:14.5px; transition:transform .14s var(--ease), box-shadow .2s var(--ease), background .18s; }
+.btn:active{ transform:scale(.97); }
+.btn--primary{ background:linear-gradient(180deg, var(--brass-400), var(--brass-500)); color:#1B1305; box-shadow:0 10px 24px -10px rgba(196,147,78,.55); }
+.btn--primary:hover{ box-shadow:0 14px 30px -10px rgba(196,147,78,.7); }
+.btn--ghost{ background:transparent; border-color:var(--ink-600); color:var(--paper-100); }
+.btn--ghost:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.btn--danger{ background:transparent; border-color:var(--ember-500); color:var(--ember-300); }
+.btn--danger:hover{ background:rgba(224,114,90,.12); }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+.btn--sm{ padding:8px 16px; font-size:13px; }
+.btn--block{ width:100%; }
+
+label{ display:block; font-size:13px; font-weight:600; color:var(--paper-300); margin-bottom:6px; }
+input[type="text"], input[type="number"], select, textarea{ width:100%; background:var(--ink-950); border:1px solid var(--ink-600); color:var(--paper-100); padding:11px 13px; border-radius:var(--radius-s); font-size:14.5px; font-family:inherit; }
+textarea{ resize:vertical; min-height:76px; line-height:1.5; }
+input:focus, select:focus, textarea:focus{ border-color:var(--phosphor-500); }
+.field{ margin-bottom:16px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .field-row{ grid-template-columns:1fr; } }
+.hint{ font-size:12px; color:var(--paper-500); margin-top:5px; }
+
+#splash{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:radial-gradient(900px 500px at 80% 10%, rgba(95,217,196,.10), transparent 60%), radial-gradient(700px 500px at 10% 90%, rgba(196,147,78,.14), transparent 60%), var(--ink-950); padding:24px; text-align:center; transition:opacity .5s var(--ease), visibility .5s; }
+#splash.is-hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+.splash__orbit{ position:relative; width:150px;height:150px; margin:0 auto 26px; }
+.splash__nucleus{ position:absolute; inset:0; margin:auto; width:26px;height:26px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); box-shadow:0 0 30px 4px rgba(196,147,78,.55); }
+.splash__ring{ position:absolute; inset:0; border:1px solid rgba(95,217,196,.35); border-radius:50%; }
+.splash__ring:nth-child(2){ inset:14px; animation:spin 6s linear infinite; }
+.splash__ring:nth-child(3){ inset:0; transform:rotate(60deg); animation:spin 9s linear infinite reverse; }
+.splash__ring:nth-child(4){ inset:0; transform:rotate(-60deg); animation:spin 12s linear infinite; }
+.splash__electron{ position:absolute; width:8px;height:8px;border-radius:50%; background:var(--phosphor-500); box-shadow:0 0 10px 2px var(--phosphor-500); top:-4px; left:50%; margin-left:-4px; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+body.reduce-motion .splash__ring{ animation:none; }
+.splash__eyebrow{ letter-spacing:.4px; color:var(--phosphor-500); font-weight:700; font-size:13px; margin-bottom:10px; }
+.splash h1{ font-size:clamp(26px,4.6vw,42px); max-width:800px; margin:0 auto 10px; }
+.splash__topic{ color:var(--brass-400); font-weight:600; font-size:clamp(15px,2vw,19px); margin-bottom:26px; }
+.splash__meta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+.chip{ border:1px solid var(--ink-600); border-radius:999px; padding:6px 14px; font-size:12.5px; color:var(--paper-300); background:var(--ink-800); }
+
+.modal-scrim{ position:fixed; inset:0; background:rgba(6,9,16,.72); z-index:210; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-scrim[hidden]{ display:none; }
+.modal{ background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); max-width:460px; width:100%; padding:28px; box-shadow:var(--shadow-deep); }
+.modal h2{ font-size:22px; }
+
+.theory-toc{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.toc-pill{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:7px 13px; border-radius:999px; font-size:12.5px; cursor:pointer; font-weight:600; }
+.toc-pill:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.theory-section{ margin-bottom:30px; scroll-margin-top:90px; }
+.theory-section h3{ font-size:20px; border-bottom:1px solid var(--ink-600); padding-bottom:10px; margin-bottom:14px; }
+.term-list{ display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; }
+.term-list dt{ font-weight:700; color:var(--paper-100); font-size:13.5px; }
+.term-list dd{ margin:0 0 12px; color:var(--paper-500); font-size:13.2px; }
+@media (max-width:700px){ .term-list{ grid-template-columns:1fr; } }
+.misconception{ border-left:3px solid var(--ember-500); background:rgba(224,114,90,.08); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:12px 16px; margin-bottom:10px; }
+.misconception b{ color:var(--ember-300); }
+table.data-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+table.data-table th{ text-align:left; font-family:var(--serif); font-weight:600; color:var(--brass-400); padding:10px 12px; border-bottom:2px solid var(--ink-600); }
+table.data-table td{ padding:10px 12px; border-bottom:1px solid var(--ink-700); color:var(--paper-300); }
+table.data-table tr:last-child td{ border-bottom:none; }
+.table-wrap{ overflow-x:auto; }
+
+.anatomy-diagram{ display:flex; align-items:center; justify-content:center; gap:22px; flex-wrap:wrap; padding:26px; background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); margin:16px 0; }
+.anatomy-label{ display:flex; flex-direction:column; align-items:center; gap:8px; font-size:11.5px; color:var(--paper-500); text-align:center; max-width:200px; }
+.anatomy-label b{ color:var(--paper-100); font-size:12.5px; }
+.anatomy-arrow{ color:var(--ink-600); font-size:22px; }
+.mini-lewis{ font-family:var(--mono); font-size:15px; color:var(--phosphor-500); background:var(--ink-900); border:1px solid var(--ink-700); padding:10px 16px; border-radius:var(--radius-s); }
+
+.proc-tabs{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.proc-tab{ border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:10px 16px; border-radius:var(--radius-m); cursor:pointer; font-weight:600; font-size:13.5px; text-align:left; }
+.proc-tab[aria-selected="true"]{ border-color:var(--brass-500); color:var(--brass-400); background:rgba(196,147,78,.09); }
+.step-list{ counter-reset:step; }
+.step{ display:grid; grid-template-columns:40px 1fr; gap:16px; padding:16px 0; border-bottom:1px solid var(--ink-700); opacity:.5; }
+.step.is-unlocked{ opacity:1; }
+.step:last-child{ border-bottom:none; }
+.step__num{ width:34px;height:34px;border-radius:50%; background:var(--ink-700); color:var(--paper-500); display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; }
+.step.is-unlocked .step__num{ background:var(--brass-500); color:#1B1305; }
+.step.is-done .step__num{ background:var(--leaf-500); color:#0c2410; }
+.step h4{ font-size:15.5px; margin-bottom:6px; }
+.step__meta{ display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--paper-500); margin:8px 0; }
+.step__meta span{ display:flex; gap:5px; align-items:center; }
+.step__meta b{ color:var(--paper-300); font-weight:600; }
+.step-actions{ margin-top:10px; }
+.progress-track{ height:8px; background:var(--ink-700); border-radius:99px; overflow:hidden; margin-bottom:20px; }
+.progress-track__fill{ height:100%; background:linear-gradient(90deg, var(--brass-500), var(--phosphor-500)); width:0%; transition:width .4s var(--ease); }
+
+.sim-shell{ display:grid; grid-template-columns:300px 1fr; gap:20px; }
+@media (max-width:980px){ .sim-shell{ grid-template-columns:1fr; } }
+.sim-panel{ display:flex; flex-direction:column; gap:16px; }
+.sim-stage{ position:relative; border-radius:var(--radius-l); border:1px solid var(--ink-600); background:radial-gradient(ellipse at 50% 30%, #0e1a30 0%, #060a14 72%); overflow:hidden; min-height:460px; }
+.sim-toolbar{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--ink-600); background:rgba(11,18,32,.7); }
+.readout{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:var(--mono); font-size:12.5px; }
+.readout div{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:8px 10px; }
+.readout b{ display:block; color:var(--phosphor-500); font-size:10.5px; letter-spacing:.4px; margin-bottom:2px; font-family:var(--sans); }
+.readout span{ color:var(--paper-100); font-size:13.5px; word-break:break-word; }
+.control-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.legend{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--paper-500); }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.legend i{ width:10px;height:10px;border-radius:50%; display:inline-block; flex:none; }
+.sim-note{ font-size:12.5px; background:rgba(95,217,196,.08); border:1px solid rgba(95,217,196,.25); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); }
+
+/* DOM layer */
+.dom-layer{ position:absolute; inset:0; overflow:auto; padding:22px; }
+
+/* Lewis dot atom diagram */
+.lewis-stage{ display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin:18px 0 10px; }
+.lewis-atom{ display:grid; grid-template-columns:26px 54px 26px; grid-template-rows:26px 54px 26px; gap:2px; place-items:center; }
+.lewis-symbol{ grid-column:2; grid-row:2; width:54px;height:54px;border-radius:50%; display:grid; place-items:center; font-family:var(--serif); font-size:21px; font-weight:700; color:#0B1220; }
+.dot-slot{ display:flex; gap:3px; }
+.dot-slot.top,.dot-slot.bottom{ grid-column:2; flex-direction:row; }
+.dot-slot.top{ grid-row:1; align-self:end; }
+.dot-slot.bottom{ grid-row:3; align-self:start; }
+.dot-slot.left{ grid-column:1; grid-row:2; flex-direction:column; justify-self:end; }
+.dot-slot.right{ grid-column:3; grid-row:2; flex-direction:column; justify-self:start; }
+.e-dot{ width:6px;height:6px;border-radius:50%; background:var(--phosphor-500); box-shadow:0 0 5px 1px rgba(95,217,196,.6); }
+.lewis-arrow{ font-size:22px; color:var(--brass-400); font-weight:700; align-self:center; }
+.bond-zone{ display:flex; flex-direction:column; gap:3px; align-items:center; justify-content:center; padding:0 4px; min-width:26px; }
+.bond-line{ width:22px; height:2px; background:var(--brass-400); }
+.result-line{ text-align:center; font-family:var(--sans); font-weight:700; font-size:17px; letter-spacing:.5px; color:var(--paper-100); margin-top:6px; }
+.result-formula{ text-align:center; font-family:var(--serif); font-size:24px; color:var(--brass-400); margin-top:4px; }
+.result-note{ font-size:12px; text-align:center; color:var(--paper-500); max-width:480px; margin:10px auto 0; }
+.exception-note{ font-size:12px; background:rgba(224,114,90,.08); border:1px solid rgba(224,114,90,.3); border-radius:var(--radius-s); padding:10px 12px; color:var(--paper-300); margin-top:14px; }
+
+/* electron sea (ikatan logam) */
+.sea-box{ position:relative; width:min(320px,86%); height:170px; margin:18px auto; border-radius:var(--radius-m); background:rgba(95,217,196,.06); border:1px solid rgba(95,217,196,.25); overflow:hidden; }
+.sea-ion{ position:absolute; width:30px;height:30px;border-radius:50%; display:grid; place-items:center; font-family:var(--serif); font-weight:700; font-size:12px; color:#0B1220; }
+.sea-electron{ position:absolute; width:5px;height:5px;border-radius:50%; background:var(--phosphor-300); box-shadow:0 0 5px 1px rgba(158,235,220,.7); }
+
+/* compare senyawa */
+.compare-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:10px; }
+@media (max-width:640px){ .compare-grid{ grid-template-columns:1fr; } }
+.compound-card{ background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-m); padding:16px; }
+.compound-card h4{ font-size:16px; margin-bottom:2px; }
+.compound-card .formula{ font-family:var(--mono); color:var(--brass-400); font-size:13px; margin-bottom:10px; }
+.compound-card dl{ margin:0; font-size:12.5px; }
+.compound-card dt{ color:var(--phosphor-500); font-weight:600; margin-top:8px; }
+.compound-card dd{ margin:2px 0 0; color:var(--paper-300); }
+.verdict{ text-align:left; padding:16px 18px; border-radius:var(--radius-m); border:1px solid var(--ink-600); background:var(--ink-950); margin-top:16px; }
+.verdict-title{ font-family:var(--serif); font-size:18px; color:var(--brass-400); margin-bottom:6px; }
+.verdict-desc{ font-size:13px; color:var(--paper-300); }
+
+.stepper-field{ margin-bottom:16px; }
+.stepper-row{ display:flex; align-items:center; gap:10px; }
+.stepper-btn{ width:34px;height:34px; border-radius:50%; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-100); font-size:17px; font-weight:700; cursor:pointer; display:grid; place-items:center; flex:none; }
+.stepper-btn:hover{ border-color:var(--brass-500); color:var(--brass-400); }
+.stepper-btn:active{ transform:scale(.92); }
+.stepper-val{ flex:1; text-align:center; font-family:var(--mono); font-size:18px; color:var(--paper-100); background:var(--ink-950); border:1px solid var(--ink-700); border-radius:var(--radius-s); padding:7px 0; }
+
+.lkpd-section{ margin-bottom:24px; }
+.lkpd-section h3{ font-size:16px; display:flex; align-items:center; gap:8px; }
+.lkpd-section h3 em{ font-style:normal; font-family:var(--mono); font-size:11px; color:var(--paper-500); background:var(--ink-700); padding:3px 8px; border-radius:5px; }
+.obs-table td, .obs-table th{ padding:8px; }
+.obs-table input{ padding:7px 9px; font-size:13px; }
+.add-row-btn{ margin-top:8px; }
+.lkpd-toolbar{ display:flex; gap:10px; flex-wrap:wrap; position:sticky; bottom:14px; z-index:5; background:var(--ink-900); border:1px solid var(--ink-600); padding:12px; border-radius:var(--radius-m); box-shadow:var(--shadow-deep); }
+.save-status{ font-size:12px; color:var(--paper-500); align-self:center; margin-left:auto; }
+
+.quiz-progress{ display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+.quiz-progress .progress-track{ flex:1; margin:0; }
+.quiz-meta{ font-family:var(--mono); font-size:12.5px; color:var(--paper-500); white-space:nowrap; }
+.q-card{ margin-bottom:18px; }
+.q-tag{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:3px 9px; border-radius:999px; margin-bottom:12px; }
+.q-tag.lots{ background:rgba(127,191,127,.16); color:var(--leaf-500); }
+.q-tag.mots{ background:rgba(196,147,78,.18); color:var(--brass-400); }
+.q-tag.hots{ background:rgba(224,114,90,.18); color:var(--ember-300); }
+.q-stem{ font-size:15.5px; color:var(--paper-100); margin-bottom:14px; font-weight:500; line-height:1.55; }
+.opt{ display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border:1px solid var(--ink-600); border-radius:var(--radius-m); margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s; }
+.opt:hover{ border-color:var(--brass-500); }
+.opt input{ margin-top:3px; accent-color:var(--brass-500); flex:none; }
+.opt span{ font-size:14px; color:var(--paper-300); }
+.opt.is-correct{ border-color:var(--leaf-500); background:rgba(127,191,127,.09); }
+.opt.is-wrong{ border-color:var(--ember-500); background:rgba(224,114,90,.09); }
+.q-explain{ display:none; margin-top:12px; padding:12px 14px; border-radius:var(--radius-s); background:var(--ink-950); border:1px solid var(--ink-700); font-size:13px; color:var(--paper-300); }
+.q-explain.is-visible{ display:block; }
+.q-explain b{ color:var(--phosphor-500); }
+.short-answer-input{ margin-top:6px; }
+.result-hero{ text-align:center; padding:38px 22px; }
+.result-score{ font-family:var(--serif); font-size:56px; color:var(--brass-400); }
+.badge-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.badge{ display:flex; flex-direction:column; align-items:center; gap:6px; width:96px; opacity:.3; }
+.badge.is-earned{ opacity:1; }
+.badge i{ width:44px;height:44px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--brass-400), var(--brass-700)); display:grid; place-items:center; font-style:normal; font-size:18px; }
+.badge span{ font-size:10.5px; text-align:center; color:var(--paper-500); font-weight:600; }
+
+.dev-card{ display:grid; grid-template-columns:180px 1fr; gap:26px; align-items:start; }
+@media (max-width:640px){ .dev-card{ grid-template-columns:1fr; } }
+.dev-photo{ width:180px;height:180px; border-radius:var(--radius-l); overflow:hidden; border:1px solid var(--ink-600); background:var(--ink-700); }
+.dev-photo svg{ width:100%; height:100%; display:block; }
+.dev-competency{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+.assistant-fab{ position:fixed; right:20px; bottom:20px; z-index:150; width:56px;height:56px; border-radius:50%; background:linear-gradient(160deg, var(--phosphor-300), var(--phosphor-500)); border:none; cursor:pointer; box-shadow:0 14px 30px -10px rgba(95,217,196,.6); font-size:22px; display:grid; place-items:center; color:#052c25; }
+.assistant-panel{ position:fixed; right:20px; bottom:88px; width:min(340px, calc(100vw - 40px)); max-height:60vh; z-index:150; background:var(--ink-900); border:1px solid var(--ink-600); border-radius:var(--radius-l); box-shadow:var(--shadow-deep); display:flex; flex-direction:column; overflow:hidden; }
+.assistant-panel[hidden]{ display:none; }
+.assistant-head{ padding:14px 16px; border-bottom:1px solid var(--ink-600); display:flex; justify-content:space-between; align-items:center; }
+.assistant-head h4{ margin:0; font-size:14.5px; }
+.assistant-body{ padding:14px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; font-size:13px; }
+.assistant-msg{ background:var(--ink-800); border-radius:var(--radius-s); padding:9px 11px; color:var(--paper-300); align-self:flex-start; max-width:88%; }
+.assistant-msg.user{ background:var(--brass-700); color:#fff; align-self:flex-end; }
+.assistant-chips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; }
+.assistant-chip{ font-size:11.5px; border:1px solid var(--ink-600); background:var(--ink-800); color:var(--paper-300); padding:6px 10px; border-radius:999px; cursor:pointer; }
+
+#toast-region{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.toast{ background:var(--ink-800); border:1px solid var(--ink-600); color:var(--paper-100); padding:10px 18px; border-radius:999px; font-size:13px; box-shadow:var(--shadow-deep); animation:toastIn .25s var(--ease); }
+.toast.success{ border-color:var(--leaf-500); }
+.toast.error{ border-color:var(--ember-500); }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(10px);} }
+footer.appfoot{ text-align:center; padding:20px; font-size:11.5px; color:var(--paper-500); border-top:1px solid var(--ink-600); }
+
+@media (max-width:760px){
+  .appbar{ flex-wrap:wrap; padding:10px 14px; row-gap:8px; }
+  .appbar__brand{ margin-right:0; }
+  .appbar__title small{ display:none; }
+  .tabs{ order:3; width:100%; padding-top:2px; }
+  .appbar__actions{ margin-left:auto; }
+  .assistant-panel{ right:12px; left:12px; width:auto; bottom:80px; }
+  .assistant-fab{ right:14px; bottom:14px; }
+}
+@media print{
+  .appbar,.assistant-fab,.assistant-panel,footer.appfoot,.lkpd-toolbar,#splash,.modal-scrim,.progress-rail{ display:none !important; }
+  body{ background:#fff; color:#111; }
+  .view{ display:block !important; }
+  main .view:not(#view-lkpd){ display:none !important; }
+  .card{ border:1px solid #ccc; background:#fff; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Lompat ke konten utama</a>
+
+<div id="splash" role="dialog" aria-labelledby="splash-title">
+  <div>
+    <div class="splash__orbit" aria-hidden="true">
+      <div class="splash__ring"></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__ring"><span class="splash__electron"></span></div>
+      <div class="splash__nucleus"></div>
+    </div>
+    <div class="splash__eyebrow">Virtual Laboratory — Kimia SMA</div>
+    <h1 id="splash-title">Ikatan Kimia</h1>
+    <div class="splash__topic">Mengapa atom-atom saling "berpegangan tangan"?</div>
+    <div class="splash__meta">
+      <span class="chip">Fase E · Kelas X</span>
+      <span class="chip">Struktur Atom &amp; Ikatan Kimia</span>
+      <span class="chip">± 60 menit</span>
+    </div>
+    <button class="btn btn--primary" id="btn-start" style="font-size:16px;padding:15px 34px;">Mulai Praktikum</button>
+  </div>
+</div>
+
+<div class="modal-scrim" id="modal-identity" hidden>
+  <form class="modal" id="form-identity" novalidate>
+    <h2>Identitas Praktikan</h2>
+    <p style="font-size:13px;">Data ini digunakan pada LKPD, evaluasi, dan rekap hasil belajarmu.</p>
+    <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama" required autocomplete="name" placeholder="cth. Ahmad Zaki"></div>
+    <div class="field-row">
+      <div class="field"><label for="inp-kelas">Kelas</label><input type="text" id="inp-kelas" required placeholder="cth. X-4"></div>
+      <div class="field"><label for="inp-id">No. Absen / ID</label><input type="text" id="inp-id" placeholder="cth. 17"></div>
+    </div>
+    <p class="hint" id="identity-error" style="color:var(--ember-300); display:none;">Nama dan kelas wajib diisi sebelum memulai.</p>
+    <button type="submit" class="btn btn--primary btn--block">Simpan &amp; Masuk Laboratorium</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="appbar">
+    <div class="appbar__brand">
+      <div class="appbar__mark" aria-hidden="true"></div>
+      <div class="appbar__title">Virtual Lab Kimia<small>Ikatan Kimia</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Navigasi bagian praktikum" role="tablist"></nav>
+    <div class="appbar__actions">
+      <button class="icon-btn" id="btn-sound" aria-pressed="true" title="Suara ON/OFF" aria-label="Aktifkan atau matikan suara">🔊</button>
+      <button class="icon-btn" id="btn-reduce-motion" aria-pressed="false" title="Kurangi animasi" aria-label="Kurangi animasi">✧</button>
+      <button class="icon-btn" id="btn-print" title="Cetak LKPD" aria-label="Cetak LKPD">🖨</button>
+    </div>
+  </header>
+  <div class="progress-rail"><div class="progress-rail__fill" id="global-progress"></div></div>
+
+  <main id="main-content">
+
+    <!-- ============================= TEORI ============================= -->
+    <section class="view" id="view-teori" data-view="teori">
+      <div class="view-head">
+        <div class="eyebrow-plain">01 · Teori</div>
+        <h2>Mengapa Atom Saling Berikatan?</h2>
+        <p>Atom-atom "bergandengan tangan" dengan satu tujuan yang sama: mencapai susunan elektron paling stabil, semirip mungkin dengan gas mulia. Caranya berbeda-beda — dan perbedaan itulah yang melahirkan tiga jenis ikatan kimia.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:26px;">
+        <h3 style="font-size:16px;margin-bottom:12px;">Tujuan Pembelajaran</h3>
+        <ul id="tp-list" style="margin:0; padding-left:20px; color:var(--paper-300); font-size:14px; line-height:1.8;"></ul>
+      </div>
+
+      <div class="theory-toc" id="theory-toc" aria-label="Lompat ke subtopik teori"></div>
+
+      <div class="anatomy-diagram">
+        <div class="anatomy-label"><div class="mini-lewis">Na + Cl → Na⁺ Cl⁻</div><b>Ikatan Ion</b>Serah terima elektron (logam + nonlogam)</div>
+        <div class="anatomy-arrow">≠</div>
+        <div class="anatomy-label"><div class="mini-lewis">H + H → H–H</div><b>Ikatan Kovalen</b>Pemakaian bersama elektron (nonlogam + nonlogam)</div>
+        <div class="anatomy-arrow">≠</div>
+        <div class="anatomy-label"><div class="mini-lewis">Na⁺ ⋯e⁻⋯ Na⁺</div><b>Ikatan Logam</b>Lautan elektron delokalisasi (logam + logam)</div>
+      </div>
+
+      <div id="theory-sections"></div>
+    </section>
+
+    <!-- ============================= PROSEDUR ============================= -->
+    <section class="view" id="view-prosedur" data-view="prosedur">
+      <div class="view-head">
+        <div class="eyebrow-plain">02 · Prosedur</div>
+        <h2>Langkah Kerja Praktikum</h2>
+        <p>Pilih salah satu aktivitas untuk melihat urutan langkah kerjanya. Selesaikan langkah secara berurutan sebelum melanjutkan ke simulasi.</p>
+      </div>
+      <div class="proc-tabs" id="proc-tabs" role="tablist" aria-label="Pilih aktivitas"></div>
+      <div class="progress-track"><div class="progress-track__fill" id="proc-progress"></div></div>
+      <div class="card"><div class="step-list" id="proc-steps"></div></div>
+    </section>
+
+    <!-- ============================= SIMULASI ============================= -->
+    <section class="view" id="view-simulasi" data-view="simulasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">03 · Simulasi</div>
+        <h2>Laboratorium Interaktif</h2>
+        <p>Pasangkan dua unsur dan amati jenis ikatan apa yang terbentuk, atau bandingkan sifat fisik dua senyawa berdasarkan jenis ikatannya.</p>
+      </div>
+      <div class="proc-tabs" id="sim-tabs" role="tablist" aria-label="Pilih simulasi" style="margin-bottom:18px;"></div>
+
+      <div class="sim-shell">
+        <div class="sim-panel">
+          <div class="card" id="sim-controls"></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Pembacaan Instrumen</h4><div class="readout" id="sim-readout"></div></div>
+          <div class="card"><h4 style="font-size:13px; margin-bottom:10px;">Legenda</h4><div class="legend" id="sim-legend"></div></div>
+        </div>
+        <div>
+          <div class="sim-stage" id="sim-stage">
+            <div class="dom-layer" id="dom-layer"></div>
+          </div>
+          <div class="sim-toolbar">
+            <div class="control-row"><button class="btn btn--danger btn--sm" id="sim-reset">↺ Reset</button></div>
+          </div>
+          <p class="sim-note" id="sim-note" style="margin-top:14px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= LKPD ============================= -->
+    <section class="view" id="view-lkpd" data-view="lkpd">
+      <div class="view-head">
+        <div class="eyebrow-plain">04 · LKPD Digital</div>
+        <h2>Lembar Kerja Peserta Didik</h2>
+        <p>Isi setiap bagian berdasarkan pengamatanmu pada simulasi. Data tersimpan otomatis di perangkatmu.</p>
+      </div>
+      <div class="card">
+        <form id="form-lkpd">
+          <div class="lkpd-section">
+            <h3>A. Identitas <em>identitas</em></h3>
+            <div class="field-row">
+              <div class="field"><label>Nama</label><input type="text" id="lkpd-nama" readonly></div>
+              <div class="field"><label>Kelas</label><input type="text" id="lkpd-kelas" readonly></div>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>B. Tujuan <em>tujuan</em></h3>
+            <p style="font-size:13.5px;">Menjelaskan kestabilan unsur, memprediksi jenis ikatan (ion/kovalen/logam) yang terbentuk antarunsur berdasarkan sifat keperiodikan, serta menghubungkan jenis ikatan dengan sifat fisik senyawa.</p>
+          </div>
+          <div class="lkpd-section">
+            <h3>C. Prediksi <em>hipotesis</em></h3>
+            <div class="field">
+              <label for="lkpd-prediksi">Menurutmu, apakah ikatan yang terbentuk antara Kalium (K) dan Oksigen (O) tergolong ikatan ion atau kovalen? Tuliskan prediksimu, lalu buktikan dengan simulator Pembentuk Ikatan.</label>
+              <textarea id="lkpd-prediksi"></textarea>
+            </div>
+          </div>
+          <div class="lkpd-section">
+            <h3>D. Alat &amp; Bahan <em>otomatis</em></h3>
+            <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px;">
+              <li>Simulator Pembentuk Ikatan (diagram Lewis interaktif)</li>
+              <li>Simulator Perbandingan Sifat Senyawa (ionik/kovalen/logam)</li>
+              <li>Panel pembacaan instrumen (jenis ikatan, rumus kimia, sifat fisik)</li>
+            </ul>
+          </div>
+          <div class="lkpd-section">
+            <h3>E. Pengamatan — Pembentuk Ikatan <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-1">
+                <thead><tr><th>Pasangan Unsur</th><th>Jenis Ikatan</th><th>Rumus/Struktur</th><th>Alasan</th></tr></thead>
+                <tbody id="obs-tbody-1"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="1">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>E2. Pengamatan — Perbandingan Sifat <em>data</em></h3>
+            <div class="table-wrap">
+              <table class="data-table obs-table" id="obs-table-2">
+                <thead><tr><th>Senyawa 1</th><th>Senyawa 2</th><th>Perbedaan Utama</th><th>Penyebab (Jenis Ikatan)</th></tr></thead>
+                <tbody id="obs-tbody-2"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm add-row-btn" data-add="2">+ Tambah Baris</button>
+          </div>
+          <div class="lkpd-section">
+            <h3>F. Analisis <em>esai singkat</em></h3>
+            <div class="field"><label for="lkpd-analisis1">1. Mengapa unsur logam cenderung melepas elektron, sedangkan unsur nonlogam cenderung menangkap elektron?</label><textarea id="lkpd-analisis1"></textarea></div>
+            <div class="field"><label for="lkpd-analisis2">2. Jelaskan mengapa senyawa kovalen molekuler umumnya memiliki titik leleh lebih rendah dibanding senyawa ion.</label><textarea id="lkpd-analisis2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>G. Pertanyaan Pemandu <em>diskusi</em></h3>
+            <div class="field"><label for="lkpd-q1">Bagaimana cara menentukan jumlah ikatan kovalen (tunggal/rangkap dua/rangkap tiga) antara dua atom nonlogam?</label><textarea id="lkpd-q1"></textarea></div>
+            <div class="field"><label for="lkpd-q2">Mengapa logam dapat menghantarkan listrik baik dalam keadaan padat maupun cair, sedangkan senyawa ion hanya dapat menghantarkan listrik dalam keadaan leleh atau larutan?</label><textarea id="lkpd-q2"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>H. Kesimpulan <em>ringkasan</em></h3>
+            <div class="field"><label for="lkpd-kesimpulan">Tuliskan kesimpulan akhir praktikummu (kaitkan dengan tujuan pembelajaran).</label><textarea id="lkpd-kesimpulan" style="min-height:100px;"></textarea></div>
+          </div>
+          <div class="lkpd-section">
+            <h3>I. Refleksi <em>metakognisi</em></h3>
+            <div class="field"><label for="lkpd-refleksi">Bagian mana dari materi ini yang paling menantang bagimu, dan strategi apa yang kamu pakai untuk memahaminya?</label><textarea id="lkpd-refleksi"></textarea></div>
+          </div>
+          <div class="lkpd-toolbar">
+            <button type="button" class="btn btn--primary btn--sm" id="lkpd-save">💾 Simpan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="lkpd-print">🖨 Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn--danger btn--sm" id="lkpd-reset">↺ Reset LKPD</button>
+            <span class="save-status" id="lkpd-status">Belum disimpan</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================= EVALUASI ============================= -->
+    <section class="view" id="view-evaluasi" data-view="evaluasi">
+      <div class="view-head">
+        <div class="eyebrow-plain">05 · Evaluasi</div>
+        <h2>Uji Pemahaman</h2>
+        <p>18 soal (LOTS–HOTS) untuk mengukur pemahamanmu tentang kestabilan unsur dan jenis-jenis ikatan kimia.</p>
+      </div>
+      <div id="quiz-intro" class="card">
+        <h3 style="font-size:17px;">Sebelum mulai</h3>
+        <ul style="font-size:13.5px; color:var(--paper-300); padding-left:20px; line-height:1.8;">
+          <li>18 soal: pilihan ganda, pilihan ganda kompleks (checkbox), isian singkat, dan analisis singkat.</li>
+          <li>Beberapa soal membahas pengecualian aturan oktet dan sifat fisik senyawa.</li>
+          <li>Pembahasan setiap soal akan muncul setelah kamu menjawab.</li>
+        </ul>
+        <button class="btn btn--primary" id="quiz-begin" style="margin-top:8px;">Mulai Evaluasi</button>
+      </div>
+      <div id="quiz-body" hidden>
+        <div class="quiz-progress">
+          <div class="progress-track"><div class="progress-track__fill" id="quiz-progress-fill"></div></div>
+          <span class="quiz-meta" id="quiz-progress-label">0 / 18 dijawab</span>
+        </div>
+        <div id="quiz-questions"></div>
+        <button class="btn btn--primary btn--block" id="quiz-submit">Kumpulkan &amp; Lihat Skor</button>
+      </div>
+      <div id="quiz-result" hidden>
+        <div class="card result-hero">
+          <div style="font-size:13px; color:var(--paper-500); letter-spacing:.4px; text-transform:uppercase;">Skor Akhir</div>
+          <div class="result-score" id="result-score">0</div>
+          <p id="result-desc" style="max-width:440px;margin:10px auto 0;"></p>
+          <div class="badge-row" id="badge-row"></div>
+          <div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn--ghost btn--sm" id="quiz-review">Lihat Pembahasan</button>
+            <button class="btn btn--danger btn--sm" id="quiz-retry">Ulangi Evaluasi</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= PROFIL PENGEMBANG ============================= -->
+    <section class="view" id="view-profil" data-view="profil">
+      <div class="view-head"><div class="eyebrow-plain">06 · Profil Pengembang</div><h2>Tentang Pengembang</h2></div>
+      <div class="card dev-card">
+        <div class="dev-photo" id="dev-photo"></div>
+        <div>
+          <h3 style="font-size:22px;">S.D. Sabirin, S.Si., Gr.</h3>
+          <p style="color:var(--brass-400); font-weight:600; margin-bottom:14px;">Guru Kimia &amp; Pengembang Media Pembelajaran Digital</p>
+          <p style="font-size:14px;">Mengajar Kimia di SMA Islam Al Azhar 5 Cirebon dan aktif membimbing siswa dalam kompetisi riset (LPIR, OSN, COSMII, OPSI, OSA). Saat ini menempuh studi Magister Kimia di Universitas Padjadjaran melalui program Beasiswa Guru SMUP. Virtual lab ini dikembangkan sebagai bagian dari upaya menghadirkan pembelajaran Kimia yang kontekstual, interaktif, dan berbasis bukti eksperimen.</p>
+          <div class="dev-competency">
+            <span class="chip">Pendidikan Kimia</span>
+            <span class="chip">Pengembangan Media Pembelajaran</span>
+            <span class="chip">Pembimbingan Riset Siswa</span>
+            <span class="chip">Deep Learning Pedagogy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="appfoot">Virtual Lab Kimia — Ikatan Kimia · Dikembangkan oleh S.D. Sabirin, S.Si., Gr. · Referensi: LibreTexts Chemistry &amp; IUPAC</footer>
+</div>
+
+<button class="assistant-fab" id="assistant-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="assistant-panel" aria-label="Buka asisten bantuan">?</button>
+<div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Asisten Bantuan" hidden>
+  <div class="assistant-head"><h4>Asisten Lab (berbasis aturan)</h4><button class="icon-btn" id="assistant-close" aria-label="Tutup asisten" style="width:28px;height:28px;">✕</button></div>
+  <div class="assistant-body" id="assistant-body"></div>
+  <div class="assistant-chips" id="assistant-chips"></div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   1. ELEMENTS DATA — Z=1..20 (golongan utama, untuk demo ikatan)
+   ========================================================================= */
+const ELEMENTS = [
+  {z:1,sym:"H",name:"Hidrogen",group:1,period:1,category:"nonlogam",en:2.20},
+  {z:2,sym:"He",name:"Helium",group:18,period:1,category:"gas-mulia",en:null},
+  {z:3,sym:"Li",name:"Litium",group:1,period:2,category:"alkali",en:0.98},
+  {z:4,sym:"Be",name:"Berilium",group:2,period:2,category:"alkali-tanah",en:1.57},
+  {z:5,sym:"B",name:"Boron",group:13,period:2,category:"metaloid",en:2.04},
+  {z:6,sym:"C",name:"Karbon",group:14,period:2,category:"nonlogam",en:2.55},
+  {z:7,sym:"N",name:"Nitrogen",group:15,period:2,category:"nonlogam",en:3.04},
+  {z:8,sym:"O",name:"Oksigen",group:16,period:2,category:"nonlogam",en:3.44},
+  {z:9,sym:"F",name:"Fluor",group:17,period:2,category:"halogen",en:3.98},
+  {z:10,sym:"Ne",name:"Neon",group:18,period:2,category:"gas-mulia",en:null},
+  {z:11,sym:"Na",name:"Natrium",group:1,period:3,category:"alkali",en:0.93},
+  {z:12,sym:"Mg",name:"Magnesium",group:2,period:3,category:"alkali-tanah",en:1.31},
+  {z:13,sym:"Al",name:"Aluminium",group:13,period:3,category:"logam",en:1.61},
+  {z:14,sym:"Si",name:"Silikon",group:14,period:3,category:"metaloid",en:1.90},
+  {z:15,sym:"P",name:"Fosforus",group:15,period:3,category:"nonlogam",en:2.19},
+  {z:16,sym:"S",name:"Belerang",group:16,period:3,category:"nonlogam",en:2.58},
+  {z:17,sym:"Cl",name:"Klorin",group:17,period:3,category:"halogen",en:3.16},
+  {z:18,sym:"Ar",name:"Argon",group:18,period:3,category:"gas-mulia",en:null},
+  {z:19,sym:"K",name:"Kalium",group:1,period:4,category:"alkali",en:0.82},
+  {z:20,sym:"Ca",name:"Kalsium",group:2,period:4,category:"alkali-tanah",en:1.00}
+];
+function elByZ(z){ return ELEMENTS[z-1]; }
+function valenceOf(el){
+  if(el.group===1) return 1;
+  if(el.group===2) return 2;
+  if(el.group>=13) return el.group-10;
+  return 0;
+}
+function octetTargetOf(el){ return el.z<=2 ? 2 : 8; }
+function isLogam(el){ return ["alkali","alkali-tanah","logam"].includes(el.category); }
+function isInert(el){ return el.category==="gas-mulia"; }
+function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); return b===0?a:gcd(b,a%b); }
+
+/* =========================================================================
+   2. LAB_DATA
+   ========================================================================= */
+const LAB_DATA = {
+  objectives:[
+    "Menjelaskan kecenderungan atom mencapai kestabilan melalui aturan oktet dan duplet.",
+    "Membedakan proses pembentukan ikatan ion, ikatan kovalen, dan ikatan logam.",
+    "Memprediksi jenis ikatan yang terbentuk antara dua unsur berdasarkan kategori logam/nonlogam dan keelektronegatifannya.",
+    "Menghubungkan jenis ikatan kimia dengan sifat fisik senyawa (titik leleh, daya hantar listrik, kekerasan)."
+  ],
+
+  theorySections:[
+    {
+      id:"kestabilan-oktet", title:"1. Kestabilan Unsur dan Aturan Oktet/Duplet",
+      body:[
+        "Gas mulia (golongan 18) dikenal sangat stabil dan hampir tidak pernah bereaksi, karena kulit terluarnya sudah terisi penuh — 8 elektron (oktet) untuk sebagian besar gas mulia, atau 2 elektron (duplet) khusus untuk Helium.",
+        "Atom-atom unsur lain \"berusaha\" meniru kestabilan ini dengan melepas, menangkap, atau memakai bersama elektron valensinya hingga mencapai susunan elektron seperti gas mulia terdekat. Kecenderungan inilah yang mendasari seluruh proses pembentukan ikatan kimia.",
+        "Susunan elektron valensi suatu atom dapat digambarkan secara sederhana dengan struktur Lewis (lambang titik elektron): lambang unsur dikelilingi titik-titik yang mewakili elektron valensinya."
+      ],
+      list:[
+        "Aturan oktet: atom cenderung stabil dengan 8 elektron valensi",
+        "Aturan duplet (pengecualian): khusus H dan He, stabil dengan 2 elektron valensi",
+        "Struktur Lewis menggambarkan elektron valensi sebagai titik-titik di sekeliling lambang unsur"
+      ],
+      example:"Neon (Ne) memiliki 8 elektron valensi (2,8) sehingga sudah stabil dan tidak reaktif. Natrium (Na) memiliki 1 elektron valensi (2,8,1) dan cenderung melepaskan 1 elektron itu agar susunannya menjadi 2,8 — identik dengan Neon.",
+      limitation:"Aturan oktet adalah pedoman umum yang sangat berguna, namun memiliki pengecualian — misalnya Boron pada BF₃ yang stabil hanya dengan 6 elektron valensi (oktet tak lengkap), dibahas lebih lanjut pada bagian ikatan kovalen."
+    },
+    {
+      id:"ikatan-ion", title:"2. Ikatan Ion",
+      body:[
+        "Ikatan ion terbentuk melalui serah terima elektron antara atom logam (yang mudah melepas elektron, energi ionisasi rendah) dan atom nonlogam (yang mudah menangkap elektron, keelektronegatifan tinggi).",
+        "Atom logam melepaskan elektron valensinya membentuk ion positif (kation), sedangkan atom nonlogam menangkap elektron tersebut membentuk ion negatif (anion). Kedua ion yang berlawanan muatan ini kemudian saling tarik-menarik melalui gaya elektrostatik, membentuk kisi kristal ion yang tersusun rapi dan berulang.",
+        "Perbandingan jumlah kation dan anion dalam rumus kimia senyawa ion ditentukan oleh muatan masing-masing ion, sedemikian rupa sehingga total muatan senyawa netral (metode kris-kras)."
+      ],
+      example:"Natrium (Na, melepas 1 elektron → Na⁺) bereaksi dengan Klorin (Cl, menangkap 1 elektron → Cl⁻) membentuk NaCl. Magnesium (Mg, melepas 2 elektron → Mg²⁺) bereaksi dengan Klorin (Cl⁻) membentuk MgCl₂, karena dibutuhkan 2 ion Cl⁻ untuk menyeimbangkan muatan 1 ion Mg²⁺.",
+      limitation:"Senyawa ion tidak tersusun atas \"molekul\" tunggal seperti senyawa kovalen, melainkan kisi kristal raksasa dengan jutaan ion — sehingga rumus kimianya (seperti NaCl) menyatakan perbandingan ion tersederhana, bukan satu unit molekul yang berdiri sendiri."
+    },
+    {
+      id:"ikatan-kovalen", title:"3. Ikatan Kovalen",
+      body:[
+        "Ikatan kovalen terbentuk melalui pemakaian bersama pasangan elektron antara dua atom nonlogam. Kedua atom sama-sama membutuhkan elektron tambahan untuk mencapai kestabilan, sehingga mereka \"berbagi\" elektron valensinya alih-alih saling memberikan.",
+        "Jumlah pasangan elektron yang dipakai bersama menentukan jenis ikatan kovalen: ikatan tunggal (1 pasang elektron, dilambangkan satu garis), ikatan rangkap dua (2 pasang elektron, dua garis), atau ikatan rangkap tiga (3 pasang elektron, tiga garis).",
+        "Ada pula ikatan kovalen koordinasi (kovalen datif), yaitu ikatan kovalen di mana pasangan elektron yang dipakai bersama hanya berasal dari salah satu atom saja, sedangkan atom pasangannya hanya menyediakan \"ruang kosong\" (orbital kosong) untuk ditempati."
+      ],
+      list:[
+        "Ikatan tunggal: 1 pasang elektron bersama (contoh: H–H pada H₂)",
+        "Ikatan rangkap dua: 2 pasang elektron bersama (contoh: O=O pada O₂)",
+        "Ikatan rangkap tiga: 3 pasang elektron bersama (contoh: N≡N pada N₂)",
+        "Ikatan kovalen koordinasi: pasangan elektron berasal dari satu atom saja (contoh: ion NH₄⁺, senyawa NH₃BF₃)"
+      ],
+      example:"Pada ion amonium (NH₄⁺), tiga ikatan N–H terbentuk secara kovalen biasa, sedangkan satu ikatan N–H yang keempat terbentuk secara kovalen koordinasi — pasangan elektron bebas nitrogen dipakai bersama dengan ion H⁺ yang orbitalnya kosong.",
+      limitation:"Setelah terbentuk, ikatan kovalen koordinasi memiliki kekuatan yang identik dengan ikatan kovalen biasa — perbedaannya hanya terletak pada asal-usul pasangan elektronnya, bukan pada kekuatan ikatan yang dihasilkan."
+    },
+    {
+      id:"kepolaran", title:"4. Kepolaran Ikatan Kovalen",
+      body:[
+        "Tidak semua ikatan kovalen membagi elektronnya secara adil. Jika kedua atom yang berikatan memiliki keelektronegatifan yang berbeda cukup besar, pasangan elektron akan lebih tertarik ke atom yang lebih elektronegatif — menghasilkan ikatan kovalen polar dengan kutub muatan parsial positif (δ+) dan negatif (δ−).",
+        "Jika kedua atom memiliki keelektronegatifan sama atau hampir sama (misalnya sesama atom unsur yang sama), pasangan elektron akan dibagi rata, menghasilkan ikatan kovalen nonpolar."
+      ],
+      example:"Ikatan H–Cl pada HCl bersifat polar (ΔEN besar: Cl jauh lebih elektronegatif dari H), sedangkan ikatan Cl–Cl pada Cl₂ bersifat nonpolar (ΔEN = 0, sesama atom Cl). Menariknya, molekul CO₂ memiliki ikatan C=O yang polar, namun molekul CO₂ secara keseluruhan bersifat nonpolar karena bentuknya yang linear dan simetris membuat kedua kutub ikatan saling meniadakan.",
+      limitation:"Kepolaran ikatan (sifat lokal sepasang atom) dan kepolaran molekul (sifat keseluruhan) adalah dua hal berbeda — molekul dengan ikatan polar belum tentu bersifat polar secara keseluruhan, bergantung pada bentuk molekulnya, topik yang akan dibahas lebih lanjut pada subtopik Bentuk Molekul."
+    },
+    {
+      id:"ikatan-logam", title:"5. Ikatan Logam",
+      body:[
+        "Ikatan logam terjadi antarsesama atom logam. Karena atom logam sama-sama cenderung melepas elektron (bukan menangkapnya), elektron valensi dari seluruh atom logam tidak terikat pada satu atom tertentu, melainkan bergerak bebas mengelilingi ion-ion positif yang tersusun rapat — model ini disebut \"lautan elektron\" (electron sea model).",
+        "Ion-ion positif logam tersusun dalam kisi kristal yang dikelilingi oleh lautan elektron yang terdelokalisasi, dan gaya tarik-menarik antara ion positif dan lautan elektron inilah yang mengikat struktur logam menjadi satu kesatuan yang kokoh."
+      ],
+      example:"Model lautan elektron menjelaskan mengapa logam dapat menghantarkan listrik dengan baik (elektron bebas bergerak membawa muatan), berkilau (elektron bebas memantulkan cahaya), dan dapat ditempa tanpa patah (lapisan ion dapat bergeser tanpa memutus ikatan dengan lautan elektron di sekitarnya).",
+      limitation:"Kombinasi dua logam berbeda dalam kehidupan nyata umumnya membentuk paduan logam (aloi) dengan struktur yang jauh lebih kompleks daripada logam murni; model lautan elektron sederhana di sini hanya menggambarkan prinsip dasarnya."
+    },
+    {
+      id:"sifat-fisik", title:"6. Hubungan Jenis Ikatan dengan Sifat Fisik Senyawa",
+      body:[
+        "Jenis ikatan yang menyusun suatu zat sangat menentukan sifat fisiknya — mulai dari titik leleh, daya hantar listrik, hingga tingkat kekerasannya.",
+        "Senyawa ion umumnya berwujud padat pada suhu ruang, memiliki titik leleh tinggi (karena gaya elektrostatik antarion sangat kuat), bersifat keras namun rapuh (getas), serta hanya dapat menghantarkan listrik dalam keadaan leleh atau larutan — karena pada keadaan padat, ion-ionnya terkunci rapat dalam kisi kristal dan tidak dapat bergerak bebas.",
+        "Senyawa kovalen molekuler umumnya memiliki titik leleh dan titik didih yang jauh lebih rendah (karena gaya antarmolekulnya relatif lemah dibanding ikatan ion/logam), dan sebagian besar tidak menghantarkan listrik — kecuali senyawa tertentu (seperti HCl atau NH₃) yang terionisasi ketika dilarutkan dalam air.",
+        "Logam bersifat khas: dapat menghantarkan listrik dengan baik baik dalam keadaan padat maupun cair (berbeda dari senyawa ion), berkilau, serta dapat ditempa dan direnggangkan tanpa mudah patah."
+      ],
+      example:"Perbedaan paling mencolok terletak pada daya hantar listrik dalam keadaan padat: batangan tembaga (logam) dapat langsung menghantarkan listrik, sedangkan kristal garam dapur/NaCl (ion) sama sekali tidak menghantarkan listrik sebelum dilelehkan atau dilarutkan dalam air.",
+      limitation:"Generalisasi ini berlaku untuk sebagian besar senyawa sederhana yang dipelajari di tingkat SMA; beberapa material lanjutan (seperti kristal kovalen raksasa contohnya intan dan grafit) memiliki sifat fisik yang menyimpang dari pola umum senyawa kovalen molekuler biasa."
+    }
+  ],
+
+  terms:[
+    {t:"Aturan oktet", d:"Kecenderungan atom mencapai kestabilan dengan 8 elektron valensi, meniru susunan elektron gas mulia."},
+    {t:"Aturan duplet", d:"Pengecualian aturan oktet khusus untuk H dan He, stabil dengan 2 elektron valensi."},
+    {t:"Struktur Lewis", d:"Representasi elektron valensi suatu atom sebagai titik-titik di sekeliling lambang unsur."},
+    {t:"Ikatan ion", d:"Ikatan yang terbentuk melalui serah terima elektron antara logam dan nonlogam."},
+    {t:"Ikatan kovalen", d:"Ikatan yang terbentuk melalui pemakaian bersama pasangan elektron antarsesama nonlogam."},
+    {t:"Ikatan kovalen koordinasi", d:"Ikatan kovalen dengan pasangan elektron yang berasal hanya dari salah satu atom."},
+    {t:"Kepolaran", d:"Ketimpangan distribusi elektron dalam suatu ikatan atau molekul akibat perbedaan keelektronegatifan."},
+    {t:"Ikatan logam", d:"Ikatan antarsesama atom logam melalui model lautan elektron yang terdelokalisasi."},
+    {t:"Kation", d:"Ion bermuatan positif, hasil pelepasan elektron oleh atom logam."},
+    {t:"Anion", d:"Ion bermuatan negatif, hasil penangkapan elektron oleh atom nonlogam."}
+  ],
+
+  misconceptions:[
+    {wrong:"Semua senyawa yang mengandung unsur logam pasti berikatan ion.", right:"Ikatan ion terbentuk ketika ada perbedaan besar antara logam (melepas elektron) dan nonlogam (menangkap elektron) — bukan sekadar karena mengandung logam. Dua logam yang berikatan justru membentuk ikatan logam, bukan ikatan ion."},
+    {wrong:"Ikatan kovalen koordinasi lebih lemah dibanding ikatan kovalen biasa.", right:"Setelah terbentuk, ikatan kovalen koordinasi sama kuatnya dengan ikatan kovalen biasa; perbedaannya hanya pada asal pasangan elektron, bukan pada kekuatan ikatannya."},
+    {wrong:"Molekul dengan ikatan kovalen polar pasti bersifat polar secara keseluruhan.", right:"Kepolaran molekul bergantung pula pada bentuk molekulnya. CO₂ memiliki ikatan polar C=O, namun molekulnya nonpolar karena bentuknya linear dan simetris sehingga kutub-kutubnya saling meniadakan."},
+    {wrong:"Senyawa ion dalam wujud padat dapat menghantarkan listrik, sama seperti logam.", right:"Senyawa ion padat TIDAK dapat menghantarkan listrik karena ion-ionnya terkunci pada posisi tetap dalam kisi kristal. Senyawa ion hanya menghantarkan listrik dalam keadaan leleh atau larutan, ketika ion-ionnya bebas bergerak."}
+  ],
+
+  summary:"Semua ikatan kimia berakar dari kecenderungan atom mencapai kestabilan elektron seperti gas mulia (aturan oktet/duplet). Cara mencapainya berbeda-beda: logam dan nonlogam saling serah-terima elektron membentuk ikatan ion; sesama nonlogam memakai bersama pasangan elektron membentuk ikatan kovalen (tunggal, rangkap dua, rangkap tiga, atau koordinasi); sesama logam berbagi lautan elektron delokalisasi membentuk ikatan logam. Ketiga jenis ikatan ini pada akhirnya menentukan sifat fisik zat yang terbentuk — mulai dari titik leleh, kekerasan, hingga daya hantar listriknya.",
+
+  procedures:{
+    builder:{
+      label:"Pembentuk Ikatan",
+      steps:[
+        {title:"Pilih dua unsur yang ingin dianalisis", instruction:"Gunakan dua dropdown untuk memilih Unsur A dan Unsur B.", tools:"Dropdown pemilihan unsur (Z=1–20)", initial:"Belum ada unsur dipilih", action:"Pilih Natrium (Na) sebagai Unsur A dan Klorin (Cl) sebagai Unsur B.", observe:"Sistem menampilkan kategori masing-masing unsur (logam/nonlogam) pada panel pembacaan instrumen."},
+        {title:"Amati prediksi jenis ikatan", instruction:"Perhatikan label jenis ikatan yang diprediksi sistem.", tools:"Panel hasil prediksi", initial:"Dua unsur telah dipilih", action:"Baca label besar di bagian atas kanvas simulasi.", observe:"Label \"Ikatan Ion\" muncul karena kombinasi logam (Na) dan nonlogam (Cl)."},
+        {title:"Amati diagram serah-terima elektron", instruction:"Perhatikan diagram titik elektron dan arah perpindahannya.", tools:"Diagram Lewis interaktif", initial:"Jenis ikatan sudah diprediksi", action:"Amati posisi titik-titik elektron pada Na dan Cl serta panah perpindahannya.", observe:"Satu elektron valensi Na berpindah ke Cl, menghasilkan ion Na⁺ dan Cl⁻ serta rumus kimia NaCl."},
+        {title:"Uji pasangan sesama nonlogam dan sesama logam", instruction:"Ganti pilihan unsur untuk melihat jenis ikatan lain.", tools:"Dropdown pemilihan unsur", initial:"Pasangan ion telah diamati", action:"Coba pasangan Oksigen (O) dengan Oksigen (O), lalu coba Natrium (Na) dengan Magnesium (Mg).", observe:"Pasangan O–O menghasilkan ikatan kovalen rangkap dua; pasangan Na–Mg menghasilkan penjelasan ikatan logam (lautan elektron)."}
+      ]
+    },
+    compare:{
+      label:"Perbandingan Sifat Senyawa",
+      steps:[
+        {title:"Pilih dua senyawa untuk dibandingkan", instruction:"Pilih Senyawa 1 dan Senyawa 2 dari daftar tersedia.", tools:"Dropdown pemilihan senyawa", initial:"Belum ada senyawa dipilih", action:"Pilih NaCl (ionik) sebagai Senyawa 1 dan Tembaga/Cu (logam) sebagai Senyawa 2.", observe:"Dua kartu sifat senyawa tampil berdampingan, masing-masing dengan label jenis ikatannya."},
+        {title:"Amati kartu sifat masing-masing senyawa", instruction:"Bandingkan titik leleh, daya hantar listrik, dan kekerasan kedua senyawa.", tools:"Kartu sifat senyawa", initial:"Dua senyawa telah dipilih", action:"Baca seluruh baris pada kedua kartu sifat.", observe:"NaCl hanya menghantarkan listrik saat leleh/larutan, sedangkan Cu menghantarkan listrik bahkan dalam keadaan padat."},
+        {title:"Baca penjelasan otomatis", instruction:"Perhatikan paragraf penjelasan di bawah kedua kartu.", tools:"Panel penjelasan (verdict)", initial:"Kartu sifat telah teramati", action:"Baca paragraf penjelasan perbedaan utama kedua senyawa.", observe:"Sistem menjelaskan bahwa perbedaan daya hantar listrik padatan disebabkan oleh perbedaan jenis ikatan (ion vs logam)."},
+        {title:"Ulangi dengan pasangan senyawa sejenis", instruction:"Pilih dua senyawa dengan jenis ikatan yang sama.", tools:"Dropdown pemilihan senyawa", initial:"Perbandingan lintas jenis telah diamati", action:"Ganti pilihan menjadi NaCl dan MgO (sama-sama ionik).", observe:"Penjelasan otomatis berubah menjadi penjelasan kemiripan sifat karena kedua senyawa sama-sama berikatan ion."}
+      ]
+    }
+  },
+
+  simulationNotes:{
+    builder:"Simulator ini menggunakan model diatomik sederhana (2 atom) dan dibatasi pada unsur golongan utama Z=1–20. Prediksi ionik/kovalen/logam didasarkan pada kategori logam-nonlogam serta selisih keelektronegatifan (ΔEN); pada beberapa kombinasi (misalnya melibatkan Boron), hasilnya dapat menunjukkan pengecualian aturan oktet seperti pada senyawa nyata BF₃.",
+    compare:"Sifat fisik yang ditampilkan (titik leleh, daya hantar listrik, kekerasan) adalah kecenderungan umum berdasarkan jenis ikatan, disederhanakan dalam kategori kualitatif (bukan nilai numerik presisi)."
+  },
+
+  evaluation:[
+    {type:"mc", level:"lots", stem:"Aturan yang menyatakan atom cenderung stabil dengan 8 elektron valensi disebut aturan …", options:["Duplet","Oktet","Triplet","Kuartet"], answer:1, explain:"Aturan oktet menyatakan atom cenderung stabil dengan 8 elektron valensi, meniru susunan elektron gas mulia."},
+    {type:"mc", level:"lots", stem:"Unsur H dan He mencapai kestabilan dengan berapa elektron valensi (pengecualian aturan oktet)?", options:["2 (duplet)","4","6","8 (oktet)"], answer:0, explain:"H dan He mengikuti aturan duplet, stabil dengan 2 elektron valensi karena hanya memiliki 1 kulit elektron."},
+    {type:"mc", level:"lots", stem:"Ikatan yang terbentuk akibat serah terima elektron antara logam dan nonlogam disebut ikatan …", options:["Kovalen","Logam","Ion","Hidrogen"], answer:2, explain:"Ikatan ion terbentuk melalui serah terima elektron antara logam (melepas) dan nonlogam (menangkap)."},
+    {type:"mc", level:"lots", stem:"Ikatan yang terbentuk akibat pemakaian bersama pasangan elektron antarsesama nonlogam disebut ikatan …", options:["Ion","Kovalen","Logam","Van der Waals"], answer:1, explain:"Ikatan kovalen terbentuk melalui pemakaian bersama pasangan elektron antarsesama nonlogam."},
+    {type:"mc", level:"lots", stem:"Model yang menggambarkan elektron valensi logam bergerak bebas di antara ion-ion positif disebut model …", options:["Awan elektron kuantum","Lautan elektron (electron sea)","Orbital hibrida","Kisi kristal ion"], answer:1, explain:"Model lautan elektron (electron sea model) menggambarkan elektron valensi logam yang bergerak bebas dan terdelokalisasi."},
+    {type:"mc", level:"mots", stem:"Natrium (Na, golongan IA) akan mencapai kestabilan dengan cara …", options:["Melepaskan 1 elektron membentuk Na⁺","Menangkap 1 elektron membentuk Na⁻","Melepaskan 7 elektron","Memakai bersama elektronnya"], answer:0, explain:"Na memiliki 1 elektron valensi; cara tercepat mencapai kestabilan adalah melepaskan 1 elektron itu, membentuk Na⁺."},
+    {type:"mc", level:"mots", stem:"Klorin (Cl, golongan VIIA) akan mencapai kestabilan dengan cara …", options:["Melepaskan 7 elektron","Menangkap 1 elektron membentuk Cl⁻","Melepaskan 1 elektron membentuk Cl⁺","Memakai bersama 7 elektron sekaligus"], answer:1, explain:"Cl memiliki 7 elektron valensi; cara tercepat mencapai oktet adalah menangkap 1 elektron, membentuk Cl⁻."},
+    {type:"mc", level:"mots", stem:"Rumus kimia senyawa ion yang terbentuk antara ion Mg²⁺ dan ion Cl⁻ adalah …", options:["MgCl", "MgCl₂", "Mg₂Cl", "Mg₂Cl₃"], answer:1, explain:"Muatan +2 pada Mg²⁺ memerlukan 2 ion Cl⁻ (masing-masing bermuatan −1) agar total muatan netral, menghasilkan MgCl₂."},
+    {type:"mc", level:"mots", stem:"Molekul N₂ (gas nitrogen) memiliki jenis ikatan kovalen …", options:["Tunggal","Rangkap dua","Rangkap tiga","Koordinasi"], answer:2, explain:"Setiap atom N membutuhkan 3 elektron tambahan untuk mencapai oktet, sehingga terbentuk ikatan rangkap tiga (3 pasang elektron bersama)."},
+    {type:"mc", level:"mots", stem:"Senyawa ion dalam wujud padat tidak dapat menghantarkan listrik karena …", options:["Tidak memiliki ion sama sekali","Ion-ionnya terkunci pada posisi tetap dalam kisi kristal sehingga tidak dapat bergerak bebas","Elektronnya semua sudah lepas ke udara","Senyawa ion selalu bersifat isolator mutlak dalam kondisi apa pun"], answer:1, explain:"Pada wujud padat, ion-ion penyusun senyawa ion terkunci pada posisi tetap dalam kisi kristal, sehingga tidak bisa bergerak membawa muatan listrik."},
+    {type:"mc", level:"mots", stem:"Logam dapat ditempa (malleable) tanpa mudah patah karena …", options:["Ion-ion positifnya dapat bergeser tanpa memutus ikatan dengan lautan elektron di sekitarnya","Logam tidak memiliki ikatan sama sekali","Elektron logam selalu diam di satu tempat","Logam tersusun dari molekul-molekul kecil yang lepas satu sama lain"], answer:0, explain:"Karena lautan elektron mengelilingi ion-ion positif secara merata, lapisan ion dapat bergeser posisi tanpa memutus ikatan logamnya, sehingga logam tidak mudah patah saat ditempa."},
+    {type:"mc", level:"hots", stem:"Molekul CO₂ memiliki ikatan C=O yang polar, namun molekul CO₂ secara keseluruhan bersifat nonpolar. Apa penyebabnya?", options:["Bentuk molekul CO₂ yang linear dan simetris menyebabkan kedua momen dipol ikatan saling meniadakan","CO₂ sebenarnya tidak memiliki ikatan kovalen sama sekali","Karbon dan oksigen memiliki keelektronegatifan yang persis sama","CO₂ adalah senyawa ion, bukan kovalen"], answer:0, explain:"Meski tiap ikatan C=O bersifat polar, bentuk molekul CO₂ yang linear dan simetris membuat kedua momen dipol ikatan mengarah berlawanan dan saling meniadakan, sehingga molekul secara keseluruhan nonpolar."},
+    {type:"mc", level:"hots", stem:"Mengapa senyawa ion umumnya bersifat keras namun rapuh (getas)?", options:["Karena ion-ionnya sangat ringan","Karena pergeseran kecil posisi kisi menyebabkan ion sejenis saling berhadapan dan tolak-menolak, memecah kristal","Karena senyawa ion tidak memiliki gaya tarik-menarik sama sekali","Karena senyawa ion selalu berwujud gas"], answer:1, explain:"Berbeda dari logam, pada senyawa ion pergeseran kecil posisi kisi kristal menyebabkan ion-ion bermuatan sejenis saling berhadapan dan tolak-menolak, sehingga kristal mudah pecah (getas) meski keras."},
+    {type:"mc", level:"hots", stem:"Larutan HCl dalam air dapat menghantarkan listrik, padahal gas HCl murni tidak. Apa penjelasan yang tepat?", options:["Dalam air, molekul HCl yang berikatan kovalen polar terionisasi menjadi ion H⁺ dan Cl⁻ yang dapat bergerak bebas menghantarkan listrik","Air mengubah HCl menjadi logam","Gas HCl murni sebenarnya juga menghantarkan listrik dengan baik","Molekul air menambahkan elektron bebas ke dalam HCl"], answer:0, explain:"Ikatan H–Cl yang polar memudahkan molekul HCl terionisasi (memisah menjadi ion H⁺ dan Cl⁻) ketika dilarutkan dalam air, dan ion-ion bebas inilah yang menghantarkan listrik pada larutannya."},
+    {type:"checkbox", level:"mots", stem:"Manakah pernyataan berikut yang BENAR tentang ikatan kovalen koordinasi? (Pilih semua yang sesuai)", options:["Pasangan elektron yang dipakai bersama berasal hanya dari salah satu atom","Setelah terbentuk, kekuatannya identik dengan ikatan kovalen biasa","Hanya dapat terbentuk antara dua atom logam","Contohnya dapat ditemukan pada ion NH₄⁺"], answerSet:[0,1,3], explain:"Pernyataan pertama, kedua, dan keempat benar. Pernyataan ketiga keliru — ikatan kovalen koordinasi terjadi antarnonlogam (atau ion), bukan antara dua atom logam."},
+    {type:"checkbox", level:"mots", stem:"Manakah pasangan unsur berikut yang akan cenderung membentuk IKATAN ION? (Pilih semua yang sesuai)", options:["Natrium (Na) dan Klorin (Cl)","Kalium (K) dan Oksigen (O)","Karbon (C) dan Oksigen (O)","Nitrogen (N) dan Hidrogen (H)"], answerSet:[0,1], explain:"Na–Cl dan K–O adalah pasangan logam-nonlogam sehingga cenderung ionik. C–O dan N–H adalah pasangan sesama nonlogam sehingga cenderung kovalen, bukan ion."},
+    {type:"short", level:"lots", stem:"Isilah titik-titik: Susunan tiga dimensi berulang tempat ion-ion positif dan negatif tersusun rapi pada senyawa ion disebut ____________.", accepted:["kisi kristal","kisi ion","kisi kristal ion"], explain:"Jawaban yang tepat adalah kisi kristal (kisi ion)."},
+    {type:"essay", level:"hots", stem:"Jelaskan mengapa logam dapat menghantarkan listrik baik dalam keadaan padat maupun cair, sedangkan senyawa ion hanya dapat menghantarkan listrik dalam keadaan leleh atau larutan, tidak dalam keadaan padat. (Jawaban akan direkam untuk penilaian guru)", explain:"Kunci jawaban: pada logam, elektron valensi terdelokalisasi bebas bergerak ke seluruh bagian struktur (lautan elektron) baik dalam keadaan padat maupun cair, sehingga selalu dapat menghantarkan listrik. Pada senyawa ion, muatan listrik dibawa oleh ion-ion itu sendiri (bukan elektron bebas); dalam keadaan padat, ion-ion tersebut terkunci pada posisi tetap dalam kisi kristal sehingga tidak bisa bergerak, dan baru dapat bergerak bebas menghantarkan listrik setelah dilelehkan atau dilarutkan."}
+  ]
+};
+
+/* =========================================================================
+   3. STATE
+   ========================================================================= */
+const STORAGE_KEY = "vlab_ikatan_kimia_v1";
+const State = {
+  identity:{ nama:"", kelas:"", id:"" },
+  soundOn:true, reduceMotion:false,
+  activeView:"teori", unlockedViews:["teori"],
+  procedure:{ active:"builder", done:{ builder:[], compare:[] } },
+  simulation:{ active:"builder" },
+  lkpd:{}, quiz:{ answers:{}, submitted:false }
+};
+function loadState(){ try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) Object.assign(State, JSON.parse(raw)); }catch(e){} }
+function persistState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(State)); }catch(e){} }
+
+/* =========================================================================
+   4. AUDIO
+   ========================================================================= */
+const AudioFX = (() => {
+  let ctx = null;
+  function ensureCtx(){ if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx=null; } } return ctx; }
+  function tone(freq,dur,type,gainVal){
+    if(!State.soundOn) return;
+    const c = ensureCtx(); if(!c) return;
+    try{
+      const osc=c.createOscillator(), gain=c.createGain();
+      osc.type=type||"sine"; osc.frequency.value=freq; gain.gain.value=gainVal||0.05;
+      osc.connect(gain); gain.connect(c.destination);
+      const now=c.currentTime;
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+      osc.start(now); osc.stop(now+dur);
+    }catch(e){}
+  }
+  return {
+    click:()=>tone(720,0.06,"square",0.035),
+    success:()=>{ tone(520,0.12,"sine",0.06); setTimeout(()=>tone(780,0.16,"sine",0.06),90); },
+    error:()=>tone(160,0.22,"sawtooth",0.05),
+    reset:()=>tone(300,0.18,"triangle",0.045),
+    complete:()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.18,"sine",0.05), i*110)); },
+    ping:()=>tone(1400,0.05,"sine",0.03)
+  };
+})();
+
+/* =========================================================================
+   5. TOAST
+   ========================================================================= */
+function showToast(msg,kind){
+  const region=document.getElementById("toast-region");
+  const el=document.createElement("div");
+  el.className="toast"+(kind?" "+kind:"");
+  el.textContent=msg;
+  region.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(),320); },2600);
+}
+
+/* =========================================================================
+   6. SPLASH & IDENTITY
+   ========================================================================= */
+function initSplash(){
+  document.getElementById("btn-start").addEventListener("click", ()=>{
+    AudioFX.click();
+    if(State.identity.nama && State.identity.kelas) enterApp();
+    else{ document.getElementById("modal-identity").hidden=false; document.getElementById("inp-nama").focus(); }
+  });
+  document.getElementById("form-identity").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    const nama=document.getElementById("inp-nama").value.trim();
+    const kelas=document.getElementById("inp-kelas").value.trim();
+    const id=document.getElementById("inp-id").value.trim();
+    const err=document.getElementById("identity-error");
+    if(!nama||!kelas){ err.style.display="block"; AudioFX.error(); return; }
+    err.style.display="none";
+    State.identity={nama,kelas,id}; persistState();
+    document.getElementById("modal-identity").hidden=true;
+    AudioFX.success(); enterApp();
+  });
+}
+function enterApp(){
+  document.getElementById("splash").classList.add("is-hidden");
+  document.getElementById("app").hidden=false;
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  showToast(`Selamat datang, ${State.identity.nama||"Praktikan"}!`,"success");
+}
+
+/* =========================================================================
+   7. NAVIGATION
+   ========================================================================= */
+const VIEWS=[
+  {id:"teori",label:"Teori"},{id:"prosedur",label:"Prosedur"},{id:"simulasi",label:"Simulasi"},
+  {id:"lkpd",label:"LKPD"},{id:"evaluasi",label:"Evaluasi"},{id:"profil",label:"Profil Pengembang"}
+];
+function buildTabs(){
+  const nav=document.getElementById("tabs"); nav.innerHTML="";
+  VIEWS.forEach((v,i)=>{
+    const btn=document.createElement("button");
+    btn.className="tab-btn"; btn.setAttribute("role","tab"); btn.id="tab-"+v.id;
+    btn.setAttribute("aria-controls","view-"+v.id);
+    btn.innerHTML=`<span class="tab-num">${i+1}</span><span>${v.label}</span>`;
+    btn.addEventListener("click", ()=>{ if(btn.disabled) return; AudioFX.click(); goToView(v.id); });
+    nav.appendChild(btn);
+  });
+  refreshTabsState();
+}
+function refreshTabsState(){
+  VIEWS.forEach(v=>{
+    const btn=document.getElementById("tab-"+v.id);
+    btn.disabled=!State.unlockedViews.includes(v.id);
+    btn.setAttribute("aria-selected", String(State.activeView===v.id));
+  });
+  const idx=VIEWS.findIndex(v=>v.id===State.activeView);
+  const pct=((State.unlockedViews.length-1)/(VIEWS.length-1))*100;
+  document.getElementById("global-progress").style.width=Math.max(pct,(idx/(VIEWS.length-1))*100)+"%";
+}
+function unlockView(id){ if(!State.unlockedViews.includes(id)){ State.unlockedViews.push(id); persistState(); refreshTabsState(); } }
+function goToView(id){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("is-active"));
+  const target=document.getElementById("view-"+id); if(target) target.classList.add("is-active");
+  State.activeView=id; persistState(); refreshTabsState();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+
+/* =========================================================================
+   8. THEORY RENDER
+   ========================================================================= */
+function renderTheory(){
+  document.getElementById("tp-list").innerHTML = LAB_DATA.objectives.map(o=>`<li>${o}</li>`).join("");
+
+  const toc=document.getElementById("theory-toc");
+  toc.innerHTML = LAB_DATA.theorySections.map(s=>`<button class="toc-pill" data-target="${s.id}">${s.title.replace(/^[0-9]+\.\s*/,"")}</button>`).join("")
+    + `<button class="toc-pill" data-target="istilah">Istilah</button><button class="toc-pill" data-target="miskonsepsi">Miskonsepsi</button>`;
+  toc.querySelectorAll(".toc-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const el=document.getElementById("sec-"+btn.dataset.target);
+      if(el) el.scrollIntoView({behavior:State.reduceMotion?"auto":"smooth", block:"start"});
+    });
+  });
+
+  const container=document.getElementById("theory-sections");
+  container.innerHTML = LAB_DATA.theorySections.map(s=>`
+    <div class="theory-section" id="sec-${s.id}">
+      <h3>${s.title}</h3>
+      ${s.body.map(p=>`<p>${p}</p>`).join("")}
+      ${s.list?`<ul style="padding-left:20px;color:var(--paper-300);font-size:14px;line-height:1.8;">${s.list.map(li=>`<li>${li}</li>`).join("")}</ul>`:""}
+      <div class="card" style="background:var(--ink-900);margin:14px 0;">
+        <strong style="color:var(--phosphor-500);font-size:12.5px;">CONTOH PENERAPAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.example}</p>
+      </div>
+      <div class="card" style="background:rgba(224,114,90,.06);border-color:rgba(224,114,90,.3);">
+        <strong style="color:var(--ember-300);font-size:12.5px;">CATATAN / KETERBATASAN</strong>
+        <p style="margin:8px 0 0;font-size:13.5px;">${s.limitation}</p>
+      </div>
+    </div>`).join("") + `
+    <div class="theory-section" id="sec-istilah">
+      <h3>Istilah Penting</h3>
+      <dl class="term-list">${LAB_DATA.terms.map(t=>`<dt>${t.t}</dt><dd>${t.d}</dd>`).join("")}</dl>
+    </div>
+    <div class="theory-section" id="sec-miskonsepsi">
+      <h3>Miskonsepsi Umum</h3>
+      ${LAB_DATA.misconceptions.map(m=>`<div class="misconception"><div><b>✗ Anggapan keliru:</b> ${m.wrong}</div><div style="margin-top:4px;"><b style="color:var(--leaf-500);">✓ Yang benar:</b> ${m.right}</div></div>`).join("")}
+    </div>
+    <div class="theory-section" id="sec-ringkasan">
+      <h3>Ringkasan</h3>
+      <p>${LAB_DATA.summary}</p>
+      <button class="btn btn--primary" id="theory-continue">Lanjut ke Prosedur →</button>
+    </div>`;
+  document.getElementById("theory-continue").addEventListener("click", ()=>{ AudioFX.success(); unlockView("prosedur"); goToView("prosedur"); });
+}
+
+/* =========================================================================
+   9. PROCEDURE
+   ========================================================================= */
+function renderProcedureTabs(){
+  const wrap=document.getElementById("proc-tabs"); wrap.innerHTML="";
+  Object.keys(LAB_DATA.procedures).forEach(key=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab");
+    btn.setAttribute("aria-selected", String(State.procedure.active===key));
+    btn.textContent=LAB_DATA.procedures[key].label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); State.procedure.active=key; persistState(); renderProcedureTabs(); renderProcedureSteps(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderProcedureSteps(){
+  const key=State.procedure.active;
+  const proc=LAB_DATA.procedures[key];
+  const doneArr=State.procedure.done[key];
+  const unlockedIndex=doneArr.length;
+  const list=document.getElementById("proc-steps");
+  list.innerHTML=proc.steps.map((s,i)=>{
+    const isDone=doneArr.includes(i);
+    const isUnlocked=i<=unlockedIndex;
+    return `<div class="step ${isUnlocked?"is-unlocked":""} ${isDone?"is-done":""}" data-i="${i}">
+      <div class="step__num">${isDone?"✓":(i+1)}</div>
+      <div>
+        <h4>${s.title}</h4>
+        <p style="margin:0 0 6px;font-size:13.5px;">${s.instruction}</p>
+        <div class="step__meta"><span><b>Alat/Bahan:</b> ${s.tools}</span><span><b>Kondisi Awal:</b> ${s.initial}</span></div>
+        <div class="step__meta"><span><b>Tindakan:</b> ${s.action}</span></div>
+        <div class="step__meta"><span><b>Hasil Diamati:</b> ${s.observe}</span></div>
+        ${isUnlocked&&!isDone?`<div class="step-actions"><button class="btn btn--primary btn--sm" data-mark="${i}">Tandai Selesai</button></div>`:""}
+      </div></div>`;
+  }).join("");
+  list.querySelectorAll("[data-mark]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i=Number(btn.dataset.mark);
+      if(!doneArr.includes(i)) doneArr.push(i);
+      AudioFX.success(); persistState(); renderProcedureSteps(); updateProcProgress();
+      const totalDone=State.procedure.done.builder.length+State.procedure.done.compare.length;
+      if(totalDone>=4) unlockView("simulasi");
+    });
+  });
+  updateProcProgress();
+}
+function updateProcProgress(){
+  const key=State.procedure.active;
+  const total=LAB_DATA.procedures[key].steps.length;
+  const done=State.procedure.done[key].length;
+  document.getElementById("proc-progress").style.width=(done/total*100)+"%";
+}
+
+/* =========================================================================
+   10. SIMULATION — Pembentuk Ikatan & Perbandingan Sifat Senyawa
+   ========================================================================= */
+const CATEGORY_LABEL={
+  "alkali":"Logam Alkali", "alkali-tanah":"Logam Alkali Tanah", "logam":"Logam",
+  "metaloid":"Metaloid", "nonlogam":"Nonlogam", "halogen":"Halogen (Nonlogam)", "gas-mulia":"Gas Mulia"
+};
+
+function predictBond(elA, elB){
+  if(elA.z===elB.z){
+    if(isInert(elA)) return { type:"inert-same" };
+  }
+  if(isInert(elA) || isInert(elB)) return { type:"inert" };
+
+  const aLogam=isLogam(elA), bLogam=isLogam(elB);
+
+  if(aLogam !== bLogam){
+    const metal = aLogam? elA: elB;
+    const nonmetal = aLogam? elB: elA;
+    const veMetal = valenceOf(metal);
+    const veNonmetal = valenceOf(nonmetal);
+    const cationCharge = veMetal;
+    const anionCharge = octetTargetOf(nonmetal) - veNonmetal;
+    const g = gcd(cationCharge, anionCharge) || 1;
+    const countCation = anionCharge/g;
+    const countAnion = cationCharge/g;
+    const metaloidInvolved = metal.category==="metaloid" || nonmetal.category==="metaloid";
+    return { type:"ion", metal, nonmetal, cationCharge, anionCharge, countCation, countAnion, metaloidInvolved };
+  }
+  if(aLogam && bLogam){
+    return { type:"logam", elA, elB };
+  }
+  // sama-sama nonlogam-like (nonlogam/halogen/metaloid)
+  const veA=valenceOf(elA), veB=valenceOf(elB);
+  const needA=octetTargetOf(elA)-veA, needB=octetTargetOf(elB)-veB;
+  const bondOrder=Math.max(1, Math.min(needA, needB, 3));
+  const incomplete = needA!==needB;
+  return { type:"kovalen", elA, elB, veA, veB, needA, needB, bondOrder, incomplete };
+}
+
+const Sim = {
+  key:"builder",
+  builder:{ zA:11, zB:17 },
+  compare:{ c1:"nacl", c2:"cu" }
+};
+
+function renderSimTabs(){
+  const wrap=document.getElementById("sim-tabs"); wrap.innerHTML="";
+  [{key:"builder",label:"Pembentuk Ikatan"},{key:"compare",label:"Perbandingan Sifat Senyawa"}].forEach(it=>{
+    const btn=document.createElement("button");
+    btn.className="proc-tab"; btn.setAttribute("role","tab"); btn.setAttribute("aria-selected", String(Sim.key===it.key));
+    btn.textContent=it.label;
+    btn.addEventListener("click", ()=>{ AudioFX.click(); Sim.key=it.key; renderSimTabs(); renderSimControls(); renderSimLegend(); drawCurrentSim(); });
+    wrap.appendChild(btn);
+  });
+}
+function renderSimControls(){
+  document.getElementById("sim-note").textContent = Sim.key==="builder" ? LAB_DATA.simulationNotes.builder : LAB_DATA.simulationNotes.compare;
+  const controls=document.getElementById("sim-controls");
+
+  if(Sim.key==="builder"){
+    const opts=ELEMENTS.map(e=>`<option value="${e.z}">${e.name} (${e.sym})</option>`).join("");
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Pembentuk Ikatan</h4>
+      <div class="field"><label for="ctrl-za">Unsur A</label><select id="ctrl-za">${opts}</select></div>
+      <div class="field"><label for="ctrl-zb">Unsur B</label><select id="ctrl-zb">${opts}</select></div>`;
+    const s1=document.getElementById("ctrl-za"), s2=document.getElementById("ctrl-zb");
+    s1.value=Sim.builder.zA; s2.value=Sim.builder.zB;
+    s1.addEventListener("change", ()=>{ Sim.builder.zA=Number(s1.value); AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    s2.addEventListener("change", ()=>{ Sim.builder.zB=Number(s2.value); AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+  } else {
+    const opts=COMPOUNDS.map(c=>`<option value="${c.id}">${c.name} (${c.formula})</option>`).join("");
+    controls.innerHTML=`
+      <h4 style="font-size:13px;margin-bottom:12px;">Variabel — Perbandingan Sifat</h4>
+      <div class="field"><label for="ctrl-c1">Senyawa 1</label><select id="ctrl-c1">${opts}</select></div>
+      <div class="field"><label for="ctrl-c2">Senyawa 2</label><select id="ctrl-c2">${opts}</select></div>`;
+    const s1=document.getElementById("ctrl-c1"), s2=document.getElementById("ctrl-c2");
+    s1.value=Sim.compare.c1; s2.value=Sim.compare.c2;
+    s1.addEventListener("change", ()=>{ Sim.compare.c1=s1.value; AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+    s2.addEventListener("change", ()=>{ Sim.compare.c2=s2.value; AudioFX.ping(); drawCurrentSim(); renderReadout(); unlockView("lkpd"); });
+  }
+  renderReadout();
+}
+function renderSimLegend(){
+  const legend=document.getElementById("sim-legend");
+  if(Sim.key==="builder"){
+    legend.innerHTML=`<span><i style="background:var(--phosphor-500);"></i> Elektron valensi</span><span><i style="background:var(--brass-400);"></i> Arah perpindahan/pasangan berbagi</span>`;
+  } else {
+    legend.innerHTML=`<span><i style="background:var(--phosphor-500);"></i> Senyawa 1</span><span><i style="background:var(--brass-500);"></i> Senyawa 2</span>`;
+  }
+}
+function renderReadout(){
+  const readout=document.getElementById("sim-readout");
+  if(Sim.key==="builder"){
+    const elA=elByZ(Sim.builder.zA), elB=elByZ(Sim.builder.zB);
+    const result=predictBond(elA, elB);
+    const typeLabel={ion:"Ikatan Ion", kovalen:"Ikatan Kovalen", logam:"Ikatan Logam", inert:"Tidak Berikatan", "inert-same":"Tidak Berikatan"}[result.type];
+    readout.innerHTML=`
+      <div><b>Unsur A</b><span>${elA.name} (${CATEGORY_LABEL[elA.category]})</span></div>
+      <div><b>Unsur B</b><span>${elB.name} (${CATEGORY_LABEL[elB.category]})</span></div>
+      <div style="grid-column:1/-1;"><b>Prediksi</b><span>${typeLabel}</span></div>`;
+  } else {
+    const c1=COMPOUNDS.find(c=>c.id===Sim.compare.c1), c2=COMPOUNDS.find(c=>c.id===Sim.compare.c2);
+    readout.innerHTML=`
+      <div><b>Senyawa 1</b><span>${c1.name}</span></div>
+      <div><b>Senyawa 2</b><span>${c2.name}</span></div>
+      <div><b>Jenis Ikatan 1</b><span>${BOND_TYPE_LABEL[c1.jenis]}</span></div>
+      <div><b>Jenis Ikatan 2</b><span>${BOND_TYPE_LABEL[c2.jenis]}</span></div>`;
+  }
+}
+
+function drawCurrentSim(){
+  if(Sim.key==="builder") drawBuilder(); else drawCompare();
+}
+
+/* ---- Diagram Lewis sederhana (DOM) ---- */
+function dotSlotsHTML(count){
+  // urutan pengisian: top,right,bottom,left (1 dulu), lalu pasangan lagi top,right,bottom,left
+  const sides=["top","right","bottom","left"];
+  const fill=[0,0,0,0];
+  let remaining=count;
+  for(let i=0;i<4 && remaining>0;i++){ fill[i]=1; remaining--; }
+  for(let i=0;i<4 && remaining>0;i++){ fill[i]=2; remaining--; }
+  return sides.map((side,i)=>`<div class="dot-slot ${side}">${'<span class="e-dot"></span>'.repeat(fill[i])}</div>`).join("");
+}
+function lewisAtomHTML(el, dotCount, bgColor){
+  return `<div class="lewis-atom">
+    ${dotSlotsHTML(dotCount)}
+    <div class="lewis-symbol" style="background:${bgColor};">${el.sym}</div>
+  </div>`;
+}
+
+function drawBuilder(){
+  const layer=document.getElementById("dom-layer");
+  const elA=elByZ(Sim.builder.zA), elB=elByZ(Sim.builder.zB);
+  const result=predictBond(elA, elB);
+
+  let html = "";
+  if(result.type==="inert" || result.type==="inert-same"){
+    const inertEl = isInert(elA) ? elA : elB;
+    html = `<div style="text-align:center;padding-top:40px;">
+      ${lewisAtomHTML(elA, valenceOf(elA)===0?8:valenceOf(elA), "#8892A6")}
+      <p class="result-note" style="margin-top:18px;">${inertEl.name} termasuk gas mulia dengan konfigurasi elektron yang sudah stabil (oktet${inertEl.z<=2?"/duplet":""} penuh). Unsur ini sangat sukar membentuk ikatan kimia dengan unsur lain.</p>
+    </div>`;
+  }
+  else if(result.type==="ion"){
+    const {metal,nonmetal,cationCharge,anionCharge,countCation,countAnion,metaloidInvolved}=result;
+    const veMetal=valenceOf(metal), veNonmetal=valenceOf(nonmetal);
+    html = `<div style="text-align:center;font-family:var(--serif);color:var(--brass-400);font-size:15px;margin-bottom:6px;">Ikatan Ion</div>
+    <div class="lewis-stage">
+      ${lewisAtomHTML(metal, veMetal, "#D9AC6E")}
+      <div class="lewis-arrow">→</div>
+      ${lewisAtomHTML(nonmetal, veNonmetal, "#5FD9C4")}
+    </div>
+    <div class="result-line">${metal.sym}${cationCharge>1?"<sup>"+cationCharge+"+</sup>":"<sup>+</sup>"} &nbsp;⋯⋯⋯&nbsp; ${nonmetal.sym}${anionCharge>1?"<sup>"+anionCharge+"−</sup>":"<sup>−</sup>"}</div>
+    <div class="result-formula">${metal.sym}${countCation>1?countCation:""}${nonmetal.sym}${countAnion>1?countAnion:""}</div>
+    <p class="result-note">${metal.name} melepaskan ${veMetal} elektron valensi (membentuk ${metal.sym}${cationCharge>1?cationCharge+"+":"+"}), sedangkan ${nonmetal.name} menangkap ${anionCharge} elektron (membentuk ${nonmetal.sym}${anionCharge>1?anionCharge+"−":"−"}). Kedua ion saling tarik-menarik membentuk kisi kristal ion.</p>
+    ${metaloidInvolved?`<div class="exception-note">⚠ Salah satu unsur (${metal.category==="metaloid"?metal.name:nonmetal.name}) tergolong metaloid. Dalam kenyataan, metaloid jarang membentuk ion sederhana seperti ini — model di sini disederhanakan untuk tujuan pembelajaran.</div>`:""}
+    `;
+  }
+  else if(result.type==="kovalen"){
+    const {elA:a,elB:b,veA,veB,bondOrder,incomplete}=result;
+    const bondLabel={1:"Tunggal",2:"Rangkap Dua",3:"Rangkap Tiga"}[bondOrder];
+    const bondSymbol={1:"–",2:"=",3:"≡"}[bondOrder];
+    const bondZoneDots = Array(bondOrder).fill('<span class="e-dot"></span><span class="e-dot"></span>').join("");
+    // sisa elektron non-ikatan (lone pair) yang ditampilkan di sisi luar
+    const outerA = Math.max(0, (octetTargetOf(a)-veA) >= bondOrder ? veA : veA - 0); // sederhana: tampilkan valensi asli dikurangi elektron yang dipakai berikatan
+    const usedA = Math.min(bondOrder, veA);
+    const usedB = Math.min(bondOrder, veB);
+    html = `<div style="text-align:center;font-family:var(--serif);color:var(--brass-400);font-size:15px;margin-bottom:6px;">Ikatan Kovalen ${bondLabel}</div>
+    <div class="lewis-stage">
+      ${lewisAtomHTML(a, Math.max(0,veA-usedA), "#9EEBDC")}
+      <div class="bond-zone">${bondZoneDots}</div>
+      ${lewisAtomHTML(b, Math.max(0,veB-usedB), "#9EEBDC")}
+    </div>
+    <div class="result-line">${a.sym} ${bondSymbol} ${b.sym}</div>
+    <div class="result-formula">${a.z===b.z ? a.sym+"₂" : a.sym+b.sym}</div>
+    <p class="result-note">${a.name} membutuhkan ${octetTargetOf(a)-veA} elektron tambahan, ${b.name} membutuhkan ${octetTargetOf(b)-veB} elektron tambahan untuk mencapai kestabilan. Keduanya memakai bersama ${bondOrder} pasang elektron (ikatan ${bondLabel.toLowerCase()}).</p>
+    ${incomplete?`<div class="exception-note">⚠ Dengan model diatomik sederhana ini, salah satu atom belum mencapai oktet penuh — ini mirip dengan kasus nyata pengecualian aturan oktet, seperti pada senyawa BF₃ atau BCl₃.</div>`:""}
+    `;
+  }
+  else if(result.type==="logam"){
+    const {elA:a,elB:b}=result;
+    const positions=[
+      {x:22,y:30},{x:60,y:22},{x:98,y:32},{x:136,y:24},{x:174,y:34},{x:212,y:26},{x:250,y:36},{x:288,y:28},
+      {x:30,y:80},{x:70,y:88},{x:110,y:78},{x:150,y:90},{x:190,y:80},{x:230,y:88},{x:270,y:78},
+      {x:20,y:130},{x:58,y:138},{x:96,y:128},{x:134,y:140},{x:172,y:130},{x:210,y:138},{x:248,y:128},{x:286,y:136}
+    ];
+    let ionsHtml="";
+    for(let i=0;i<12;i++){
+      const p=positions[i*2]||positions[i];
+      const sym = i%2===0? a.sym : b.sym;
+      const color = i%2===0? "#D9AC6E" : "#C4934E";
+      ionsHtml += `<div class="sea-ion" style="left:${(i%4)*76+20}px; top:${Math.floor(i/4)*52+14}px; background:${color};">${sym}⁺</div>`;
+    }
+    let elecHtml="";
+    for(let i=0;i<40;i++){
+      elecHtml += `<div class="sea-electron" style="left:${(i*37)%300+8}px; top:${(i*53)%150+8}px;"></div>`;
+    }
+    html = `<div style="text-align:center;font-family:var(--serif);color:var(--brass-400);font-size:15px;margin-bottom:6px;">Ikatan Logam</div>
+    <div class="sea-box">${ionsHtml}${elecHtml}</div>
+    <div class="result-line">Lautan elektron delokalisasi</div>
+    <p class="result-note">${a.name} dan ${b.name} sama-sama tergolong logam: keduanya cenderung melepas elektron, bukan menangkapnya. Elektron valensi dari seluruh atom tidak terikat pada satu ion tertentu, melainkan bergerak bebas mengelilingi ion-ion positif — inilah yang disebut ikatan logam.</p>
+    <div class="exception-note">⚠ Kombinasi dua logam berbeda pada kenyataannya membentuk paduan logam (aloi) dengan struktur lebih kompleks; diagram ini hanya menggambarkan prinsip dasar lautan elektron secara sederhana.</div>
+    `;
+  }
+
+  layer.innerHTML = html;
+}
+
+const BOND_TYPE_LABEL={ ion:"Ionik", kovalen:"Kovalen Molekuler", logam:"Logam" };
+const COMPOUNDS=[
+  {id:"nacl", name:"Natrium Klorida", formula:"NaCl", jenis:"ion", wujud:"Padat", titikLeleh:"Tinggi", hantarPadat:"Tidak", hantarLelehLarutan:"Ya, menghantar baik", kekerasan:"Keras namun rapuh (getas)"},
+  {id:"mgo", name:"Magnesium Oksida", formula:"MgO", jenis:"ion", wujud:"Padat", titikLeleh:"Sangat tinggi", hantarPadat:"Tidak", hantarLelehLarutan:"Ya, menghantar baik", kekerasan:"Keras namun rapuh (getas)"},
+  {id:"caf2", name:"Kalsium Fluorida", formula:"CaF₂", jenis:"ion", wujud:"Padat", titikLeleh:"Tinggi", hantarPadat:"Tidak", hantarLelehLarutan:"Ya, menghantar baik", kekerasan:"Keras namun rapuh (getas)"},
+  {id:"h2o", name:"Air", formula:"H₂O", jenis:"kovalen", wujud:"Cair (suhu ruang)", titikLeleh:"Rendah", hantarPadat:"Tidak berlaku (cair)", hantarLelehLarutan:"Sangat lemah (air murni)", kekerasan:"Tidak relevan (cairan)"},
+  {id:"co2", name:"Karbon Dioksida", formula:"CO₂", jenis:"kovalen", wujud:"Gas", titikLeleh:"Sangat rendah", hantarPadat:"Tidak berlaku (gas)", hantarLelehLarutan:"Tidak menghantar", kekerasan:"Tidak relevan (gas)"},
+  {id:"ch4", name:"Metana", formula:"CH₄", jenis:"kovalen", wujud:"Gas", titikLeleh:"Sangat rendah", hantarPadat:"Tidak berlaku (gas)", hantarLelehLarutan:"Tidak menghantar", kekerasan:"Tidak relevan (gas)"},
+  {id:"hcl", name:"Hidrogen Klorida", formula:"HCl", jenis:"kovalen", wujud:"Gas", titikLeleh:"Rendah", hantarPadat:"Tidak berlaku (gas)", hantarLelehLarutan:"Ya, jika dilarutkan dalam air (terionisasi)", kekerasan:"Tidak relevan (gas)"},
+  {id:"nh3", name:"Amonia", formula:"NH₃", jenis:"kovalen", wujud:"Gas", titikLeleh:"Rendah", hantarPadat:"Tidak berlaku (gas)", hantarLelehLarutan:"Sedikit, jika dilarutkan dalam air", kekerasan:"Tidak relevan (gas)"},
+  {id:"cu", name:"Tembaga", formula:"Cu", jenis:"logam", wujud:"Padat", titikLeleh:"Sedang–tinggi", hantarPadat:"Ya, menghantar sangat baik", hantarLelehLarutan:"Ya, menghantar baik", kekerasan:"Ulet, dapat ditempa/direnggangkan"},
+  {id:"fe", name:"Besi", formula:"Fe", jenis:"logam", wujud:"Padat", titikLeleh:"Tinggi", hantarPadat:"Ya, menghantar baik", hantarLelehLarutan:"Ya, menghantar baik", kekerasan:"Ulet, dapat ditempa/direnggangkan"},
+  {id:"al", name:"Aluminium", formula:"Al", jenis:"logam", wujud:"Padat", titikLeleh:"Sedang", hantarPadat:"Ya, menghantar baik", hantarLelehLarutan:"Ya, menghantar baik", kekerasan:"Ulet, dapat ditempa/direnggangkan"}
+];
+
+function compareVerdict(c1,c2){
+  if(c1.id===c2.id) return {title:"Pilih Dua Senyawa Berbeda", desc:"Pilih dua senyawa yang berbeda untuk melihat perbandingan.", related:false};
+  if(c1.jenis===c2.jenis){
+    const label=BOND_TYPE_LABEL[c1.jenis];
+    return {title:`Sama-Sama ${label}`, desc:`${c1.name} dan ${c2.name} sama-sama tersusun dari ikatan ${label.toLowerCase()}, sehingga pola sifat fisiknya cenderung mirip — meski nilai persisnya (seperti titik leleh) tetap dapat berbeda tergantung ukuran dan kekuatan gaya tarik antarpartikelnya.`, related:true};
+  }
+  const pair=[c1.jenis,c2.jenis].sort().join("-");
+  const texts={
+    "ion-kovalen":`${c1.jenis==="ion"?c1.name:c2.name} (ionik) memiliki titik leleh jauh lebih tinggi daripada ${c1.jenis==="kovalen"?c1.name:c2.name} (kovalen molekuler), karena gaya elektrostatik antarion jauh lebih kuat dibanding gaya antarmolekul kovalen. Senyawa ionik padat juga tidak menghantarkan listrik, berbeda dari beberapa senyawa kovalen yang dapat terionisasi dalam air.`,
+    "kovalen-logam":`${c1.jenis==="logam"?c1.name:c2.name} (logam) dapat menghantarkan listrik dalam keadaan padat berkat lautan elektron yang bebas bergerak, sedangkan ${c1.jenis==="kovalen"?c1.name:c2.name} (kovalen molekuler) umumnya tidak menghantarkan listrik sama sekali karena elektronnya terikat erat dalam ikatan kovalen dan molekulnya bersifat netral.`,
+    "ion-logam":`Perbedaan paling mencolok ada pada daya hantar listrik dalam keadaan padat: ${c1.jenis==="logam"?c1.name:c2.name} (logam) dapat langsung menghantarkan listrik karena elektronnya bebas bergerak, sedangkan ${c1.jenis==="ion"?c1.name:c2.name} (ionik) hanya dapat menghantarkan listrik setelah dilelehkan atau dilarutkan, karena dalam keadaan padat ion-ionnya terkunci dalam kisi kristal.`
+  };
+  return {title:"Jenis Ikatan Berbeda", desc:texts[pair], related:false};
+}
+
+function compoundCardHTML(c){
+  return `<div class="compound-card">
+    <h4>${c.name}</h4>
+    <div class="formula">${c.formula} · Ikatan ${BOND_TYPE_LABEL[c.jenis]}</div>
+    <dl>
+      <dt>Wujud (suhu ruang)</dt><dd>${c.wujud}</dd>
+      <dt>Titik Leleh</dt><dd>${c.titikLeleh}</dd>
+      <dt>Daya Hantar (Padat)</dt><dd>${c.hantarPadat}</dd>
+      <dt>Daya Hantar (Leleh/Larutan)</dt><dd>${c.hantarLelehLarutan}</dd>
+      <dt>Kekerasan</dt><dd>${c.kekerasan}</dd>
+    </dl>
+  </div>`;
+}
+
+function drawCompare(){
+  const layer=document.getElementById("dom-layer");
+  const c1=COMPOUNDS.find(c=>c.id===Sim.compare.c1), c2=COMPOUNDS.find(c=>c.id===Sim.compare.c2);
+  const verdict=compareVerdict(c1,c2);
+  layer.innerHTML=`
+    <h4 style="font-size:15px;margin-bottom:4px;color:var(--paper-100);">Perbandingan Sifat Fisik</h4>
+    <div class="compare-grid">${compoundCardHTML(c1)}${compoundCardHTML(c2)}</div>
+    <div class="verdict"><div class="verdict-title">${verdict.title}</div><div class="verdict-desc">${verdict.desc}</div></div>
+  `;
+}
+
+function resetSim(){
+  AudioFX.reset();
+  if(confirm("Kembalikan simulasi ke kondisi awal? Data LKPD tidak akan terhapus.")){
+    Sim.builder={zA:11,zB:17};
+    Sim.compare={c1:"nacl",c2:"cu"};
+    renderSimControls(); drawCurrentSim();
+    showToast("Simulasi direset ke kondisi awal.");
+  }
+}
+function initSimulationView(){
+  renderSimTabs();
+  renderSimControls();
+  renderSimLegend();
+  drawCurrentSim();
+  document.getElementById("sim-reset").addEventListener("click", resetSim);
+}
+
+/* =========================================================================
+   11. LKPD
+   ========================================================================= */
+const LKPD_FIELDS=["prediksi","analisis1","analisis2","q1","q2","kesimpulan","refleksi"];
+let obsRowCount1=0, obsRowCount2=0;
+function addObsRow1(data){
+  const tbody=document.getElementById("obs-tbody-1"); const idx=obsRowCount1++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. Na dan Cl" value="${data&&data.pasangan||""}"></td>
+    <td><input type="text" placeholder="cth. Ion" value="${data&&data.jenis||""}"></td>
+    <td><input type="text" placeholder="cth. NaCl" value="${data&&data.rumus||""}"></td>
+    <td><input type="text" placeholder="cth. Logam+nonlogam" value="${data&&data.alasan||""}"></td>`;
+  tbody.appendChild(row);
+}
+function addObsRow2(data){
+  const tbody=document.getElementById("obs-tbody-2"); const idx=obsRowCount2++;
+  const row=document.createElement("tr");
+  row.innerHTML=`
+    <td><input type="text" placeholder="cth. NaCl" value="${data&&data.s1||""}"></td>
+    <td><input type="text" placeholder="cth. Cu" value="${data&&data.s2||""}"></td>
+    <td><input type="text" placeholder="cth. Daya hantar padat" value="${data&&data.beda||""}"></td>
+    <td><input type="text" placeholder="cth. Ion vs Logam" value="${data&&data.penyebab||""}"></td>`;
+  tbody.appendChild(row);
+}
+function renderLKPD(){
+  document.getElementById("lkpd-nama").value=State.identity.nama||"";
+  document.getElementById("lkpd-kelas").value=State.identity.kelas||"";
+  const l=State.lkpd;
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el&&l[f]) el.value=l[f]; });
+  document.getElementById("obs-tbody-1").innerHTML=""; obsRowCount1=0;
+  (l.obs1&&l.obs1.length?l.obs1:[{},{}]).forEach(r=>addObsRow1(r));
+  document.getElementById("obs-tbody-2").innerHTML=""; obsRowCount2=0;
+  (l.obs2&&l.obs2.length?l.obs2:[{},{}]).forEach(r=>addObsRow2(r));
+}
+function collectLKPD(){
+  const l={};
+  LKPD_FIELDS.forEach(f=>{ const el=document.getElementById("lkpd-"+f); if(el) l[f]=el.value; });
+  l.obs1 = Array.from(document.querySelectorAll("#obs-tbody-1 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {pasangan:i[0].value, jenis:i[1].value, rumus:i[2].value, alasan:i[3].value};
+  });
+  l.obs2 = Array.from(document.querySelectorAll("#obs-tbody-2 tr")).map(tr=>{
+    const i=tr.querySelectorAll("input");
+    return {s1:i[0].value, s2:i[1].value, beda:i[2].value, penyebab:i[3].value};
+  });
+  return l;
+}
+function initLKPD(){
+  document.querySelectorAll("[data-add]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ AudioFX.click(); btn.dataset.add==="1"?addObsRow1():addObsRow2(); });
+  });
+  document.getElementById("lkpd-save").addEventListener("click", ()=>{
+    State.lkpd=collectLKPD(); persistState();
+    document.getElementById("lkpd-status").textContent="Tersimpan · "+new Date().toLocaleTimeString("id-ID");
+    AudioFX.success(); showToast("LKPD berhasil disimpan.","success");
+    unlockView("evaluasi");
+  });
+  document.getElementById("lkpd-print").addEventListener("click", ()=>window.print());
+  document.getElementById("btn-print").addEventListener("click", ()=>{ goToView("lkpd"); setTimeout(()=>window.print(),200); });
+  document.getElementById("lkpd-reset").addEventListener("click", ()=>{
+    if(confirm("Hapus seluruh isian LKPD? Tindakan ini tidak dapat dibatalkan.")){
+      State.lkpd={}; persistState(); renderLKPD(); AudioFX.reset(); showToast("LKPD telah direset.");
+    }
+  });
+}
+
+/* =========================================================================
+   12. EVALUATION
+   ========================================================================= */
+function renderQuiz(){
+  const container=document.getElementById("quiz-questions");
+  container.innerHTML=LAB_DATA.evaluation.map((q,i)=>{
+    let body="";
+    if(q.type==="mc") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="radio" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="checkbox") body=q.options.map((opt,oi)=>`<label class="opt" data-q="${i}" data-oi="${oi}"><input type="checkbox" name="q${i}" value="${oi}"><span>${opt}</span></label>`).join("");
+    else if(q.type==="short") body=`<input type="text" class="short-answer-input" id="q${i}-short" placeholder="Ketik jawabanmu…">`;
+    else if(q.type==="essay") body=`<textarea id="q${i}-essay" placeholder="Tuliskan jawaban analisismu…" style="min-height:90px;"></textarea>`;
+    return `<div class="card q-card" id="qcard-${i}">
+      <span class="q-tag ${q.level}">${q.level.toUpperCase()} · Soal ${i+1}</span>
+      <div class="q-stem">${q.stem}</div>${body}
+      <div class="q-explain" id="qexplain-${i}"><b>Pembahasan:</b> ${q.explain}</div>
+    </div>`;
+  }).join("");
+  container.addEventListener("change", onQuizAnswerChange);
+  container.querySelectorAll(".short-answer-input, textarea").forEach(el=>el.addEventListener("input", onQuizAnswerChange));
+  document.getElementById("quiz-begin").parentElement.hidden=true;
+  document.getElementById("quiz-body").hidden=false;
+  updateQuizProgress();
+}
+function onQuizAnswerChange(){
+  const answers={};
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    if(q.type==="mc"){ const sel=document.querySelector(`input[name="q${i}"]:checked`); if(sel) answers[i]=Number(sel.value); }
+    else if(q.type==="checkbox"){ const sels=document.querySelectorAll(`input[name="q${i}"]:checked`); if(sels.length) answers[i]=Array.from(sels).map(s=>Number(s.value)); }
+    else if(q.type==="short"){ const val=document.getElementById(`q${i}-short`).value.trim(); if(val) answers[i]=val; }
+    else if(q.type==="essay"){ const val=document.getElementById(`q${i}-essay`).value.trim(); if(val) answers[i]=val; }
+  });
+  State.quiz.answers=answers; persistState(); updateQuizProgress();
+}
+function updateQuizProgress(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  document.getElementById("quiz-progress-fill").style.width=(answered/total*100)+"%";
+  document.getElementById("quiz-progress-label").textContent=`${answered} / ${total} dijawab`;
+}
+function normalizeText(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+function gradeQuiz(){
+  let scoreItems=0, gradable=0;
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    const ans=State.quiz.answers[i];
+    if(q.type==="essay") return;
+    gradable++;
+    if(q.type==="mc"){ if(ans===q.answer) scoreItems++; }
+    else if(q.type==="checkbox"){ if(Array.isArray(ans)){ const a=[...ans].sort().join(","), b=[...q.answerSet].sort().join(","); if(a===b) scoreItems++; } }
+    else if(q.type==="short"){ if(ans && q.accepted.includes(normalizeText(ans))) scoreItems++; }
+  });
+  return { scoreItems, gradable, pct: gradable?Math.round((scoreItems/gradable)*100):0 };
+}
+function revealAnswers(){
+  LAB_DATA.evaluation.forEach((q,i)=>{
+    document.getElementById(`qexplain-${i}`).classList.add("is-visible");
+    if(q.type==="mc"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(oi===q.answer) optEl.classList.add("is-correct"); else if(oi===sel) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="checkbox"){
+      const opts=document.querySelectorAll(`#qcard-${i} .opt`); const sel=State.quiz.answers[i]||[];
+      opts.forEach((optEl,oi)=>{ optEl.querySelector("input").disabled=true; if(q.answerSet.includes(oi)) optEl.classList.add("is-correct"); else if(sel.includes(oi)) optEl.classList.add("is-wrong"); });
+    } else if(q.type==="short"){ document.getElementById(`q${i}-short`).disabled=true; }
+    else if(q.type==="essay"){ document.getElementById(`q${i}-essay`).disabled=true; }
+  });
+}
+function submitQuiz(){
+  const total=LAB_DATA.evaluation.length, answered=Object.keys(State.quiz.answers).length;
+  if(answered<total){ if(!confirm(`Kamu baru menjawab ${answered} dari ${total} soal. Tetap kumpulkan sekarang?`)) return; }
+  const result=gradeQuiz();
+  State.quiz.submitted=true; State.quiz.lastResult=result; persistState();
+  revealAnswers(); unlockView("profil");
+  document.getElementById("quiz-submit").hidden=true;
+  document.getElementById("quiz-result").hidden=false;
+  document.getElementById("result-score").textContent=result.pct;
+  let desc="";
+  if(result.pct>=85) desc="Istimewa! Pemahamanmu tentang ikatan kimia sangat kuat.";
+  else if(result.pct>=70) desc="Bagus! Sebagian besar konsep sudah kamu kuasai — tinjau kembali bagian yang masih keliru.";
+  else if(result.pct>=50) desc="Cukup baik. Baca ulang bagian Teori, khususnya perbedaan ikatan ion, kovalen, dan logam, lalu coba lagi.";
+  else desc="Perlu belajar lebih dalam. Cobalah ulangi bagian Teori dan Simulasi sebelum mengulang evaluasi.";
+  document.getElementById("result-desc").textContent=desc;
+  const badges=[
+    {icon:"🎓",label:"Skor ≥ 85",earned:result.pct>=85},
+    {icon:"⚛",label:"Semua Soal Dijawab",earned:answered>=total},
+    {icon:"🔗",label:"Skor ≥ 70",earned:result.pct>=70}
+  ];
+  document.getElementById("badge-row").innerHTML=badges.map(b=>`<div class="badge ${b.earned?"is-earned":""}"><i>${b.icon}</i><span>${b.label}</span></div>`).join("");
+  if(result.pct>=70) AudioFX.complete(); else AudioFX.error();
+  window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+}
+function initQuiz(){
+  document.getElementById("quiz-begin").addEventListener("click", ()=>{ AudioFX.click(); renderQuiz(); });
+  document.getElementById("quiz-submit").addEventListener("click", submitQuiz);
+  document.getElementById("quiz-review").addEventListener("click", ()=>{
+    document.getElementById("quiz-result").hidden=true;
+    document.getElementById("quiz-body").hidden=false;
+    window.scrollTo({top:0, behavior:State.reduceMotion?"auto":"smooth"});
+  });
+  document.getElementById("quiz-retry").addEventListener("click", ()=>{
+    if(confirm("Ulangi evaluasi dari awal? Jawaban sebelumnya akan dihapus.")){
+      State.quiz={answers:{},submitted:false}; persistState();
+      document.getElementById("quiz-result").hidden=true;
+      document.getElementById("quiz-intro").hidden=false;
+      document.getElementById("quiz-body").hidden=true;
+      document.getElementById("quiz-submit").hidden=false;
+      AudioFX.reset();
+    }
+  });
+}
+
+/* =========================================================================
+   13. DEVELOPER PROFILE
+   ========================================================================= */
+function renderDevProfile(){
+  document.getElementById("dev-photo").innerHTML=`
+    <svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder foto pengembang">
+      <rect width="180" height="180" fill="#1F2C48"/>
+      <circle cx="90" cy="70" r="34" fill="#2C3A5C"/>
+      <path d="M30 168c8-40 40-58 60-58s52 18 60 58z" fill="#2C3A5C"/>
+      <circle cx="90" cy="90" r="88" fill="none" stroke="#C4934E" stroke-width="1.5" opacity="0.4"/>
+    </svg>`;
+}
+
+/* =========================================================================
+   14. ASSISTANT
+   ========================================================================= */
+const ASSISTANT_RULES=[
+  {keys:["mulai","cara mulai"], reply:"Klik \"Mulai Praktikum\", isi identitasmu, lalu ikuti tab navigasi dari Teori → Prosedur → Simulasi → LKPD → Evaluasi secara berurutan."},
+  {keys:["oktet","duplet"], reply:"Aturan oktet: atom cenderung stabil dengan 8 elektron valensi. Pengecualiannya adalah aturan duplet khusus untuk H dan He (stabil dengan 2 elektron valensi)."},
+  {keys:["ikatan ion","ion"], reply:"Ikatan ion terbentuk antara logam (melepas elektron) dan nonlogam (menangkap elektron), menghasilkan kation dan anion yang saling tarik-menarik."},
+  {keys:["ikatan kovalen","kovalen"], reply:"Ikatan kovalen terbentuk antarsesama nonlogam yang memakai bersama pasangan elektron. Bisa tunggal, rangkap dua, rangkap tiga, atau koordinasi (datif)."},
+  {keys:["ikatan logam","logam"], reply:"Ikatan logam terjadi antarsesama atom logam, dengan elektron valensi bergerak bebas (lautan elektron) mengelilingi ion-ion positif."},
+  {keys:["polar","kepolaran"], reply:"Ikatan kovalen polar terjadi jika ΔEN cukup besar (elektron tertarik ke salah satu atom); nonpolar jika ΔEN kecil/nol. Kepolaran molekul juga dipengaruhi bentuk molekulnya (contoh: CO2 nonpolar meski ikatannya polar)."},
+  {keys:["daya hantar","konduktor"], reply:"Logam menghantarkan listrik baik padat maupun cair. Senyawa ion hanya menghantarkan saat leleh/larutan (tidak saat padat). Senyawa kovalen umumnya tidak menghantar, kecuali larut dan terionisasi dalam air."},
+  {keys:["lkpd"], reply:"LKPD dapat diisi setelah kamu mencoba simulasi. Klik \"Simpan\" secara berkala, dan gunakan \"Cetak / Simpan PDF\" bila perlu dokumen cetak."},
+  {keys:["nilai","skor","evaluasi"], reply:"Evaluasi berisi 18 soal (LOTS-HOTS). Skor otomatis dihitung dari soal pilihan ganda, checkbox, dan isian singkat. Soal esai direkam untuk dinilai gurumu."},
+  {keys:["error","macet","bug"], reply:"Coba muat ulang halaman. Data LKPD dan jawabanmu tersimpan otomatis di perangkat ini."}
+];
+function assistantReply(text){
+  const q=normalizeText(text);
+  const rule=ASSISTANT_RULES.find(r=>r.keys.some(k=>q.includes(k)));
+  return rule?rule.reply:"Aku asisten berbasis aturan (bukan AI generatif), jadi jawabanku terbatas pada topik virtual lab ini. Coba tanyakan tentang: aturan oktet, ikatan ion, ikatan kovalen, ikatan logam, kepolaran, atau daya hantar listrik.";
+}
+function initAssistant(){
+  const fab=document.getElementById("assistant-fab"), panel=document.getElementById("assistant-panel"), body=document.getElementById("assistant-body"), chips=document.getElementById("assistant-chips");
+  function addMsg(text,who){ const div=document.createElement("div"); div.className="assistant-msg"+(who==="user"?" user":""); div.textContent=text; body.appendChild(div); body.scrollTop=body.scrollHeight; }
+  addMsg("Halo! Aku asisten berbasis aturan untuk membantumu memahami ikatan kimia. Silakan bertanya.","bot");
+  ["Apa itu ikatan ion?","Bedanya kovalen & logam?","Kenapa CO2 nonpolar?"].forEach(q=>{
+    const chip=document.createElement("button"); chip.className="assistant-chip"; chip.textContent=q;
+    chip.addEventListener("click", ()=>{ addMsg(q,"user"); setTimeout(()=>addMsg(assistantReply(q),"bot"),220); });
+    chips.appendChild(chip);
+  });
+  fab.addEventListener("click", ()=>{ const hidden=panel.hidden; panel.hidden=!hidden; fab.setAttribute("aria-expanded", String(hidden)); AudioFX.click(); });
+  document.getElementById("assistant-close").addEventListener("click", ()=>{ panel.hidden=true; fab.setAttribute("aria-expanded","false"); });
+}
+
+/* =========================================================================
+   15. TOP CONTROLS
+   ========================================================================= */
+function initTopControls(){
+  const soundBtn=document.getElementById("btn-sound");
+  soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+  soundBtn.textContent=State.soundOn?"🔊":"🔇";
+  soundBtn.addEventListener("click", ()=>{
+    State.soundOn=!State.soundOn;
+    soundBtn.setAttribute("aria-pressed", String(State.soundOn));
+    soundBtn.textContent=State.soundOn?"🔊":"🔇";
+    persistState(); if(State.soundOn) AudioFX.click();
+  });
+  const rmBtn=document.getElementById("btn-reduce-motion");
+  rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+  document.body.classList.toggle("reduce-motion", State.reduceMotion);
+  rmBtn.addEventListener("click", ()=>{
+    State.reduceMotion=!State.reduceMotion;
+    rmBtn.setAttribute("aria-pressed", String(State.reduceMotion));
+    document.body.classList.toggle("reduce-motion", State.reduceMotion);
+    persistState();
+  });
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    State.reduceMotion=true; document.body.classList.add("reduce-motion"); rmBtn.setAttribute("aria-pressed","true");
+  }
+}
+
+window.addEventListener("error",(e)=>{ console.error("Terjadi kesalahan tak terduga:", e.message); });
+
+/* =========================================================================
+   16. BOOTSTRAP
+   ========================================================================= */
+function init(){
+  loadState();
+  initSplash();
+  initTopControls();
+  buildTabs();
+  renderTheory();
+  renderProcedureTabs();
+  renderProcedureSteps();
+  initLKPD();
+  renderLKPD();
+  initQuiz();
+  renderDevProfile();
+  initAssistant();
+  goToView(State.activeView||"teori");
+
+  let simInitialized=false;
+  document.getElementById("tab-simulasi").addEventListener("click", ()=>{ if(!simInitialized){ initSimulationView(); simInitialized=true; } });
+  if(State.activeView==="simulasi"){ initSimulationView(); simInitialized=true; }
+}
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
